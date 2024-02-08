@@ -1,0 +1,101 @@
+{
+    "test":"init",
+    "navbar":{
+        "about":"About",
+        "work":"Work",
+        "contact":"Contact"
+    },
+    "hero":{
+        "header":"Hi, I'm ",
+        "first":"I am an engineering student at the University of Salento.",
+        "second":"Here you'll find all my works!",
+        "liftoff":"Let's go ↓"
+    },
+    "about":{
+        "intro":"Introduction",
+        "header":"Overview",
+        "overview":"I like facing stimulating challenges and finding innovative solutions, demonstrating a creative and methodical overview",
+        "cv_download":"Download CV",
+        "card1":"Information Engineering",
+        "card2":"Creative Approach to Problem Solving",
+        "card3":"Inspired by Innovation",
+        "card4":"Programming Enthusiast"
+    },
+    "works":{
+        "intro":"What I have done so far",
+        "header":"Work Experience"
+    },
+    "tech":{
+        "intro":"What tools I can use",
+        "header":"Technologies"
+    },
+    "projects":{
+        "intro":"My work",
+        "header":"Projects",
+        "arnia":{
+            "title":"Structure of a hive animated in 3D",
+            "bio":"Animation for educational purposes of the structure of a hive and its composition"
+        },
+        "mousecam":{
+            "title":"Computer Vision application in python",
+            "bio":"A Python application that allows the usage of a webcam as a mouse."
+        },
+        "cv_arm":{
+            "title":"Computer vision control system for an Arduino robotic arm",
+            "bio":"A Python application made for Adeept that allows the user to control an Arduino robotic Arm with the usage of a webcam"
+        },
+        "comingsoon":{
+            "title":"Coming Soon!",
+            "bio":"..."
+        }
+    },
+    "testimonials":{
+        "intro":"What others say",
+        "header":"Testimonial",
+        "feedback1": "His passion and skill have been an added value for our company.",
+        "feedback2": "After his work, our product has reached a much higher level of quality",
+        "feedbackDefault": "..."
+    },
+    "contacts":{
+        "intro":"Get in touch",
+        "header":"Contact",
+        "name_lable":"Your Name",
+        "name_place":"Name",
+        "mail_lable":"Your Email",
+        "mail_place":"Email",
+        "mess_lable":"Your Message",
+        "mess_place":"Message",
+        "send":"Send",
+        "sending":"Sending ...",
+        "follow":"or follow "
+    },    
+    "vidyasoft":{
+        "role": "Python Developer",
+        "company":"Vidyasoft",
+        "dot1":"Developed of a software for the preprocessing of big data used for training an artificial intelligence",
+        "dot2":"Project commissioned by Banca Sella in collaboration with Banca d'Italia",
+        "dot3":"Product developed in Python, using technologies such as Docker, Redis and MongoDB",
+        "period":"October 2022 - February 2023"
+    },
+    "adeept":{
+        "role": "Freelancer Developer",
+        "company":"Adeept (commissioner)",
+        "dot1":"Designed and developed control systems for robotics projects",
+        "dot2":"Worked with Python and Arduino on educational projects",
+        "dot3":"Worked remotely for a leading company with worldwide distribution",
+        "period":"August 2023 - Currently"
+    },
+    "warnings": {
+        "page-not-found": {
+            "title": "Error 404!",
+            "subtitle": "Page not found",
+            "text": "We apologize, the page you were looking for does not exist or it's temporarily unavailable."
+        },
+        "generic-error":"Something went wrong",
+        "mail-error":"The email you tried to use is not valid",
+        "name-required":"Name is required",
+        "mail-required":"The mail is required",
+        "message-required":"The message is required",
+        "message-sent":"Thanks! We will get back to you asap!"
+    }
+}
