@@ -10,13 +10,13 @@ module.exports = {
         tertiary: "#151030",
         "black-100": "#100d25",
         "black-200": "#090325",
-        "white-100": "#f3f3f3",
+        "white-100": "#384955",
+        blue: "#021823",
+        "err-main": "#B71C1C",
+        "err-bg": "#EF9A9A",
 
-        "err-main":"#B71C1C",
-        "err-bg":"#EF9A9A",
-        
-        "ok-main":"#295429",
-        "ok-bg":"#6fd96f",
+        "ok-main": "#295429",
+        "ok-bg": "#6fd96f",
       },
       boxShadow: {
         card: "0px 35px 120px -15px #211e35",

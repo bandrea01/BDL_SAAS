@@ -1,5 +1,4 @@
 import { Html, useProgress } from "@react-three/drei";
-import { satellite } from "../assets";
 import { styles } from '../styles';
 
 

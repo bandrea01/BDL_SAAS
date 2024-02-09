@@ -1,101 +1,35 @@
 {
-    "test":"init",
-    "navbar":{
-        "about":"Chi Sono",
-        "work":"Lavori",
-        "contact":"Contatti"
+  "test": "init",
+  "navbar": {
+    "about": "Contesto",
+    "technologies": "Tecnologie",
+    "viewer":"Visualizzatore",
+    "documentation": "Documentazione"
+  },
+  "hero": {
+    "header": "Modelli 3d da file IFC",
+    "first": "In questo progetto si vogliono rappresentare modelli 3d estratti da file IFC.",
+    "second": "Tutti i file sono salvati in un database a grafo: ArangoDB.",
+    "liftoff": "Scopri di più ↓"
+  },
+  "technologies": {
+    "intro": "Quali tecnologie sono state usate",
+    "header": "Tecnologie"
+  },
+  "viewer": {
+    "title": "Visualizzatore IFC"
+  },
+  "warnings": {
+    "page-not-found": {
+      "title": "Errore 404!",
+      "subtitle": "Pagina non trovata",
+      "text": "Ci scusiamo, la pagina che stavi cercando non esiste o non è al momento disponibile."
     },
-    "hero":{
-        "header":"Ciao, sono ",
-        "first":"Sono uno studente di Ingegneria dell'Università del Salento",
-        "second":"Qui troverai tutti i miei lavori!",
-        "liftoff":"Avanti ↓"
-    },
-    "about":{
-        "intro":"Introduzione ",
-        "header":"Chi Sono",
-        "overview":"Mi piace affrontare sfide stimolanti e trovare soluzioni innovative, dimostrando una visione d'insieme creativa e metodica",
-        "cv_download":"Scarica il CV",
-        "card1":"Ingegneria dell'Informazione",
-        "card2":"Approccio Creativo al Problem Solving",
-        "card3":"Ispirato dall'Innovazione",
-        "card4":"Programming Enthusiast"
-    },
-    "works":{
-        "intro":"Cosa ho realizzato fin'ora",
-        "header":"Esperienza Lavorativa"
-    },
-    "tech":{
-        "intro":"Quali tecnologie so utilizzare",
-        "header":"Tecnologie"
-    },
-    "projects":{
-        "intro":"I miei lavori",
-        "header":"Progetti",
-        "arnia":{
-            "title":"Struttura di un'Arnia animata in 3D",
-            "bio":"Animazione a scopo educazionale di un'arnia e della sua composizione"
-        },
-        "mousecam":{
-            "title":"Applicazione di Computer Vision in Python",
-            "bio":"Applicazione in python che consentedi utilizzare una webcam come mouse"
-        },
-        "cv_arm":{
-            "title":"Sistema di controllo in computer vision per un braccio robotico pilotato da Arduino",
-            "bio":"Applicazione in python che consentedi utilizzare una webcam come mouse"
-        },
-        "comingsoon":{
-            "title":"Coming Soon!",
-            "bio":"..."
-        }
-    },
-    "testimonials":{
-        "intro":"Cosa dicono gli altri",
-        "header":"Testimonial",
-        "feedback1": "La sua passione e abilità sono stati un valore aggiunto per la nostra azienda.",
-        "feedback2": "Dopo il suo lavoro, il nostro prodotto ha raggiunto un livello di qualità molto più elevato",
-        "feedbackDefault": "..."
-    },
-    "contacts":{
-        "intro":"Contattami",
-        "header":"Contatti",
-        "name_lable":"Il tuo nome",
-        "name_place":"Nome",
-        "mail_lable":"La tua Email",
-        "mail_place":"Email",
-        "mess_lable":"Il tuo Messaggio",
-        "mess_place":"Testo",
-        "send":"Invia",
-        "sending":"Invio ...",
-        "follow":"o segui "
-    },
-    "vidyasoft":{
-        "role": "Sviluppatore Python",
-        "company":"Vidyasoft",
-        "dot1":"Sviluppato un software per il preprocessing di big data usato per il training di un'intelligenza artificiale",
-        "dot2":"Progetto commissionato da Banca Sella in collaborazione con Banca d'Italia",
-        "dot3":"Prodotto sviluppato in Python, con l'ausilio di tecnologie quali Docker, Redis e MongoDB",
-        "period":"Ottobre 2022 - Febbraio 2023"
-    },
-    "adeept":{
-        "role": "Sviluppatore Freelancer",
-        "company":"Adeept (commissioner)",
-        "dot1":"Ideato e progettato sistemi di controllo per progetti di robotica",
-        "dot2":"Lavorato in Python e Arduino su progetti educazionali",
-        "dot3":"Lavorato da remoto per una compagnia di Shenzen leader del settore e con presenza globale",
-        "period":"Agosto 2023 - In Corso"
-    },
-    "warnings": {
-        "page-not-found": {
-            "title":"Errore 404!",
-            "subtitle":"Pagina non trovata",
-            "text":"Ci scusiamo, la pagina che stavi cercando non esiste o non è al momento disponibile."
-        },
-        "generic-error":"Qualcosa è andato storto",
-        "mail-error":"L'email che hai inserito non è valida",
-        "name-required":"Il Nome è obbligatorio!",
-        "mail-required":"la mail è obbligatoria!",
-        "message-required":"Il messaggio è obbligatorio!",
-        "message-sent":"Grazie! Ti contatteremo al più presto!"
-    }        
+    "generic-error": "Qualcosa è andato storto",
+    "mail-error": "L'email che hai inserito non è valida",
+    "name-required": "Il Nome è obbligatorio!",
+    "mail-required": "la mail è obbligatoria!",
+    "message-required": "Il messaggio è obbligatorio!",
+    "message-sent": "Grazie! Ti contatteremo al più presto!"
+  }
 }

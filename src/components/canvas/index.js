@@ -1,3 +1,2 @@
-import {EarthCanvas, MoonCanvas} from "./Earth";
-
-export { EarthCanvas, MoonCanvas};
+import { EarthCanvas, MoonCanvas } from "./Earth";
+export { EarthCanvas, MoonCanvas };
