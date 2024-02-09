@@ -1,20 +1,23 @@
-version: '3.8'
-
+version: '3.9'
 services:
-  web-app:
-    build:
-      context: .
-      dockerfile: Dockerfile
+  app:
+    image: node:latest
+    build: .
     ports:
-      - "3000:3000" 
+      - "3000:3000"
     depends_on:
       - arangodb
-    environment:
-      - REACT_APP_ARANGODB_URL=http://arangodb:8529 
-
+    volumes:
+      - .:/app
+ 
   arangodb:
-    image: arangodb
-    ports:
-      - "8529:8529" 
+    image: arangodb:latest
     environment:
-      - ARANGO_ROOT_PASSWORD=${ARANGO_DB_PASSWORD}
+      ARANGO_ROOT_PASSWORD: your_root_password
+    ports:
+      - "8529:8529"
+    volumes:
+      - arangodata:/var/lib/arangodb3
+ 
+volumes:
+  arangodata:

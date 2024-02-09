@@ -92,7 +92,7 @@ const IFCViewer = () => {
     const boxGeometry = new THREE.BoxGeometry(3, 3, 3);
     const cube = new THREE.Mesh(boxGeometry, boxMaterial);
     cube.position.set(0, 1.5, 0);
-    scene.add(cube);
+    // scene.add(cube);
 
     // Ottieni il renderer e i componenti
     rendererRef.current = components.renderer && components.renderer.renderer;
