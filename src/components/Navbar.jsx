@@ -8,10 +8,11 @@ import LanguageDropdown from "./LanguageButton";
 const Navbar = () => {
   const [active, setActive] = useState("");
   const [isScrolled, setIsScrolled] = useState(false);
+  const [isViewerZone, setIsViewerZone] = useState(false);
   const { t } = useTranslation();
 
   const handleDownloadClick = () => {
-    const fileUrl = "/documentation.pdf"; // Modifica il percorso del file con il percorso del tuo file
+    const fileUrl = "/documentation.pdf";
 
     const downloadUrl = new URL(fileUrl, window.location.origin);
 
@@ -35,8 +36,24 @@ const Navbar = () => {
     };
   }, []);
 
+  useEffect(() => {
+    const handleViewerZone = () => {
+      if (window.scrollY > 1500) {
+        setIsViewerZone(true);
+      } else {
+        setIsViewerZone(false);
+      }
+    };
+
+    window.addEventListener("scroll", handleViewerZone);
+    return () => {
+      window.removeEventListener("scroll", handleViewerZone);
+    };
+  }, []);
+
   const navbarClasses = `
     ${isScrolled ? "bg-blue" : "bg-transparent"}
+    ${isViewerZone ? "opacity-0" : "opacity-100"}
     ${"px-4 w-full flex items-center py-5 fixed top-0 z-50"}
     duration-700 
   `;

@@ -24,9 +24,9 @@ const Hero = () => {
         content="Hero section of the site, here you'll find a brief introduction of who I am"
       ></meta>
       <div
-        className={`${styles.paddingX} absolute inset-0 top-[170px] max-w-[1400px] mx-auto flex flex-row items-start gap-5`}
+        className={`${styles.paddingX} absolute inset-0 top-[170px] max-w-[1400px] mx-auto flex flex-row items-start gap-5 h-[500px]`}
       >
-        <div className="z-40">
+        <div>
           <h1 className={`${styles.heroHeadText} text-blue`}>
             {t("hero.header")}
           </h1>
@@ -34,16 +34,13 @@ const Hero = () => {
             {t("hero.first")} <br /> {t("hero.second")}
           </p>
         </div>
-
         <div className="absolute z-10 flex items-center p-1 sm:bottom-12 bottom-14">
           <div className="flex items-center gap-20">
             <GoAboutButton />
           </div>
         </div>
       </div>
-      {/* <div className=" flex justify-center h-[380px] w-full absolute top-[200px] sm:top-0 sm:h-full">
-        <MoonCanvas />
-      </div> */}
+
     </section>
   );
 };
