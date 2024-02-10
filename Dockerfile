@@ -1,24 +1,18 @@
-FROM python:3.11.4-alpine3.18
+# Usa un'immagine Node.js come base
+FROM node:latest
 
-COPY requirements.txt .
+# Imposta la directory di lavoro all'interno del container
+WORKDIR /app
 
-RUN \
-    #Scarichiamo librerie di postgres
-    apk add --no-cache postgresql-libs && \ 
-    apk add --no-cache g++ && \
-    apk add --no-cache --virtual .builds-deps gcc musl-dev postgresql-dev && \
-    #Installazione di dipendenze e librerie python
-    python3 -m pip install -r requirements.txt --no-cache-dir && \
-    #Pulizia della memoria
-    apk --purge del .builds-deps
-
+# Copia i file del progetto nella directory di lavoro del container
+COPY package*.json ./
 COPY . .
 
-#Esposizione della porta 80 (docker-compose.yml -> pythonapp -> port)
-EXPOSE 80
+# Installa le dipendenze del progetto
+RUN npm install
 
-#Indico che la FLASK_APP è l'applicazione python che ho scritto (App.py)
-ENV FLASK_APP=src/App2.py
+# Espone la porta su cui il tuo server Node.js sarà in ascolto
+EXPOSE 3000
 
-#Comando che viene eseguito automaticamente per runnare l'applicazione
-CMD ["flask", "run", "--host=0.0.0.0", "--port=80"]
+# Comando per avviare l'applicazione quando il container viene avviato
+CMD ["npm", "run", "dev"]
