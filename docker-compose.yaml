@@ -12,4 +12,3 @@ services:
       ARANGO_ROOT_PASSWORD: BDLaaS
     ports:
       - "8529:8529"
-
