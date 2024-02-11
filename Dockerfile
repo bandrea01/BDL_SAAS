@@ -11,8 +11,8 @@ COPY . .
 # Installa le dipendenze del progetto
 RUN npm install
 
-# Espone la porta su cui il tuo server Node.js sarà in ascolto
-EXPOSE 3000
+# Espone la porta su cui il server sarà in ascolto
+EXPOSE 8080
 
 # Comando per avviare l'applicazione quando il container viene avviato
 CMD ["npm", "run", "dev"]
