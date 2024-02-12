@@ -3,7 +3,9 @@ services:
   app:
     build: .
     ports:
-      - "8080:8080"
+      - "5173:5173"
+    volumes:
+      - app_data:/app
     links:
       - arangodb
   arangodb:
@@ -12,3 +14,11 @@ services:
       ARANGO_ROOT_PASSWORD: BDLaaS
     ports:
       - "8529:8529"
+    volumes:
+      - arangodb_data:/var/lib/arangodb3
+      - arangodb_config:/etc/arangodb3
+
+volumes:
+  app_data:
+  arangodb_data:
+  arangodb_config:

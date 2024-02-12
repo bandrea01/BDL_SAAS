@@ -12,7 +12,7 @@ COPY . .
 RUN npm install
 
 # Espone la porta su cui il server sarà in ascolto
-EXPOSE 8080
+EXPOSE 5173
 
 # Comando per avviare l'applicazione quando il container viene avviato
 CMD ["npm", "run", "dev"]
