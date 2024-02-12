@@ -16,9 +16,11 @@ services:
       - "8529:8529"
     volumes:
       - arangodb_data:/var/lib/arangodb3
-      - arangodb_config:/etc/arangodb3
+      - arangodb_apps:/var/lib/arangodb3-apps
+      - arangodb_backup:/var/lib/arangodb3-backup
 
 volumes:
   app_data:
   arangodb_data:
-  arangodb_config:
+  arangodb_apps:
+  arangodb_backup:
