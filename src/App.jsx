@@ -119,6 +119,7 @@ const App = () => {
           </div>
         </div>
         <div id="technologies">
+          <div className="h-[60px]"/>
           <Tech />
         </div>
         <div id = "viewer">

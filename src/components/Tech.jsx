@@ -11,8 +11,7 @@ import { useTranslation} from 'react-i18next';
 
 const TechCard = ()=>{
   return(
-
-    <div className='justify-center mx' >
+    <div className='justify-center' >
       
       <motion.div variants={fadeIn('right', 'spring')} className='w-full white-pink-gradient p-1 rounded-[20px]'>
         <div options={{
