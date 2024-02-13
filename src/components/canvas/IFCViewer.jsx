@@ -2,43 +2,6 @@ import * as THREE from "three";
 import * as OBC from "openbim-components";
 import React, { useEffect, useRef } from "react";
 
-//Function for loading IFC files
-async function loadIfcAsFragments() {
-  const file = await fetch("../../../resources/small.ifc");
-  const data = await file.arrayBuffer();
-  const buffer = new Uint8Array(data);
-  const model = await fragmentIfcLoader.load(buffer, "example");
-  scene.add(model);
-}
-
-//Function for exporting fragments
-async function exportFragments() {
-  if (!fragments.groups.length) return;
-  const group = fragments.groups[0];
-  const data = fragments.export(group);
-  const blob = new Blob([data]);
-  const fragmentFile = new File([blob], "small.frag");
-  const files = [];
-  files.push(fragmentFile);
-  files.push(new File([JSON.stringify(group.properties)], "small.json"));
-  const result = await downloadZip(files).blob();
-  result.name = "example";
-  download(result);
-}
-
-function download(file) {
-  const link = document.createElement("a");
-  link.href = URL.createObjectURL(file);
-  link.download = file.name;
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-}
-
-function disposeFragments() {
-  fragments.dispose();
-}
-
 const IFCViewer = () => {
   const containerRef = useRef(null); // Riferimento alla div del container
   const rendererRef = useRef(null); // Riferimento al renderer
@@ -67,6 +30,8 @@ const IFCViewer = () => {
     let fragments = new OBC.FragmentManager(components);
     let fragmentIfcLoader = new OBC.FragmentIfcLoader(components);
 
+    /* TOOLBAR */
+
     //Button to load IFC
     const mainToolbar = new OBC.Toolbar(components, {
       name: "Main Toolbar",
@@ -75,6 +40,11 @@ const IFCViewer = () => {
     components.ui.addToolbar(mainToolbar);
     const ifcButton = fragmentIfcLoader.uiElement.get("main");
     mainToolbar.addChild(ifcButton);
+
+    //Toolbar per il controllo dei modelli nella scena
+    const toolbar = new OBC.Toolbar(components);
+    components.ui.addToolbar(toolbar);
+    toolbar.addChild(fragments.uiElement.get("main"));
 
     // Import of WASM file:
     // It's a technology that lets us run C++ on the browser, which means that we can load IFCs faster.
@@ -87,12 +57,6 @@ const IFCViewer = () => {
     //Setting coordinates
     fragmentIfcLoader.settings.webIfc.COORDINATE_TO_ORIGIN = true;
     fragmentIfcLoader.settings.webIfc.OPTIMIZE_PROFILES = true;
-
-    const boxMaterial = new THREE.MeshStandardMaterial({ color: "#6528D7" });
-    const boxGeometry = new THREE.BoxGeometry(3, 3, 3);
-    const cube = new THREE.Mesh(boxGeometry, boxMaterial);
-    cube.position.set(0, 1.5, 0);
-    // scene.add(cube);
 
     // Ottieni il renderer e i componenti
     rendererRef.current = components.renderer && components.renderer.renderer;

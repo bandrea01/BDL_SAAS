@@ -38,7 +38,7 @@ const Navbar = () => {
 
   useEffect(() => {
     const handleViewerZone = () => {
-      if (window.scrollY > 1500) {
+      if (window.scrollY > 1000) {
         setIsViewerZone(true);
       } else {
         setIsViewerZone(false);
@@ -51,15 +51,20 @@ const Navbar = () => {
     };
   }, []);
 
+  // ${isViewerZone ? "opacity-0" : "opacity-100"}
   const navbarClasses = `
     ${isScrolled ? "bg-blue" : "bg-transparent"}
-    ${isViewerZone ? "opacity-0" : "opacity-100"}
     ${"px-4 w-full flex items-center py-5 fixed top-0 z-50"}
-    duration-700 
+    transition-all ease-in-out durantion-700
   `;
 
   return (
-    <nav className={navbarClasses}>
+    <nav
+      className={navbarClasses}
+      style={{
+        visibility: isViewerZone ? "hidden" : "visible",
+      }}
+    >
       <div className="flex items-center px-1 justify-between w-full mx-auto max-w-[1700px]">
         <Link
           to="https://datalab.unisalento.it/"

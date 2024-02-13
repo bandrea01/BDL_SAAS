@@ -3,7 +3,7 @@
   "navbar": {
     "about": "About",
     "technologies": "Technologies",
-    "viewer":"Viewer",
+    "viewer": "Viewer",
     "documentation": "Documentation"
   },
   "hero": {
@@ -18,6 +18,15 @@
   },
   "viewer": {
     "title": "IFC Viewer"
+  },
+  "modal": {
+    "title": "How to use this viewer?",
+    "body": {
+      "toolbarInstructions": "This simple suite allows you to render models from an IFC file, and navigate around them. The toolbar located at the bottom has two functions, the first button allows you to load a file with .ifc format, the second allows you to remove the inserted models.",
+      "leftMouse": "• While holding LEFT mouse button you can rotate around a point in the scene",
+      "rightMouse": "• While holding RIGHT mouse button you can move through the axes in the scene."
+    },
+    "close": "Close"
   },
   "warnings": {
     "page-not-found": {
