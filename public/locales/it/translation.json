@@ -23,8 +23,8 @@
     "title": "Come usare il visualizzatore?",
     "body": {
       "toolbarInstructions": "Questa semplice suite ti permette di renderizzare dei modelli a partire da un file IFC, e di navigarci attorno. La barra degli strumenti situata in basso ha due funzionalità, il primo bottone ti permette di caricare un file con formato .ifc, il secondo permette di rimuovere i modelli inseriti.",
-      "leftMouse": "• Premendo il pulsante SINISTRO puoi ruotare attorno alla scena.",
-      "rightMouse": "• Premendo il pulsante DESTRO puoi muoverti lungo gli assi."
+      "leftMouse": "• Tenendo premuto il pulsante SINISTRO puoi ruotare attorno alla scena.",
+      "rightMouse": "• Tenendo premuto il pulsante DESTRO puoi muoverti lungo gli assi."
     },
     "close": "Chiudi"
   },

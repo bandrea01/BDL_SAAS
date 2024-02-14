@@ -8,7 +8,7 @@ const Viewer = () => {
 
   return (
     <div className="sm:w-full h-full relative flex">
-      <div className="sm:w-full h-full pt-20 relative z-70">
+      <div className="sm:w-full h-full pt-10 relative z-70">
         <div className="flex">
           <h1 className="text-blue text-6xl ps-[300px] font-bold justify-left">
             {i18n.t("viewer.title")}

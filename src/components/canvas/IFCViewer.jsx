@@ -2,6 +2,18 @@ import * as THREE from "three";
 import * as OBC from "openbim-components";
 import React, { useEffect, useRef } from "react";
 
+let model;
+
+async function loadIfcAsFragments() {
+  const file = await fetch("../../../resources/small.ifc");
+  const data = await file.arrayBuffer();
+  const buffer = new Uint8Array(data);
+  const model = await fragmentIfcLoader.load(buffer, "example");
+  const properties = await fetch("../../../resources/small.json");
+  model.properties = await properties.json();
+  scene.add(model);
+}
+
 const IFCViewer = () => {
   const containerRef = useRef(null); // Riferimento alla div del container
   const rendererRef = useRef(null); // Riferimento al renderer
@@ -18,9 +30,9 @@ const IFCViewer = () => {
     components.camera = new OBC.SimpleCamera(components);
     components.raycaster = new OBC.SimpleRaycaster(components);
 
-    components.init();
-
     const scene = components.scene.get();
+
+    components.init();
 
     components.camera.controls.setLookAt(10, 10, 10, 0, 0, 0);
 
@@ -38,13 +50,44 @@ const IFCViewer = () => {
       position: "bottom",
     });
     components.ui.addToolbar(mainToolbar);
-    const ifcButton = fragmentIfcLoader.uiElement.get("main");
-    mainToolbar.addChild(ifcButton);
 
     //Toolbar per il controllo dei modelli nella scena
     const toolbar = new OBC.Toolbar(components);
     components.ui.addToolbar(toolbar);
-    toolbar.addChild(fragments.uiElement.get("main"));
+
+    const ifcButton = fragmentIfcLoader.uiElement.get("main");
+    ifcButton.onClick.add(() => loadIfcAsFragments());
+    mainToolbar.addChild(ifcButton);
+
+    //Boutton per il loading dell'ifc
+    mainToolbar.addChild(fragmentIfcLoader.uiElement.get("main"));
+    //Button per la cancellazione dei modelli
+    mainToolbar.addChild(fragments.uiElement.get("main"));
+    //Button per la frammentazione dei componenti
+    // const modelTree = new OBC.FragmentTree(components);
+    // mainToolbar.addChild(modelTree.uiElement.get("main"));
+
+    const highlighter = new OBC.FragmentHighlighter(components, fragments);
+    highlighter.setup();
+
+    highlighter.outlinesEnabled = true;
+    highlighter.update();
+
+    //Classificatore
+    const classifier = new OBC.FragmentClassifier(components);
+
+    // classifier.byStorey(model);
+    // classifier.byEntity(model);
+
+    // const modelTree = new OBC.FragmentTree(components);
+    // modelTree.init();
+    // modelTree.update(["storeys", "entities"]);
+
+    // modelTree.onHovered.add((filter) => {
+    //   highlighter.highlightByID("hover", filter);
+    // });
+
+    // mainToolbar.addChild(modelTree.uiElement.get("main"));
 
     // Import of WASM file:
     // It's a technology that lets us run C++ on the browser, which means that we can load IFCs faster.
