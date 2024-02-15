@@ -6,7 +6,7 @@ WORKDIR /app
 
 # Copia i file del progetto nella directory di lavoro del container
 COPY package*.json ./
-COPY .. .
+COPY . .
 
 # Installa le dipendenze del progetto
 RUN npm install

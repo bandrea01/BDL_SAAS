@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify, session
 from flask import render_template
 from flask import redirect, url_for
 from functools import wraps
-from datetime import datetime
+import streamlit as st
 
 import os  # Per prendere le variabili di ambiente definite dal file docker
 
@@ -12,13 +12,14 @@ if __name__ == '__main__':
     app.run(debug=True)
 
 #   DEBUG ADMIN  #
-
 @app.route('/')
 def index():
-    """
-        Visualizzazione di default di tutti i clienti
-    """
-    return redirect(url_for('view_clienti'))
+    return render_template('prova.html')
+
+@app.route('/prova')
+def streamlit():
+    st.set_page_config(page_title="My Streamlit App")
+    st.write("Hello, world!")
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -125,17 +126,15 @@ def login_required(f):
     return decorated_function
 
 
-@app.route('/load_ifc', methods=['GET', 'POST'])
-@login_required
-def load_ifc():
-    """
-        Metodo per la creazione di un record di Cliente
-    """
-    if request.method == 'POST':
-
-        return redirect(url_for('view_clienti'))
-
-    return render_template('create_cliente.html', menu=generate_menu())
+# @app.route('/load_ifc', methods=['GET', 'POST'])
+# @login_required
+# def load_ifc():
+#     """
+#         Metodo per la creazione di un record di Cliente
+#     """
+#     if request.method == 'POST':
+#         return redirect(url_for('view_clienti'))
+#     return render_template('create_cliente.html', menu=generate_menu())
 
 
 #   END DEBUG   #
