@@ -1,26 +1,38 @@
 version: '3.9'
+
 services:
-  app:
-    build: .
+  flask_app:
+    build:
+      context: ./flask_root
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - flask_app:/app
+
+  react_app:
+    build:
+      context: ./node_root
+      dockerfile: Dockerfile
     ports:
       - "5173:5173"
     volumes:
-      - app_data:/app
-    links:
-      - arangodb
+      - react_app:/app
+
   arangodb:
-    image: arangodb
-    environment:
-      ARANGO_ROOT_PASSWORD: BDLaaS
+    image: arangodb:3.11.7
     ports:
       - "8529:8529"
+    environment:
+      ARANGO_ROOT_PASSWORD: "BDLaaS"
     volumes:
       - arangodb_data:/var/lib/arangodb3
       - arangodb_apps:/var/lib/arangodb3-apps
       - arangodb_backup:/var/lib/arangodb3-backup
 
 volumes:
-  app_data:
+  flask_app:
+  react_app:
   arangodb_data:
   arangodb_apps:
   arangodb_backup:
