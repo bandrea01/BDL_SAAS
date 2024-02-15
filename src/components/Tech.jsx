@@ -11,7 +11,7 @@ import { useTranslation} from 'react-i18next';
 
 const TechCard = ()=>{
   return(
-    <div className='justify-center' >
+    <div className='justify-center ' >
       
       <motion.div variants={fadeIn('right', 'spring')} className='w-full white-pink-gradient p-1 rounded-[20px]'>
         <div options={{
@@ -35,7 +35,7 @@ const TechCard = ()=>{
 
 
 const TechIcon = ({image, name}) => (
-  <div className="group">
+  <div className="group ">
   <div className="w-[80px] h-[80px] flex justify-center flex gap-10 item-contain rounded-full m-5 scale-100 group-hover:scale-90 ease-in duration-300">
     <img src={image}  draggable={false} />
   </div>
@@ -52,7 +52,7 @@ const Tech = () => {
   return (
     <section>
 
-    <motion.div variants={textVariant()} className="text-white">
+    <motion.div variants={textVariant()} className="text-white pt-[70px]">
       <p className={styles.sectionSubText}>{i18n.t('technologies.intro')}</p>
       <h2 className={styles.sectionHeadText}>{i18n.t('technologies.header')}</h2>
     </motion.div >

@@ -15,6 +15,10 @@ import reactjs from "./tech/reactjs.webp";
 import tailwind from "./tech/tailwind.webp";
 import python from "./tech/python.webp";
 
+import skyline1 from "./skyline1.png";
+import skyline2 from "./skyline2.png";
+
+
 export {
   logo_white,
   logo_black,
@@ -30,5 +34,7 @@ export {
   tailwind,
   threejs,
   python,
-  fiware
+  fiware,
+  skyline1,
+  skyline2
 };

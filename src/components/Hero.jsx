@@ -3,6 +3,7 @@ import { styles } from "../styles";
 
 import { useTranslation } from "react-i18next";
 import { MoonCanvas } from "../components";
+import { skyline1, skyline2 } from "../assets";
 
 const Hero = () => {
   const { t } = useTranslation();
@@ -24,23 +25,20 @@ const Hero = () => {
         content="Hero section of the site, here you'll find a brief introduction of who I am"
       ></meta>
       <div
-        className={`${styles.paddingX} absolute inset-0 top-[170px] max-w-[1400px] mx-auto flex flex-row items-start gap-5 h-[500px]`}
+        className={`${styles.paddingX} absolute inset-0 top-[190px] max-w-[1400px] mx-auto flex flex-col items-start gap-5 h-[500px]`}
       >
         <div>
-          <h1 className={`${styles.heroHeadText} text-blue`}>
+          <h1 className={`${styles.heroHeadText} text-blue text-3xl`}>
             {t("hero.header")}
           </h1>
           <p className={`${styles.heroSubText} mt text-white-100`}>
             {t("hero.first")} <br /> {t("hero.second")}
           </p>
         </div>
-        <div className="absolute z-10 flex items-center p-1 sm:bottom-12 bottom-14">
-          <div className="flex items-center gap-20">
-            <GoAboutButton />
-          </div>
+        <div classname="w-full h-full">
+          <img src={skyline2}/>
         </div>
       </div>
-
     </section>
   );
 };

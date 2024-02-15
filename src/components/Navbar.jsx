@@ -52,17 +52,19 @@ const Navbar = () => {
   }, []);
 
   // ${isViewerZone ? "opacity-0" : "opacity-100"}
-  const navbarClasses = `
-    ${isScrolled ? "bg-blue" : "bg-transparent"}
-    ${"px-4 w-full flex items-center py-5 fixed top-0 z-50"}
-    transition-all ease-in-out durantion-700
-  `;
+  // const navbarClasses = `
+  //   ${isScrolled ? "bg-blue" : "bg-transparent"}
+  //   ${"px-4 w-full flex items-center py-5 fixed top-0 z-50"}
+  //   transition-all ease-in-out durantion-700
+  // `;
 
   return (
     <nav
-      className={navbarClasses}
+      // className={navbarClasses}
+      className="bg-blue opacity-95 px-4 w-full flex items-center py-5 fixed top-0 z-50"
       style={{
         visibility: isViewerZone ? "hidden" : "visible",
+        transition: "visibility 700ms"
       }}
     >
       <div className="flex items-center px-1 justify-between w-full mx-auto max-w-[1700px]">
@@ -76,15 +78,16 @@ const Navbar = () => {
           }}
         >
           <img
-            src={isScrolled ? logo_white : logo_black}
+            src= {logo_white}
             draggable={false}
             alt="logo"
-            className="object-contain w-[90px] h-[90px]"
+            className="object-contain w-[70px] h-[70px]"
           />
           <p
-            className={`${
-              isScrolled ? "text-white" : "text-blue"
-            } text-[30px] font-bold cursor-pointer flex pl-[30px]`}
+            // className={`${
+            //   isScrolled ? "" : "text-blue"
+            // } text-[30px] font-bold cursor-pointer flex pl-[30px]`}
+            className = "text-white text-[20px] font-bold cursor-pointer flex pl-[30px]"
           >
             Big Data Lab | Software as a Service
             <span className="hidden sm:block"> </span>
@@ -95,10 +98,12 @@ const Navbar = () => {
           {navLinks.map((nav) => (
             <li
               key={nav.id}
-              className={`
-              ${isScrolled ? "text-white" : "text-blue"}
-             hover:text-white text-[18px] font-medium cursor-pointer duration-200 ease-in-out`}
-              onClick={() => setActive(t(nav.title))}
+            //   className={`
+            //   ${isScrolled ? "text-white" : "text-blue"}
+            //  hover:text-white text-[18px] font-medium cursor-pointer duration-200 ease-in-out`}
+            //   onClick={() => setActive(t(nav.title))}
+            className="text-white hover:underline text-[15px] font-medium cursor-pointer duration-200 ease-in-out"
+            onClick = { () => setActive(t(nav.title))}
             >
               {nav.id === "documentation" ? (
                 <a href="../public/BIM.pdf" download>
