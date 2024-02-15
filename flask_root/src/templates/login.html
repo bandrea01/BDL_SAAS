@@ -3,31 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
-    <title>Login</title>
+    <link rel="icon" href="{{ url_for('static', filename='logo_black.png') }}">
+    <title>Big Data Lab | Software as a Service</title>
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #f7f7f7;
+            background-color: #bfd1da;
             margin: 0;
             padding: 0;
             height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
+            flex-direction: column; /* Aggiunto per centrare i contenuti verticalmente */
         }
 
+
         .login-container {
-            background-color: #fff;
+            background-color: #021823;
             padding: 20px;
-            border-radius: 8px;
+            border-radius: 15px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             width: 300px;
         }
 
         .login-container h2 {
             text-align: center;
-            color: #333;
+            color: white;
             margin-bottom: 20px;
         }
 
@@ -41,17 +43,20 @@
             padding: 10px;
             margin-bottom: 15px;
             border: 1px solid #ddd;
-            border-radius: 4px;
+            border-radius: 15px;
+            background-color: white;
+            color: #021823;
         }
 
         .login-container form .login-button {
-            background-color: #4CAF50;
-            color: white;
+            background-color: #aadb22;
+            color: #021823;
+            font-weight: bold;
             padding: 10px;
             border: none;
-            border-radius: 4px;
+            border-radius: 15px;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s, border-color 0.3s;
         }
 
         .flex-container {
@@ -59,12 +64,22 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            flex-direction: column; /* Aggiunto per centrare i contenuti verticalmente */
             padding-bottom: 40px;
         }
 
         .flex-container h1 {
             font-size: 45px;
-            color: #1b2b2c;
+            color: #021823;
+            margin-bottom: 10px; /* Aggiunto margine inferiore */
+            font-weight: bolder;
+        }
+
+        .flex-container p {
+            font-size: 25px; /* Dimensione del carattere più piccola */
+            padding: 10px; /* Aggiunto spazio interno */
+            color: #021823;
+            font-weight: bold;
         }
 
         .flex-container img {
@@ -73,16 +88,20 @@
             height: auto;
         }
 
-        .login-container form .login-button:hover {
-            background-color: #45a049;
+        .login-container form .login-button:hover{
+            background-color: #bfd1da;
+            border-color: #021823;
         }
+
+
     </style>
 </head>
 <body>
-	<div class="flex-column">
+    <div class="flex-container">
       <div class="flex-container">
-          <img src="{{ url_for('static', filename='apple-touch-icon.png') }}" alt="logo">
-          <h1>FlaskApp</h1>
+          <img src="{{ url_for('static', filename='logo_black.png') }}" alt="logo">
+          <h1>Big Data Lab | Software as a service</h1>
+          <p>IFC mapping in ArangoDB - Interface</p>
       </div>
       <div class="login-container">
           <h2>Login</h2>

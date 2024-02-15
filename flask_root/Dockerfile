@@ -1,14 +1,15 @@
-FROM python:3.11.5-alpine3.18
+FROM python:3.11
 
 COPY requirements.txt .
 
 RUN \
-    apk add --no-cache g++ && \
-    apk add --no-cache --virtual .builds-deps gcc musl-dev && \
-    python3 -m pip install -r requirements.txt --no-cache-dir && \
-    apk --purge del .builds-deps
+    python3 -m pip install -r requirements.txt --no-cache-dir
 
 
+#    apk add --no-cache g++ && \
+#    apk add --no-cache --virtual .builds-deps gcc musl-dev && \
+
+#    apk --purge del .builds-deps
 COPY . .
 
 EXPOSE 8432
