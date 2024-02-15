@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+    <title>Login</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+
+        .login-container h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        .login-container form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .login-container form input[type='text'],
+        .login-container form input[type='password'] {
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .login-container form .login-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .flex-container {
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding-bottom: 40px;
+        }
+
+        .flex-container h1 {
+            font-size: 45px;
+            color: #1b2b2c;
+        }
+
+        .flex-container img {
+            margin-right: 30px;
+            width: 100px;
+            height: auto;
+        }
+
+        .login-container form .login-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+	<div class="flex-column">
+      <div class="flex-container">
+          <img src="{{ url_for('static', filename='apple-touch-icon.png') }}" alt="logo">
+          <h1>FlaskApp</h1>
+      </div>
+      <div class="login-container">
+          <h2>Login</h2>
+          <form method="post" action="/login">
+              <input type="text" name="username" placeholder="Username" required>
+              <input type="password" name="password" placeholder="Password" required>
+              <button type="submit" class="login-button">Login</button>
+          </form>
+      </div>
+    </div>
+</body>
+</html>

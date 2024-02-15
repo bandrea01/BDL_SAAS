@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Possiede</title>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/v/bs5/jq-3.7.0/dt-1.13.8/r-2.5.0/datatables.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/v/bs5/jq-3.7.0/dt-1.13.8/r-2.5.0/datatables.min.js"></script>
+
+
+</head>
+<body>
+
+    <div class="dropdown">
+        <button onclick="myFunction()" class="dropbtn">Menu</button>
+            <div id="myDropdown" class="dropdown-content">
+                {% for page in menu %}
+                <a href="{{ page.url }}">{{ page.name }}</a>
+                {% endfor %}
+            </div>
+    </div>
+
+    <h1>Possiede</h1>
+    <div class="container">
+    <table border="1" class="display nowrap dataTable dtr-inline collapsed" style="width:100%" id="tabella">
+        <thead>
+            <tr>
+                <th>Codice Officina</th>
+                <th>Codice Pezzo</th>
+                <th>Quantità</th>
+                <th>Quantità Minima</th>
+                <th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for possiede in possiedi %}
+            <tr>
+                <td>{{ possiede.cod_officina }}</td>
+                <td>{{ possiede.cod_pezzo }}</td>
+                <td>{{ possiede.quantita }}</td>
+                <td>{{ possiede.quantita_minima }}</td>
+                <td>
+                    <form action="{{ url_for('delete_possiede', cod_officina=possiede.cod_officina, cod_pezzo=possiede.cod_pezzo) }}" method="post" onclick="return confirm('Sei sicuro di voler eliminare?')">
+                         <button type="submit" class="btn">X</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+
+   <div style="text-align: center; margin-top: 20px;">
+        <a href="{{ url_for('logout') }}" class="btn">Logout</a>
+   </div>
+
+</body>
+</html>
+
+<script>
+$(document).ready(function() {
+    $('#tabella').DataTable({
+        "paging": true,
+        "ordering": true,
+        "info": true,
+        "searching": true,
+        "responsive": true
+    });
+});
+</script>
+
+<script>
+/* When the user clicks on the button,
+toggle between hiding and showing the dropdown content */
+function myFunction() {
+  document.getElementById("myDropdown").classList.toggle("show");
+}
+
+// Close the dropdown if the user clicks outside of it
+window.onclick = function(event) {
+  if (!event.target.matches('.dropbtn')) {
+    var dropdowns = document.getElementsByClassName("dropdown-content");
+    var i;
+    for (i = 0; i < dropdowns.length; i++) {
+      var openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains('show')) {
+        openDropdown.classList.remove('show');
+      }
+    }
+  }
+}
+</script>

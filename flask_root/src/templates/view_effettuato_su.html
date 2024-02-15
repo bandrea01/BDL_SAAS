@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Effettuato Su</title>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.datatables.net/v/bs5/jq-3.7.0/dt-1.13.8/r-2.5.0/datatables.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/v/bs5/jq-3.7.0/dt-1.13.8/r-2.5.0/datatables.min.js"></script>
+
+</head>
+<body>
+
+    <div class="dropdown">
+        <button onclick="myFunction()" class="dropbtn">Menu</button>
+            <div id="myDropdown" class="dropdown-content">
+                {% for page in menu %}
+                <a href="{{ page.url }}">{{ page.name }}</a>
+                {% endfor %}
+            </div>
+    </div>
+
+    <h1>Effettuato Su</h1>
+    <div class="container">
+    <table border="1" class="display nowrap dataTable dtr-inline collapsed" style="width:100%" id="tabella">
+        <thead>
+            <tr>
+                <th>ID Effettuato</th>
+                <th>Codice Targa</th>
+                <th>Codice Intervento</th>
+                <th>Azioni</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for effettuato in effettuati %}
+            <tr>
+                <td>{{ effettuato.id_effettuato }}</td>
+                <td>{{ effettuato.codice_targa }}</td>
+                <td>{{ effettuato.codice_intervento }}</td>
+                <td>
+                    <form action="{{ url_for('delete_effettuato_su', id_effettuato=effettuato.id_effettuato) }}" method="post">
+                        <input type="submit" class="btn" value="X">
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+
+   <div style="text-align: center; margin-top: 20px;">
+        <a href="{{ url_for('logout') }}" class="btn">Logout</a>
+   </div>
+
+</body>
+</html>
+
+<script>
+$(document).ready(function() {
+    $('#tabella').DataTable({
+        "paging": true,
+        "ordering": true,
+        "info": true,
+        "searching": true,
+        "responsive": true
+    });
+});
+</script>
+
+<script>
+/* When the user clicks on the button,
+toggle between hiding and showing the dropdown content */
+function myFunction() {
+  document.getElementById("myDropdown").classList.toggle("show");
+}
+
+// Close the dropdown if the user clicks outside of it
+window.onclick = function(event) {
+  if (!event.target.matches('.dropbtn')) {
+    var dropdowns = document.getElementsByClassName("dropdown-content");
+    var i;
+    for (i = 0; i < dropdowns.length; i++) {
+      var openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains('show')) {
+        openDropdown.classList.remove('show');
+      }
+    }
+  }
+}
+</script>
