@@ -11,7 +11,7 @@ RUN \
 
 COPY . .
 
-EXPOSE 80
+EXPOSE 8432
 
 ENV FLASK_APP=src/App.py
 ENV FLASK_ENV=development

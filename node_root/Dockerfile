@@ -5,7 +5,7 @@ FROM node:21.6.1
 WORKDIR /app
 
 # Copia i file del progetto nella directory di lavoro del container
-COPY package*.json ./
+COPY package*.json .
 COPY . .
 
 # Installa le dipendenze del progetto

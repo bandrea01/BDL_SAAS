@@ -6,7 +6,7 @@ services:
       context: ./flask_root
       dockerfile: Dockerfile
     ports:
-      - "8000:8000"
+      - "8432:80"
     volumes:
       - flask_app:/app
 
