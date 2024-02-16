@@ -1,4 +1,5 @@
 import subprocess
+import time
 from functools import wraps
 
 from flask import Flask, request, jsonify, session
@@ -74,7 +75,8 @@ def upload_file():
 
     # Esegui lo script py2arango con il percorso del file come argomento
     os.system('python /src/py2arango.py ' + file_path)
-    return render_template('main_page.html')
+
+    return render_template('upload_complete.html')
 
 
 if __name__ == '__main__':

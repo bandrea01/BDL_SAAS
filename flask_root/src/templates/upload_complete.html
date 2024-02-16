@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="{{ url_for('static', filename='logo_black.png') }}">
+    <title>Big Data Lab | Software as a Service</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #bfd1da;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-image: url("{{ url_for('static', filename='graph_image.png') }}");
+        }
+
+        .flex-container h1 {
+            font-size: 50px;
+            font-weight: bolder;
+        }
+
+        .flex-container a{
+            font-family: 'Arial', sans-serif;
+        }
+
+        .flex-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column; /* Aggiunto per centrare i contenuti verticalmente */
+        }
+
+        .card-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: row; /* Aggiunto per centrare i contenuti verticalmente */
+        }
+
+        .card-react {
+            width: 200px;
+            height: 300px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            margin: 10px;
+            text-align: center;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.1s ease-in-out;
+            background-image: url("{{ url_for('static', filename='model_image.png') }}");
+            background-size: cover;
+        }
+
+        .card-graph {
+            width: 200px;
+            height: 300px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            margin: 10px;
+            text-align: center;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.1s ease-in-out;
+            background-image: url("{{ url_for('static', filename='arangodb_image.png') }}");
+            background-size: cover;
+        }
+
+        .card-remapping {
+            width: 200px;
+            height: 300px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            margin: 10px;
+            text-align: center;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.1s ease-in-out;
+            {#background-image: url("{{ url_for('static', filename='ifc_image.png') }}");#}
+            background-color: black;
+            background-size: cover;
+        }
+
+        .card-container a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+            display: block;
+            margin-top: 20px;
+        }
+
+        .card-container h2 {
+            font-size: 40px;
+            font-weight: bold;
+            color: #fafafa;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0)
+        }
+
+        .card-container p {
+            font-size: 20px;
+            font-weight: bold;
+            color: #aadb22;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0)
+
+        }
+
+        .card-graph:hover, .card-remapping:hover, .card-react:hover {
+            transform: scale(1.05);
+            border-radius: 8px;
+            margin: 10px;
+            text-align: center;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+
+        {#.card-react h2 {#}
+        {#    color: #fafafa;#}
+        {#}#}
+        {##}
+        {#.card-graph h2 {#}
+        {#    color: #021823;#}
+        {#}#}
+        {##}
+        {#.card-remapping h2 {#}
+        {#    color: #021823;#}
+        {#}#}
+
+    </style>
+</head>
+<body>
+<div class="flex-container">
+    <h1>Mapping is completed! Choose the next step</h1>
+    <div class="card-container">
+        <a href="https://bdl_saas-react-app-1:5173">
+            <div class="card-react">
+                <h2>React Viewer</h2>
+                <p>Render 3D model of IFC file</p>
+            </div>
+        </a>
+        <a href="https://example.com/card2">
+            <div class="card-graph">
+                <h2>Graph viewer</h2>
+                <p>View the graph in ArangoDB</p>
+            </div>
+        </a>
+        <a href="/main_page">
+        <div class="card-remapping">
+            <h2>Mapping IFC</h2>
+            <p>Do antoher IFC mapping in ArangoDB</p>
+        </div>
+        </a>
+    </div>
+</div>
+</body>
+</html>
