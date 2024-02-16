@@ -1,3 +1,5 @@
+from functools import wraps
+
 from flask import Flask, request, jsonify, session
 from flask import render_template
 from flask import redirect, url_for
@@ -29,7 +31,7 @@ def login_required(f):
 @app.route('/main_page')
 @login_required
 def main_page():
-    return render_template('login.html')
+    return render_template('main_page.html')
 #   DEBUG ADMIN  #
 
 @app.route('/')
