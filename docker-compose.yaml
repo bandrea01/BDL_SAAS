@@ -9,6 +9,9 @@ services:
       - "8432:80"
     volumes:
       - flask_app:/app
+    networks:
+      - general_network
+
 
   react_app:
     build:
@@ -18,6 +21,8 @@ services:
       - "5173:5173"
     volumes:
       - react_app:/app
+    networks:
+      - general_network
 
   arangodb:
     image: arangodb:3.11.7
@@ -29,6 +34,8 @@ services:
       - arangodb_data:/var/lib/arangodb3
       - arangodb_apps:/var/lib/arangodb3-apps
       - arangodb_backup:/var/lib/arangodb3-backup
+    networks:
+      - general_network
 
 volumes:
   flask_app:
@@ -36,3 +43,6 @@ volumes:
   arangodb_data:
   arangodb_apps:
   arangodb_backup:
+
+networks:
+  general_network:

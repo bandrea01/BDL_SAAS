@@ -8,6 +8,7 @@ import os  # Per prendere le variabili di ambiente definite dal file docker
 
 app = Flask(__name__)
 
+
 #   DEBUG ADMIN  #
 @app.route('/')
 def index():
