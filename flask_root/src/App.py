@@ -1,3 +1,4 @@
+import subprocess
 from functools import wraps
 
 from flask import Flask, request, jsonify, session
@@ -59,6 +60,16 @@ def login():
 
     return render_template('login.html')
 
+
+@app.route('/upload', methods=['POST'])
+def upload_file():
+    # Salva il file caricato e ottieni il percorso
+    uploaded_file = request.files['file']
+    file_path = 'ifc\\' + uploaded_file.filename
+    uploaded_file.save(file_path)
+
+    # Esegui lo script py2arango con il percorso del file come argomento
+    subprocess.run(['python', 'py2arango.py', file_path])
 
 if __name__ == '__main__':
     app.run(debug=True)

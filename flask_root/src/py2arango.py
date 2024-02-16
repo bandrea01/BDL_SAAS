@@ -1,3 +1,4 @@
+import sys
 from arango import ArangoClient
 from uuid import uuid4
 import ifcopenshell
@@ -121,7 +122,14 @@ db.create_collection('entities'),
 db.create_collection('relationships', edge=True)
 
 # Caricamento file ifc
-ifc_file_path = '.\\ifc\\IFC_Example.ifc'
+
+if len(sys.argv) != 2:
+    print("Usage: python py2arango.py <path_to_ifc_file>")
+    sys.exit(1)
+
+ifc_file_path = sys.argv[1]
+
+# ifc_file_path = '.\\ifc\\IFC_Example.ifc'
 ifc_file = ifcopenshell.open(ifc_file_path)
 
 # Inizializzazione e utilizzo del grafo
