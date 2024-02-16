@@ -7,6 +7,9 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8432:80"
+    environment:
+      - DEBUG_USR=admin
+      - DEBUG_PWD=restapi
     volumes:
       - flask_app:/app
     networks:
