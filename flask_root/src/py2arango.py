@@ -133,7 +133,7 @@ ifc_file_path = sys.argv[1]
 ifc_file = ifcopenshell.open(ifc_file_path)
 
 # Inizializzazione e utilizzo del grafo
-# create_full_graph(db, ifc_file)
+create_full_graph(db, ifc_file)
 
 graph = db.create_graph("grafoProva", edge_definitions=[
     {

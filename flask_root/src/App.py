@@ -65,11 +65,12 @@ def login():
 def upload_file():
     # Salva il file caricato e ottieni il percorso
     uploaded_file = request.files['file']
-    file_path = 'ifc\\' + uploaded_file.filename
+    file_path = '/src/ifc/' + uploaded_file.filename
     uploaded_file.save(file_path)
 
     # Esegui lo script py2arango con il percorso del file come argomento
-    subprocess.run(['python', 'py2arango.py', file_path])
+    os.system('python /src/py2arango.py' + file_path)
+    return render_template('main_page.html')
 
 if __name__ == '__main__':
     app.run(debug=True)

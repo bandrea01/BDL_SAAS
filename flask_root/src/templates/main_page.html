@@ -3,13 +3,174 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload File</title>
+    <title>Big Data Lab | Software as a Service</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #bfd1da;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column; /* Aggiunto per centrare i contenuti verticalmente */
+            background-image: url("{{ url_for('static', filename='graph_image.png') }}");
+            background-size: cover;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        .upload-container {
+            background-color: #021823;
+            padding: 40px;
+            border-radius: 15px;
+            width: 400px; /* Aumentato il width per lasciare spazio al testo */
+            text-align: center; /* Centrare il testo */
+            box-shadow: 2px 10px 20px 0 rgb(0 0 0 / 66%);
+        }
+
+        .upload-container h2 {
+            text-align: center;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .upload-container form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .upload-container form input[type='file'] {
+            padding: 20px;
+            margin-bottom: 20px; /* Aumentato lo spazio inferiore */
+            border-radius: 15px;
+            background-color: white;
+            color: #021823;
+            font-size: 20px;
+            text-align: center; /* Centrare il testo */
+            width: 100%; /* Fatto in modo che occupi tutta la larghezza del container */
+        }
+
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
+
+        .upload-container form .upload-button {
+            background-color: #aadb22;
+            color: #021823;
+            font-weight: bold;
+            font-size: 25px;
+            padding: 10px 0; /* Aumentato il padding per rendere il pulsante più grande */
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s; /* Aggiunto anche il colore alla transizione */
+            width: 100%; /* Fatto in modo che occupi tutta la larghezza del container */
+        }
+
+        .upload-container form .file-button {
+            background-color: #fafafa;
+            border-style: dotted;
+            border-width: 6px;
+            font-weight: bold;
+            padding: 20px 0; /* Aumentato il padding per rendere il pulsante più grande */
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s; /* Aggiunto anche il colore alla transizione */
+            width: 100%; /* Fatto in modo che occupi tutta la larghezza del container */
+        }
+
+        .upload-container form .upload-button:hover {
+            background-color: #bfd1da;
+            border-color: #021823;
+        }
+
+        .flex-container {
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column; /* Aggiunto per centrare i contenuti verticalmente */
+            padding-bottom: 40px;
+        }
+
+        .flex-container h1 {
+            font-size: 45px;
+            color: #021823;
+            margin-bottom: 10px; /* Aggiunto margine inferiore */
+            font-weight: bolder;
+        }
+
+        .upload-container p {
+            font-size: 20px; /* Dimensione del carattere più piccola */
+            padding: 10px; /* Aggiunto spazio interno */
+            color: #aadb22;
+            font-weight: bold;
+            margin-bottom: 20px; /* Aggiunto margine inferiore */
+        }
+
+        .flex-container img {
+            margin-right: 30px;
+            width: 100px;
+            height: auto;
+        }
+
+    </style>
 </head>
 <body>
-    <h1>Upload File</h1>
-    <form action="/upload" method="post" enctype="multipart/form-data">
-        <input type="file" name="file">
-        <button type="submit">Upload</button>
-    </form>
+
+<div class="flex-container">
+    <div class="flex-container">
+        <h1>Upload IFC file to mapping in ArangoDB</h1>
+    </div>
+    <div class="upload-container">
+        <form action="/upload" method="post" enctype="multipart/form-data">
+            <label for="file-upload" class="file-button">Choose File...</label>
+            <input type="file" id="file-upload" name="file" class="visually-hidden">
+            <p>Warning! Mapping is a very slow process. For big files it can require several minutes!</p>
+            <button type="submit" class="upload-button">Upload</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const fileInput = document.getElementById("file-upload");
+        const fileButton = document.querySelector(".file-button");
+        const uploadForm = document.querySelector("form");
+
+        fileInput.addEventListener("change", function() {
+            const file = fileInput.files[0];
+            const allowedExtensions = ["ifc"];
+
+            if (file) {
+                const fileExtension = file.name.split(".").pop().toLowerCase();
+                if (!allowedExtensions.includes(fileExtension)) {
+                    alert("Invalid file type. Please choose an .ifc file.");
+                    fileInput.value = ""; // Rimuove il file selezionato
+                    fileButton.innerText = "Choose File";
+                } else {
+                    fileButton.innerText = file.name;
+                }
+            }
+        });
+
+        uploadForm.addEventListener("submit", function(event) {
+            const file = fileInput.files[0];
+            if (!file) {
+                event.preventDefault(); // Impedisce l'invio del modulo se non è stato selezionato alcun file
+                alert("Please insert an .ifc file.");
+            }
+        });
+    });
+</script>
+
+
+
 </body>
 </html>
