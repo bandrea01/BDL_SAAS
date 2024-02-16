@@ -10,6 +10,7 @@ import os  # Per prendere le variabili di ambiente definite dal file docker
 app = Flask(__name__)
 app.secret_key = 'cristian'
 
+
 def login_required(f):
     """
     Metodo per la richiesta di login
@@ -33,6 +34,8 @@ def login_required(f):
 @login_required
 def main_page():
     return render_template('main_page.html')
+
+
 #   DEBUG ADMIN  #
 
 @app.route('/')
@@ -62,6 +65,7 @@ def login():
 
 
 @app.route('/upload', methods=['POST'])
+@login_required
 def upload_file():
     # Salva il file caricato e ottieni il percorso
     uploaded_file = request.files['file']
@@ -69,91 +73,9 @@ def upload_file():
     uploaded_file.save(file_path)
 
     # Esegui lo script py2arango con il percorso del file come argomento
-    os.system('python /src/py2arango.py' + file_path)
+    os.system('python /src/py2arango.py ' + file_path)
     return render_template('main_page.html')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
-
-#
-# def contains(word, pattern):
-#     """
-#     Metodo per verificare la presenza di un pattern in una parola
-#     """
-#     return pattern in word
-#
-#
-# def get_table_routes():
-#     """
-#     Metodo che ritorna tutte le routes dell'applicazione per le view
-#     """
-#     routes = []
-#     if 'user_id' not in session:
-#         routes.append('login')
-#         return routes
-#     for rule in app.url_map.iter_rules():
-#         # Filtra le regole che non necessiti, come static files
-#         if rule.endpoint != 'static' and contains(rule.endpoint, 'view'):
-#             routes.append(rule.endpoint)
-#     routes.append('logout')
-#     return routes
-#
-#
-# def get_rest_routes():
-#     """
-#     Metodo che ritorna tutte le routes restanti dell'applicazione
-#     """
-#     routes = []
-#     for rule in app.url_map.iter_rules():
-#         # Filtra le regole che non necessiti, come static files
-#         if not ( rule.endpoint == 'static' or contains(rule.endpoint, 'view') or contains(rule.endpoint, 'logout') or contains(rule.endpoint, 'login')):
-#             if str(rule) != '/results':
-#                 routes.append(
-#                     [app.view_functions[rule.endpoint].__name__, str(rule), app.view_functions[rule.endpoint].__doc__])
-#     return routes
-#
-#
-# def url_to_phrase(url):
-#     """
-#     Metodo per la formattazione di un URL
-#     """
-#     words = url.split('_')
-#     phrase = ' '.join(word.capitalize() for word in words)
-#     return phrase
-#
-#
-# def generate_menu():
-#     """
-#     Generate menu
-#     """
-#     pages = []
-#     for link in get_table_routes():
-#         pages.append({'name': url_to_phrase(link), 'url': url_for(link)})
-#
-#     return pages
-#
-#
-# @app.route('/logout')
-# def logout():
-#     """
-#         Metodo per il logout dalla web app
-#     """
-#     session.pop('user_id', None)
-#     return redirect(url_for('login'))
-#
-#
-
-#
-
-# @app.route('/load_ifc', methods=['GET', 'POST'])
-# @login_required
-# def load_ifc():
-#     """
-#         Metodo per la creazione di un record di Cliente
-#     """
-#     if request.method == 'POST':
-#         return redirect(url_for('view_clienti'))
-#     return render_template('create_cliente.html', menu=generate_menu())
-
-
-#   END DEBUG   #

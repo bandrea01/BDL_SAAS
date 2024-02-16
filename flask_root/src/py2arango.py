@@ -115,21 +115,18 @@ def create_full_graph(db, ifc_file):
 
 
 # Initialize the ArangoDB client
-client = ArangoClient(hosts='http://localhost:8529')
+client = ArangoClient(hosts='http://bdl_saas-arangodb-1:8529')
 db = client.db('prova', username='root', password='BDLaaS')
 
 db.create_collection('entities'),
 db.create_collection('relationships', edge=True)
 
-# Caricamento file ifc
-
 if len(sys.argv) != 2:
     print("Usage: python py2arango.py <path_to_ifc_file>")
     sys.exit(1)
 
+# Caricamento file ifc
 ifc_file_path = sys.argv[1]
-
-# ifc_file_path = '.\\ifc\\IFC_Example.ifc'
 ifc_file = ifcopenshell.open(ifc_file_path)
 
 # Inizializzazione e utilizzo del grafo
