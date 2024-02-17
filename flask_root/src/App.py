@@ -69,12 +69,12 @@ def login():
 @login_required
 def upload_file():
     # Salva il file caricato e ottieni il percorso
-    uploaded_file = request.files['file']
-    file_path = '/src/ifc/' + uploaded_file.filename
-    uploaded_file.save(file_path)
+    # uploaded_file = request.files['file']
+    # file_path = '/src/ifc/' + uploaded_file.filename
+    # uploaded_file.save(file_path)
 
     # Esegui lo script py2arango con il percorso del file come argomento
-    os.system('python /src/py2arango.py ' + file_path)
+    # os.system('python /src/py2arango.py ' + file_path)
 
     return render_template('upload_complete.html')
 

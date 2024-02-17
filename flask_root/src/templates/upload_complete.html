@@ -22,7 +22,7 @@
             font-weight: bolder;
         }
 
-        .flex-container a{
+        .flex-container a {
             font-family: 'Arial', sans-serif;
         }
 
@@ -40,16 +40,29 @@
             flex-direction: row; /* Aggiunto per centrare i contenuti verticalmente */
         }
 
-        .card-react {
+        .card-remapping {
             width: 200px;
             height: 300px;
-            border: 1px solid #ccc;
             border-radius: 8px;
             margin: 10px;
             text-align: center;
             padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: transform 0.1s ease-in-out;
+            box-shadow: 2px 2px 8px rgb(0 0 0);
+            transition: transform 0.2s ease-in-out;
+            background-color: black;
+            background-image: url("{{ url_for('static', filename='ifc_image.png') }}");
+            background-size: cover;
+        }
+
+        .card-react {
+            width: 200px;
+            height: 300px;
+            border-radius: 8px;
+            margin: 10px;
+            text-align: center;
+            padding: 20px;
+            box-shadow: 2px 2px 8px rgb(0 0 0);
+            transition: transform 0.2s ease-in-out;
             background-image: url("{{ url_for('static', filename='model_image.png') }}");
             background-size: cover;
         }
@@ -57,29 +70,13 @@
         .card-graph {
             width: 200px;
             height: 300px;
-            border: 1px solid #ccc;
             border-radius: 8px;
             margin: 10px;
             text-align: center;
             padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: transform 0.1s ease-in-out;
+            box-shadow: 2px 2px 8px rgb(0 0 0);
+            transition: transform 0.2s ease-in-out;
             background-image: url("{{ url_for('static', filename='arangodb_image.png') }}");
-            background-size: cover;
-        }
-
-        .card-remapping {
-            width: 200px;
-            height: 300px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            margin: 10px;
-            text-align: center;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: transform 0.1s ease-in-out;
-            {#background-image: url("{{ url_for('static', filename='ifc_image.png') }}");#}
-            background-color: black;
             background-size: cover;
         }
 
@@ -95,7 +92,7 @@
             font-size: 40px;
             font-weight: bold;
             color: #fafafa;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0)
+            text-shadow: 1px 2px 20px rgb(0 0 0)
         }
 
         .card-container p {
@@ -118,15 +115,18 @@
 
         {#.card-react h2 {#}
         {#    color: #fafafa;#}
-        {#}#}
+        {
+        #}#}
         {##}
         {#.card-graph h2 {#}
         {#    color: #021823;#}
-        {#}#}
+        {
+        #}#}
         {##}
         {#.card-remapping h2 {#}
         {#    color: #021823;#}
-        {#}#}
+        {
+        #}#}
 
     </style>
 </head>
@@ -147,10 +147,10 @@
             </div>
         </a>
         <a href="/main_page">
-        <div class="card-remapping">
-            <h2>Mapping IFC</h2>
-            <p>Do antoher IFC mapping in ArangoDB</p>
-        </div>
+            <div class="card-remapping">
+                <h2>Mapping IFC</h2>
+                <p>Do antoher IFC mapping in ArangoDB</p>
+            </div>
         </a>
     </div>
 </div>
