@@ -5,11 +5,6 @@ COPY requirements.txt .
 RUN \
     python3 -m pip install -r requirements.txt --no-cache-dir
 
-
-#    apk add --no-cache g++ && \
-#    apk add --no-cache --virtual .builds-deps gcc musl-dev && \
-
-#    apk --purge del .builds-deps
 COPY . .
 
 EXPOSE 8432

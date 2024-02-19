@@ -15,7 +15,6 @@ services:
     networks:
       - general_network
 
-
   react_app:
     build:
       context: ./node_root
@@ -40,12 +39,145 @@ services:
     networks:
       - general_network
 
+  orion:
+    image: fiware/orion:${ORION_VERSION:-3.12.0-PRE-484}
+    ports:
+      - "1026:1026"
+    command: -logLevel DEBUG -noCache -dbhost mongo
+    depends_on:
+      - mongo
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://0.0.0.0:1026/version"]
+      interval: 1m
+      timeout: 10s
+      retries: 3
+    networks:
+      - general_network
+
+  quantumleap:
+    image: orchestracities/quantumleap:1.0.0
+    ports:
+      - "8668:8668"
+    depends_on:
+      - mongo
+      - orion
+      - crate
+    environment:
+      - CRATE_HOST=${CRATE_HOST:-crate}
+      - USE_GEOCODING=True
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - LOGLEVEL=DEBUG
+    networks:
+      - general_network
+
+  mongo:
+    image: mongo:${MONGO_VERSION:-4.4}
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodata:/data/db
+      - mongoconfig:/data/configdb
+      - mongolog:/var/log/mongodb
+    networks:
+      - general_network
+
+  crate:
+    image: crate:${CRATE_VERSION:-4.6.7}
+    command: crate -Cauth.host_based.enabled=false
+      -Ccluster.name=democluster -Chttp.cors.enabled=true -Chttp.cors.allow-origin="*"
+    environment:
+      - LOG4J_FORMAT_MSG_NO_LOOKUPS=true
+    ports:
+      # Admin UI
+      - "4200:4200"
+      # Transport protocol
+      - "4300:4300"
+    volumes:
+      - cratedata:/data
+    networks:
+      - general_network
+
+  grafana:
+    image: grafana/grafana
+    ports:
+      - "3000:3000"
+    depends_on:
+      - crate
+    networks:
+      - general_network
+
+  redis:
+    image: redis:${REDIS_VERSION:-6.2.3}
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+    networks:
+      - general_network
+
+  perseo-mongo:
+    image: mongo:4.4
+    volumes:
+      - perseomongodata:/data/db
+      - perseomongoconfig:/data/configdb
+      - perseomongolog:/var/log/mongodb
+    networks:
+        - general_network
+    deploy:
+        replicas: 1
+        restart_policy:
+            condition: on-failure
+
+  perseo-core:
+    image: fiware/perseo-core:1.13.0
+    environment:
+        - PERSEO_FE_URL=http://perseo-fe:9090
+        - MAX_AGE=6000
+    networks:
+        - general_network
+    depends_on:
+        - perseo-mongo
+    deploy:
+        replicas: 1
+        restart_policy:
+            condition: on-failure
+
+  perseo-fe:
+    image: fiware/perseo:1.26.0
+    networks:
+        - general_network
+    ports:
+        - "9090:9090"
+    depends_on:
+        - perseo-core
+    environment:
+        - PERSEO_MONGO_ENDPOINT=perseo-mongo
+        - PERSEO_CORE_URL=http://perseo-core:8080
+        - PERSEO_LOG_LEVEL=debug
+        - PERSEO_ORION_URL=http://orion:1026/
+        - PERSEO_SMTP_HOST=www.hostname.com
+        - PERSEO_SMTP_PORT=25
+        - PERSEO_SMTP_SECURE=false
+    deploy:
+        replicas: 1
+        restart_policy:
+            condition: on-failure
+
 volumes:
   flask_app:
   react_app:
   arangodb_data:
   arangodb_apps:
   arangodb_backup:
+  mongodata:
+  mongoconfig:
+  mongolog:
+  perseomongodata:
+  perseomongoconfig:
+  perseomongolog:
+  cratedata:
+  redisdata:
 
 networks:
   general_network:

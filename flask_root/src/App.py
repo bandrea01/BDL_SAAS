@@ -1,4 +1,3 @@
-import subprocess
 import time
 from functools import wraps
 
@@ -55,8 +54,8 @@ def login():
         password = request.form['password']
 
         # Sostituire con il controllo delle credenziali reali
-        # if username == os.getenv('DEBUG_USR') and password == os.getenv('DEBUG_PWD'):
-        if username == "admin" and password == "restapi":
+        if username == os.getenv('DEBUG_USR') and password == os.getenv('DEBUG_PWD'):
+        # if username == "admin" and password == "restapi":
             session['user_id'] = username  # Salva l'ID utente nella sessione
             return redirect(url_for('main_page'))  # Reindirizzare alla pagina principale dopo il login
         else:
@@ -69,12 +68,12 @@ def login():
 @login_required
 def upload_file():
     # Salva il file caricato e ottieni il percorso
-    # uploaded_file = request.files['file']
-    # file_path = '/src/ifc/' + uploaded_file.filename
-    # uploaded_file.save(file_path)
+    uploaded_file = request.files['file']
+    file_path = '/src/ifc/' + uploaded_file.filename
+    uploaded_file.save(file_path)
 
     # Esegui lo script py2arango con il percorso del file come argomento
-    # os.system('python /src/py2arango.py ' + file_path)
+    os.system('python /src/py2arango.py ' + file_path)
 
     return render_template('upload_complete.html')
 

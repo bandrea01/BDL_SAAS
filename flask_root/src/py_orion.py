@@ -66,7 +66,7 @@ class OrionAPI(object):
         return response.json()
 
     def get_entitiy_plain_value(self, entity_id, attribute):
-        url = f'http://{self.orionIP}/v2/entities/{entity_id}/attrs/{attribute}'
+        url = f'http://{self.orionIP}/v2/entities/{entity_id}/attrs/{attribute}/value'
         response = requests.get(url, headers=self.get_header_plain)
         return response.json()
 
