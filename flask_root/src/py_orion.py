@@ -4,10 +4,10 @@ import requests
 class OrionAPI(object):
     def __init__(self):
         self.orionIP = None
-        self.get_header = "'Accept': 'application/json'"
-        self.get_header_plain = "'Accept': 'application/plain'"
-        self.post_header = "'Content-Type': 'application/json', 'Accept': 'application/json'"
-        self.post_header_plain = "'Content-Type': 'text/plain'"
+        self.get_header = {'Accept': 'application/json'}
+        self.get_header_plain = {'Accept': 'application/plain'}
+        self.post_header = {'Content-Type': 'application/json', 'Accept': 'application/json'}
+        self.post_header_plain = {'Content-Type': 'text/plain'}
 
     def setOrionIP(self, orion_ip):
         self.orionIP = orion_ip
