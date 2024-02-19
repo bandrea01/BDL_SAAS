@@ -83,7 +83,7 @@ services:
       - general_network
 
   crate:
-    image: crate:${CRATE_VERSION:-4.6.7}
+    image: crate:${CRATE_VERSION:-4.8.4}
     command: crate -Cauth.host_based.enabled=false
       -Ccluster.name=democluster -Chttp.cors.enabled=true -Chttp.cors.allow-origin="*"
     environment:
@@ -93,6 +93,7 @@ services:
       - "4200:4200"
       # Transport protocol
       - "4300:4300"
+      - "5432:5432"
     volumes:
       - cratedata:/data
     networks:
@@ -106,7 +107,6 @@ services:
       - crate
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=BDLaaS
-      - GF_INSTALL_PLUGINS=crate-datasource
       - GF_CRATE_DATASOURCE_URL=http://crate:4300
     networks:
       - general_network
