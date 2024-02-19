@@ -104,6 +104,10 @@ services:
       - "3000:3000"
     depends_on:
       - crate
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=BDLaaS
+      - GF_INSTALL_PLUGINS=crate-datasource
+      - GF_CRATE_DATASOURCE_URL=http://crate:4300
     networks:
       - general_network
 

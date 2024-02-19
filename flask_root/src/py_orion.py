@@ -22,22 +22,21 @@ class OrionAPI(object):
             return response.json()
         elif http_request_type == "POST":
             response = requests.post(query_url, headers=http_header, json=http_data)
-            return response.json()
+            return response.status_code
 
     def insert_entity(self, entity_id, entity_type, entity_attribute_name, entity_attribute_value,
-                      entity_attribute_type, observed_time) -> int:
+                      entity_attribute_type) -> int:
         data = {
             "id": entity_id,
             "type": entity_type,
             entity_attribute_name: {
                 "value": entity_attribute_value,
-                "attr_type": entity_attribute_type
-            },
-            "dateObserved": observed_time
+                "type": entity_attribute_type
+            }
         }
         url = f'http://{self.orionIP}/v2/entities'
         response = requests.post(url, headers=self.post_header, json=data)
-        return response.json()
+        return response.status_code
 
     def get_entities(self):
         url = f'http://{self.orionIP}/v2/entities'
@@ -80,13 +79,13 @@ class OrionAPI(object):
 
         url = f'http://{self.orionIP}/v2/entities/{entity_id}/attrs'
         response = requests.patch(url, headers=self.post_header, json=data)
-        return response.json()
+        return response.status_code
 
     def update_entity_by_value(self, entity_id, attribute_name, attribute_new_value):
         string_new_value = str(attribute_new_value)
         url = f'http://{self.orionIP}/v2/entities/{entity_id}/attrs/{attribute_name}/value'
-        response = requests.post(url, headers=self.post_header_plain, json=string_new_value)
-        return response.json()
+        response = requests.put(url, headers=self.post_header_plain, json=string_new_value)
+        return response.status_code
 
     @staticmethod
     def _create_subscription_data(description, entities_list, conditions_list, notification_http_url,
@@ -115,9 +114,11 @@ class OrionAPI(object):
                   expiration):
         data = self._create_subscription_data(description, entities_list, conditions_list, notification_url,
                                               notification_attrs_list, expiration)
+        print("\n\n\n\n\n\n\n\n\n")
+        print(data)
         url = f'http://{self.orionIP}/v2/subscriptions'
         response = requests.post(url, headers=self.post_header, json=data)
-        return response.json()
+        return response.status_code
 
     def subscribe_with_expression(self, description, entities_list, conditions_list, expression_name, expression_body,
                                   notification_http_url, notification_attrs_list, expiration):
@@ -125,7 +126,7 @@ class OrionAPI(object):
                                               notification_attrs_list, expiration, expression_name, expression_body)
         url = f'http://{self.orionIP}/v2/subscriptions'
         response = requests.post(url, headers=self.post_header, json=data)
-        return response.json()
+        return response.status_code
 
     @staticmethod
     def get_subscription_id_from_response(response):
@@ -136,7 +137,7 @@ class OrionAPI(object):
 
         url = f'http://{self.orionIP}/v2/subscriptions/{subscription_id}'
         response = requests.patch(url, headers=self.post_header, json=data)
-        return response.json()
+        return response.status_code
 
     def get_types(self):
         url = f'http://{self.orionIP}/v2/types'
@@ -164,7 +165,7 @@ class OrionAPI(object):
 
         url = f'http://{self.orionIP}/v2/types?option=values'
         response = requests.post(url, headers=self.post_header, json=data)
-        return response.json()
+        return response.status_code
 
     @staticmethod
     def get_registration_id_from_response(response):
@@ -183,4 +184,4 @@ class OrionAPI(object):
     def delete_registration_by_id(self, regitration_id):
         url = f'http://{self.orionIP}/v2/registrations/{regitration_id}'
         response = requests.delete(url, headers=self.post_header)
-        return response.json()
+        return response.status_code
