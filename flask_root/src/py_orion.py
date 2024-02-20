@@ -72,7 +72,7 @@ class OrionAPI(object):
         response = requests.get(url, headers=self.header)
         return response.json()
 
-    def update_entity(self, data):
+    def update_entity(self, entity_id, data):
         url = f'http://{self.orionIP}/ngsi-ld/v1/entities/{entity_id}/attrs'
         response = requests.patch(url, headers=self.header, json=data)
         return response.status_code
