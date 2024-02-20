@@ -7,9 +7,12 @@ class OrionAPI(object):
         self.orionIP = None
         self.header = {
             'Content-Type': 'application/json',
-            'Link': '<http://context/ngsi-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; '
-                    'type="application/ld+json"',
-            'Accept': 'application/ld+json'
+            'Link': '<https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.7.jsonld>; '
+                    'rel="http://www.w3.org/ns/json-ld#context"; '
+                    'type="application/ld+json"'
+        }
+        self.header_subscription = {
+            'Content-Type': 'application/json'
         }
 
     def setOrionIP(self, orion_ip):
@@ -85,7 +88,7 @@ class OrionAPI(object):
 
     def subscribe(self, data):
         url = f'http://{self.orionIP}/ngsi-ld/v1/subscriptions'
-        response = requests.post(url, headers=self.header, json=data)
+        response = requests.post(url, headers=self.header_subscription, json=data)
         return response.status_code
 
     @staticmethod

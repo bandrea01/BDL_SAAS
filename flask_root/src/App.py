@@ -32,21 +32,41 @@ def login_required(f):
 
 
 def init_orion():
-    orion.setOrionIP("bdl_saas-orion-1:1026")
-    res = orion.insert_entity("Room1", "Room", "temperature", 25.4, "Float")
+    orion.setOrionIP("orion:1026")
+    payload = {
+        "id": "urn:ngsi-ld:TemperatureSensor:001",
+        "type": "TemperatureSensor",
+        "category": {
+            "type": "Property",
+            "value": "sensor"
+        },
+        "temperature": {
+            "type": "Property",
+            "value": 25
+        }
+    }
+    res = orion.insert_entity(payload)
     return res
 
 
 def init_subscriptions():
     # Quantumleap
-    entities = [{"id": "Room1", "type": "Room"}]
-    attrs = ["temperature"]
-    res = orion.subscribe("Quantumleap subscription", entities, attrs,
-                          "http://quantumleap:8668/v2/notify",
-                          attrs, "2040-01-01T14:00:00.00Z")
-    print("\n\n\n\n\n\n")
-    print(res)
-    print("\n\n\n\n\n\n")
+    payload = {
+        "description": "Subscription for temperature updates",
+        "type": "Subscription",
+        "entities": [
+            {
+                "type": "TemperatureSensor"
+            }
+        ],
+        "notification": {
+            "endpoint": {
+                "uri": "http://quantumleap:8668/v2/notify",
+                "accept": "application/json"
+            }
+        }
+    }
+    res = orion.subscribe(payload)
     return res
     # Perseo
     # orion.subscribe(.....)
@@ -96,10 +116,14 @@ def upload_file():
 
     # Esegui lo script py2arango con il percorso del file come argomento
     # os.system('python /src/py2arango.py ' + file_path)
-    if init_orion() != 201:
-        return render_template("error.html")
-    if init_subscriptions() != 201:
-        return render_template("error.html")
+    res_init = init_orion()
+    if res_init != 201:
+        err = "Error in init Orion: " + str(res_init)
+        return render_template("error.html", message=err)
+    res_subscription = init_subscriptions()
+    if res_subscription != 201:
+        err = "Error in init Orion: " + str(res_subscription)
+        return render_template("error.html", message=err)
 
     return render_template("upload_complete.html")
 
