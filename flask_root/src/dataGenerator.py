@@ -1,63 +1,38 @@
-import json
-import time
-import csv
-
-times = []
-temperatures = []
-
-def csv_to_jsonld(csv_file):
-    context = {
-        "@context": {
-            "nome": "http://schema.org/name",
-            "coordinate": {
-                "@id": "http://schema.org/geo",
-                "@type": "http://schema.org/GeoCoordinates",
-                "x": "http://schema.org/longitude",
-                "y": "http://schema.org/latitude",
-                "z": "http://schema.org/altitude"
-            },
-            "tempo": "http://schema.org/DateTime",
-            "temperatura": "http://schema.org/temperature"
-        }
-    }
-
-    data = []
-
-    # Lettura dei dati dal file CSV
-    with open(csv_file, 'r') as file:
-        header = file.readline().strip()
-        header = header.replace("\n", "")
-        names_list = header.split(";")
-        file.readline()
-        for line in file:
-            line = line.replace("\n", "")
-            values_list = line.split(";")
-            dictionary = {key: value for key, value in zip(names_list, values_list)}
-            data.append(dictionary)
-
-    # Aggiunta del contesto ai dati
-    data_with_context = context.copy()
-    data_with_context.update({"data": data})
-
-    # Scrittura dei dati in un file JSON
-    with open("./json_ld_data.jsonld", 'w') as json_file:
-        json.dump(data_with_context, json_file, indent=2)
-
-    print("File created!")
+import random
+import numpy as np
 
 
-def data_sender(csv_file):
-    with open(csv_file, "r") as csv:
-        csv.readline()
-        for line in csv:
-            string = line
-            string = string.replace('\n', '')
-            values = string.split(";")
-            times.append(values[4])
-            temperatures.append(float(values[5]))
-    for i in range(0, len(times)):
-        print(times[i], temperatures[i])
-        time.sleep(1)
+def generate_temperature_values(n, std_dev, outlier_probability):
+    """
+    Generate temperature values with normal distribution and occasional outliers.
 
+    Args:
+        n (int): Number of temperature values to generate.
+        std_dev (float): Standard deviation of the normal distribution.
+        outlier_probability (float): Probability of generating an outlier (0 to 1).
 
-csv_to_jsonld("simulated_data.csv")
+    Returns:
+        List[float]: List of temperature values.
+    """
+    temperatures = [25]
+    actual_outlier_probability = outlier_probability
+    for i in range(1, n):
+        if random.random() < outlier_probability:
+            # Generate an outlier
+            outlier = np.random.normal(temperatures[i - 1] + 5, std_dev)
+            temperatures.append(outlier)
+            outlier_probability = actual_outlier_probability - 0.04
+        else:
+            # Generate a normal temperature value
+            temperature = np.random.normal(temperatures[i - 1], std_dev)
+            temperatures.append(temperature)
+
+    return temperatures
+
+# Usage example
+# num_values = 100
+# mean_temp = 25  # Mean temperature
+# std_dev_temp = 2  # Standard deviation of temperature
+# outlier_probability = 0.1  # 10% chance of generating an outlier
+#
+# generate_temperature_values(num_values, mean_temp, std_dev_temp, outlier_probability)

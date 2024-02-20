@@ -105,6 +105,9 @@ services:
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=BDLaaS
       - GF_CRATE_DATASOURCE_URL=http://crate:4300
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - grafana_logs:/var/log/grafana
     networks:
       - general_network
 
@@ -179,6 +182,8 @@ volumes:
   perseomongolog:
   cratedata:
   redisdata:
+  grafana_data:
+  grafana_logs:
 
 networks:
   general_network:

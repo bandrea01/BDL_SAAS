@@ -75,14 +75,14 @@ class OrionAPI(object):
         response = requests.get(url, headers=self.header)
         return response.json()
 
-    def update_entity(self, entity_id, data):
-        url = f'http://{self.orionIP}/ngsi-ld/v1/entities/{entity_id}/attrs'
+    def update_entity(self, entity_id, attribute_name, data):
+        url = f'http://{self.orionIP}/ngsi-ld/v1/entities/{entity_id}/attrs/{attribute_name}'
         response = requests.patch(url, headers=self.header, json=data)
         return response.status_code
 
     def update_entity_by_value(self, entity_id, attribute_name, attribute_new_value):
         string_new_value = str(attribute_new_value)
-        url = f'http://{self.orionIP}/ngsi-ld/v1/entities/{entity_id}/attrs/{attribute_name}/value'
+        url = f'http://{self.orionIP}/ngsi-ld/v1/entities/{entity_id}/attrs/{attribute_name}'
         response = requests.put(url, headers=self.header, json=string_new_value)
         return response.status_code
 
