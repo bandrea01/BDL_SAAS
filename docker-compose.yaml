@@ -40,17 +40,14 @@ services:
       - general_network
 
   orion:
-    image: fiware/orion:${ORION_VERSION:-3.12.0-PRE-484}
+    image: fiware/orion-ld:1.6.0-PRE-1578
     ports:
       - "1026:1026"
     command: -logLevel DEBUG -noCache -dbhost mongo
     depends_on:
       - mongo
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://0.0.0.0:1026/version"]
-      interval: 1m
-      timeout: 10s
-      retries: 3
+      test: curl --fail -s http://orion:1026/version || exit 1
     networks:
       - general_network
 
