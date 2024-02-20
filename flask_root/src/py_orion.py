@@ -7,7 +7,8 @@ class OrionAPI(object):
         self.orionIP = None
         self.header = {
             'Content-Type': 'application/json',
-            'Link': '<http://context/ngsi-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; type="application/ld+json"',
+            'Link': '<http://context/ngsi-context.jsonld>; rel="http://www.w3.org/ns/json-ld#context"; '
+                    'type="application/ld+json"',
             'Accept': 'application/ld+json'
         }
 
@@ -20,10 +21,19 @@ class OrionAPI(object):
     @staticmethod
     def custom_query(http_request_type, http_header, http_data, query_url):
         if http_request_type == "GET":
-            response = requests.post(query_url, headers=http_header)
+            response = requests.get(query_url, headers=http_header)
             return response.json()
         elif http_request_type == "POST":
             response = requests.post(query_url, headers=http_header, json=http_data)
+            return response.status_code
+        elif http_request_type == "PATCH":
+            response = requests.patch(query_url, headers=http_header, json=http_data)
+            return response.status_code
+        elif http_request_type == "PUT":
+            response = requests.put(query_url, headers=http_header, json=http_data)
+            return response.status_code
+        elif http_request_type == "DELETE":
+            response = requests.delete(query_url, headers=http_header, json=http_data)
             return response.status_code
 
     def insert_entity(self, data):
