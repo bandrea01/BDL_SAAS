@@ -118,7 +118,7 @@ def create_full_graph(db, ifc_file, nodes_name, edges_name):
 client = ArangoClient(hosts='http://bdl_saas-arangodb-1:8529')
 db = client.db('prova', username='root', password='BDLaaS')
 
-filename = sys.argv[1].rsplit('/', 1)[-1]
+filename = sys.argv[1].rsplit('/', 1)[-1].split('.')[-2]
 nodes_name = filename + '_nodes'
 edges_name = filename + '_edges'
 graph_name = filename + '_graph'

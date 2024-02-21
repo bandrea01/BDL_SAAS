@@ -103,8 +103,12 @@ services:
     depends_on:
       - crate
     environment:
-      - GF_SECURITY_ADMIN_PASSWORD=BDLaaS
-      - GF_CRATE_DATASOURCE_URL=http://crate:4300
+#      - GF_SECURITY_ADMIN_PASSWORD=BDLaaS
+#      - GF_CRATE_DATASOURCE_URL=http://crate:4300
+      - GF_SECURITY_ALLOW_EMBEDDING=true
+      - GF_AUTH_ANONYMOUS_ENABLED=true
+      - GF_AUTH_DISABLE_LOGIN_FORM=true
+      - GF_AUTH_ORG_ROLE=viewer
     volumes:
       - grafana_data:/var/lib/grafana
       - grafana_logs:/var/log/grafana

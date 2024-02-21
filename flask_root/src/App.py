@@ -89,6 +89,7 @@ def login():
 def menu():
     return render_template("upload_complete.html")
 
+
 @app.route('/upload', methods=['GET', 'POST'])
 @login_required
 def upload_file():
@@ -101,8 +102,6 @@ def upload_file():
     os.system('python /src/py2arango.py ' + file_path)
 
     return redirect(url_for('menu'))
-
-
 
 
 @app.route('/monitoring', methods=['GET', 'POST'])

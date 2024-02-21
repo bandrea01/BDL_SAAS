@@ -25,7 +25,7 @@
             flex-direction: column; /* Aggiunto per centrare i contenuti verticalmente */
         }
 
-        .button-container{
+        .button-container {
             padding-top: 25px;
         }
 
@@ -33,7 +33,7 @@
             border-radius: 15px;
         }
 
-        .button-container button{
+        .button-container button {
             background-color: #aadb22;
             color: #021823;
             font-weight: bold;
@@ -45,7 +45,7 @@
             transition: background-color 0.3s, border-color 0.3s;
         }
 
-        .button-container button:hover{
+        .button-container button:hover {
             background-color: #021823;
             color: #fafafa;
         }
@@ -54,7 +54,7 @@
 </head>
 <body>
 <div class="flex-container">
-    <iframe src="http://localhost:3000/d/e59f102a-cc7b-4277-815b-e7f3fb52d160/temperaturemonitoration?from=1708442958695&to=1708444742877&refresh=auto&orgId=1&viewPanel=1"
+    <iframe src="http://grafana:3000/d/fd42fcb5-adbf-4f4e-89fb-c2b47b7dc1e6/temperaturemonitoration?orgId=1&refresh=auto&from=1708516289516&to=1708516589517&viewPanel=1"
             width="100%" height="100%"></iframe>
     <div class="button-container">
         <button class="simulation-button" id="generation">Start simulation</button>
@@ -63,21 +63,38 @@
         </a>
     </div>
 </div>
-
 <script>
     document.getElementById('generation').addEventListener('click', function () {
+        // Disabilita il bottone
+        this.disabled = true;
+
+        // Esegui la richiesta fetch
         fetch('/generation')
             .then(response => {
+                // Controlla se la risposta è ok
                 if (!response.ok) {
                     throw new Error('Errore nella richiesta');
                 }
+                alert("Catch")
+                // Se la risposta è ok, ritorna il risultato come JSON
                 return response.json();
             })
             .then(data => {
+                // Visualizza un messaggio di successo
+                alert('Richiesta completata con successo');
                 console.log(data);
             })
             .catch(error => {
+                // Se si verifica un errore, visualizza un messaggio di errore
+                alert('Blocco catch');
                 console.error('Si è verificato un errore:', error);
+            })
+            .finally(() => {
+                // Riabilita il bottone dopo 5000 millisecondi (5 secondi)
+                alert('Blocco finally');
+                setTimeout(() => {
+                    this.disabled = false;
+                }, 500 * 1000);
             });
     });
 </script>
