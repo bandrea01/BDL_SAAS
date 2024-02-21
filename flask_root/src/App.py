@@ -84,6 +84,11 @@ def login():
     return render_template('login.html')
 
 
+@app.route('/menu', methods=['GET', 'POST'])
+@login_required
+def menu():
+    return render_template("upload_complete.html")
+
 @app.route('/upload', methods=['GET', 'POST'])
 @login_required
 def upload_file():
@@ -95,7 +100,9 @@ def upload_file():
     # Esegue lo script py2arango con il percorso del file come argomento
     #os.system('python /src/py2arango.py ' + file_path)
 
-    return render_template("upload_complete.html")
+    return redirect(url_for('menu'))
+
+
 
 
 @app.route('/monitoring', methods=['GET', 'POST'])

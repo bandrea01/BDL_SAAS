@@ -24,9 +24,9 @@ existing_edges = set()
 # Process literal attributes, entity attributes, and relationship attributes
 # Input: db - a link to ArangoDB graph database, ifc_entity - an instance, ifc_file - the parsed ifc-SPF
 # Output: a subgraph
-def create_graph_from_ifc_entity_all(db, ifc_entity, ifc_file):
+def create_graph_from_ifc_entity_all(db, ifc_entity, ifc_file, nodes_name, edges_name):
     node = create_pure_node_from_ifc_entity(ifc_entity, ifc_file)
-    collection = db["entities"]
+    collection = db[nodes_name]
 
     # Check if node already exists in the database
     existing_node = collection.get(node["_key"])
@@ -40,7 +40,7 @@ def create_graph_from_ifc_entity_all(db, ifc_entity, ifc_file):
                     continue
                 else:
                     sub_node = create_pure_node_from_ifc_entity(ifc_entity[i], ifc_file)
-                    sub_collection = db["entities"]
+                    sub_collection = db[nodes_name]
 
                     # Check if sub node already exists in the database
                     existing_sub_node = sub_collection.get(sub_node["_key"])
@@ -50,10 +50,10 @@ def create_graph_from_ifc_entity_all(db, ifc_entity, ifc_file):
                     # Controllo se l'arco esiste già
                     edge_key = (node["_key"], sub_node["_key"])
                     if edge_key not in existing_edges:
-                        rel_collection = db['relationships']
+                        rel_collection = db[edges_name]
                         rel_collection.insert({
-                            "_from": "entities/" + node["_key"],
-                            "_to": "entities/" + sub_node["_key"],
+                            "_from": nodes_name + "/" + node["_key"],
+                            "_to": nodes_name + "/" + sub_node["_key"],
                             "rel_name": ifc_entity.wrapped_data.get_argument_name(i)
                         })
                         existing_edges.add(edge_key)
@@ -61,7 +61,7 @@ def create_graph_from_ifc_entity_all(db, ifc_entity, ifc_file):
             elif ifc_entity.wrapped_data.get_argument_type(i) == 'AGGREGATE OF ENTITY INSTANCE':
                 for sub_entity in ifc_entity[i]:
                     sub_node = create_pure_node_from_ifc_entity(sub_entity, ifc_file)
-                    sub_collection = db["entities"]
+                    sub_collection = db[nodes_name]
 
                     # Check if sub node already exists in the database
                     existing_sub_node = sub_collection.get(sub_node["_key"])
@@ -71,10 +71,10 @@ def create_graph_from_ifc_entity_all(db, ifc_entity, ifc_file):
                     # Controllo se l'arco esiste già
                     edge_key = (node["_key"], sub_node["_key"])
                     if edge_key not in existing_edges:
-                        rel_collection = db['relationships']
+                        rel_collection = db[edges_name]
                         rel_collection.insert({
-                            "_from": "entities/" + node["_key"],
-                            "_to": "entities/" + sub_node["_key"],
+                            "_from": nodes_name + "/" + node["_key"],
+                            "_to": nodes_name + "/" + sub_node["_key"],
                             "rel_name": ifc_entity.wrapped_data.get_argument_name(i)
                         })
                         existing_edges.add(edge_key)
@@ -85,7 +85,7 @@ def create_graph_from_ifc_entity_all(db, ifc_entity, ifc_file):
             for wrapped_rel in inverse_relations:
                 rel_entity = ifc_file.by_id(wrapped_rel.id())
                 sub_node = create_pure_node_from_ifc_entity(rel_entity, ifc_file)
-                sub_collection = db["entities"]
+                sub_collection = db[nodes_name]
                 # Check if sub node already exists in the database
                 existing_sub_node = sub_collection.get(sub_node["_key"])
                 if not existing_sub_node:
@@ -94,22 +94,22 @@ def create_graph_from_ifc_entity_all(db, ifc_entity, ifc_file):
                 # Controllo se l'arco esiste già
                 edge_key = (sub_node["_key"], sub_node["_key"])
                 if edge_key not in existing_edges:
-                    rel_collection = db['relationships']
+                    rel_collection = db[edges_name]
                     rel_collection.insert({
-                        "_from": "entities/" + sub_node["_key"],
-                        "_to": "entities/" + sub_node["_key"],
+                        "_from": nodes_name + "/" + sub_node["_key"],
+                        "_to": nodes_name + "/" + sub_node["_key"],
                         "rel_name": rel_name
                     })
                     existing_edges.add(edge_key)
 
 
-def create_full_graph(db, ifc_file):
+def create_full_graph(db, ifc_file, nodes_name, edges_name):
     idx = 1
     length = len(ifc_file.wrapped_data.entity_names())
     for entity_id in ifc_file.wrapped_data.entity_names():
         entity = ifc_file.by_id(entity_id)
         print(idx, '/', length, entity)
-        create_graph_from_ifc_entity_all(db, entity, ifc_file)
+        create_graph_from_ifc_entity_all(db, entity, ifc_file, nodes_name, edges_name)
         idx += 1
     return
 
@@ -118,8 +118,13 @@ def create_full_graph(db, ifc_file):
 client = ArangoClient(hosts='http://bdl_saas-arangodb-1:8529')
 db = client.db('prova', username='root', password='BDLaaS')
 
-db.create_collection('entities'),
-db.create_collection('relationships', edge=True)
+filename = sys.argv[1].rsplit('/', 1)[-1]
+nodes_name = filename + '_nodes'
+edges_name = filename + '_edges'
+graph_name = filename + '_graph'
+
+db.create_collection(nodes_name)
+db.create_collection(edges_name, edge=True)
 
 if len(sys.argv) != 2:
     print("Usage: python py2arango.py <path_to_ifc_file>")
@@ -129,13 +134,14 @@ if len(sys.argv) != 2:
 ifc_file_path = sys.argv[1]
 ifc_file = ifcopenshell.open(ifc_file_path)
 
-# Inizializzazione e utilizzo del grafo
-create_full_graph(db, ifc_file)
 
-graph = db.create_graph("grafoProva", edge_definitions=[
+# Inizializzazione e utilizzo del grafo
+create_full_graph(db, ifc_file, nodes_name, edges_name)
+
+graph = db.create_graph(graph_name, edge_definitions=[
     {
-        "edge_collection": "relationships",  # Nome della collezione di archi (edges) esistente
-        "from_vertex_collections": ["entities"],  # Nomi delle collezioni di nodi (from)
-        "to_vertex_collections": ["entities"]  # Nomi delle collezioni di nodi (to)
+        "edge_collection": edges_name,  # Nome della collezione di archi (edges) esistente
+        "from_vertex_collections": [nodes_name],  # Nomi delle collezioni di nodi (from)
+        "to_vertex_collections": [nodes_name]  # Nomi delle collezioni di nodi (to)
     }
 ])
