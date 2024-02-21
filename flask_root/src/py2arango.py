@@ -113,6 +113,9 @@ def create_full_graph(db, ifc_file, nodes_name, edges_name):
         idx += 1
     return
 
+if len(sys.argv) != 2:
+    print("Usage: python py2arango.py <path_to_ifc_file>")
+    sys.exit(1)
 
 # Initialize the ArangoDB client
 client = ArangoClient(hosts='http://bdl_saas-arangodb-1:8529')
@@ -123,25 +126,21 @@ nodes_name = filename + '_nodes'
 edges_name = filename + '_edges'
 graph_name = filename + '_graph'
 
-db.create_collection(nodes_name)
-db.create_collection(edges_name, edge=True)
+if not (db.has_collection(nodes_name) and db.has_collection(edges_name)):
+    db.create_collection(nodes_name)
+    db.create_collection(edges_name, edge=True)
 
-if len(sys.argv) != 2:
-    print("Usage: python py2arango.py <path_to_ifc_file>")
-    sys.exit(1)
+    # Caricamento file ifc
+    ifc_file_path = sys.argv[1]
+    ifc_file = ifcopenshell.open(ifc_file_path)
 
-# Caricamento file ifc
-ifc_file_path = sys.argv[1]
-ifc_file = ifcopenshell.open(ifc_file_path)
+    # Inizializzazione e utilizzo del grafo
+    create_full_graph(db, ifc_file, nodes_name, edges_name)
 
-
-# Inizializzazione e utilizzo del grafo
-create_full_graph(db, ifc_file, nodes_name, edges_name)
-
-graph = db.create_graph(graph_name, edge_definitions=[
-    {
-        "edge_collection": edges_name,  # Nome della collezione di archi (edges) esistente
-        "from_vertex_collections": [nodes_name],  # Nomi delle collezioni di nodi (from)
-        "to_vertex_collections": [nodes_name]  # Nomi delle collezioni di nodi (to)
-    }
-])
+    graph = db.create_graph(graph_name, edge_definitions=[
+        {
+            "edge_collection": edges_name,  # Nome della collezione di archi (edges) esistente
+            "from_vertex_collections": [nodes_name],  # Nomi delle collezioni di nodi (from)
+            "to_vertex_collections": [nodes_name]  # Nomi delle collezioni di nodi (to)
+        }
+    ])

@@ -164,9 +164,10 @@ services:
         - PERSEO_CORE_URL=http://perseo-core:8080
         - PERSEO_LOG_LEVEL=debug
         - PERSEO_ORION_URL=http://orion:1026/
-        - PERSEO_SMTP_HOST=www.hostname.com
-        - PERSEO_SMTP_PORT=25
-        - PERSEO_SMTP_SECURE=false
+        - PERSEO_SMPP_HOST=https://api.twilio.com/2010-04-01/Accounts/
+        - PERSEO_SMPP_PORT=443
+        - PERSEO_SMPP_USERNAME=AC7ecc793aad32d43e008ab0987edb7896
+        - PERSEO_SMPP_PASSWORD=9ab27852e4908b344eb78f9df3faaeec
     deploy:
         replicas: 1
         restart_policy:

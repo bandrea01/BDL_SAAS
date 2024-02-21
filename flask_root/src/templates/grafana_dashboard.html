@@ -75,22 +75,12 @@
                 if (!response.ok) {
                     throw new Error('Response error! Inspect console logs for more informations');
                 }
-            })
-            .then(data => {
-                // Visualizza un messaggio di successo
                 alert('Simulation started! Watch on the dashboard');
-            })
-            .catch(error => {
-                // Se si verifica un errore, visualizza un messaggio di errore
-                alert('Something went wrong! Inspect console logs for more informations');
-                console.error('Error logs', error);
-            })
-            .finally(() => {
-                // Riabilita il bottone dopo 5000 millisecondi (5 secondi)
-                setTimeout(() => {
-                    this.disabled = false;
-                }, 500 * 1000);
-            });
+            }).finally(() => {
+            setTimeout(() => {
+                this.disabled = false;
+            }, 500 * 1000);
+        });
     });
 </script>
 </body>

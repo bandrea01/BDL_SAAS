@@ -1,14 +1,12 @@
 from functools import wraps
-
 from flask import Flask, request, session
 from flask import render_template
 from flask import redirect, url_for
-
 import dataGenerator
 import time
 from py_orion import OrionAPI
 
-import os  # Per prendere le variabili di ambiente definite dal file docker
+import os
 
 app = Flask(__name__)
 app.secret_key = 'cristian'
@@ -22,7 +20,6 @@ def login_required(f):
     :param f:
     :return:
     """
-
     @wraps(f)
     def decorated_function(*args, **kwargs):
         """
@@ -31,19 +28,16 @@ def login_required(f):
         if 'user_id' not in session:
             return redirect(url_for('login', next=request.url))
         return f(*args, **kwargs)
-
     return decorated_function
 
 
 def update_entities():
-    temperatures = dataGenerator.generate_temperature_values(100, 0.5, 0.1)
-
-    for i in range(1, 100):
+    temperatures = dataGenerator.generate_temperature_values(100, 0.5, 25, 0.1)
+    for i in range(0, 100):
         payload = {
-            "value": [temperatures[i - 1], temperatures[i]],
-            "type": "Property"
+            "temperature" : temperatures[i]
         }
-        res_update = orion.update_entity("urn:ngsi-ld:TemperatureSensor:001", "temperature", payload)
+        res_update = orion.update_entity("urn:ngsi-ld:TemperatureSensor:001", payload)
         if res_update != 204:
             err_update = "Error in update data " + str(res_update)
             return render_template("error.html", msg=err_update)
@@ -55,8 +49,6 @@ def update_entities():
 def main_page():
     return render_template('main_page.html')
 
-
-#   DEBUG ADMIN  #
 
 @app.route('/')
 @login_required
@@ -72,15 +64,12 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-
-        # Sostituire con il controllo delle credenziali reali
         if username == os.getenv('DEBUG_USR') and password == os.getenv('DEBUG_PWD'):
             # if username == "admin" and password == "restapi":
-            session['user_id'] = username  # Salva l'ID utente nella sessione
-            return redirect(url_for('main_page'))  # Reindirizzare alla pagina principale dopo il login
+            session['user_id'] = username
+            return redirect(url_for('main_page'))
         else:
             return redirect(url_for("login"))
-
     return render_template('login.html')
 
 
@@ -93,14 +82,10 @@ def menu():
 @app.route('/upload', methods=['GET', 'POST'])
 @login_required
 def upload_file():
-    # Salva il file caricato e ottieni il percorso
     uploaded_file = request.files['file']
     file_path = '/src/ifc/' + uploaded_file.filename
     uploaded_file.save(file_path)
-
-    # Esegue lo script py2arango con il percorso del file come argomento
     os.system('python /src/py2arango.py ' + file_path)
-
     return redirect(url_for('menu'))
 
 
@@ -120,6 +105,12 @@ def generation():
     res_subscription = orion.init_subscriptions("Quantumleap subscription",
                                                 "normalized",
                                                 "http://quantumleap:8668/v2/notify")
+    if res_subscription != 201:
+        err = "Error in doing subscription: " + str(res_subscription)
+        return render_template("error.html", message=err)
+    res_subscription = orion.init_subscriptions("Perseo-FE subscription",
+                                                "normalized",
+                                                "http://perseo-fe:9090/notices")
     if res_subscription != 201:
         err = "Error in doing subscription: " + str(res_subscription)
         return render_template("error.html", message=err)
