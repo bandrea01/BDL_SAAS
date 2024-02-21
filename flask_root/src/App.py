@@ -98,7 +98,7 @@ def upload_file():
     uploaded_file.save(file_path)
 
     # Esegue lo script py2arango con il percorso del file come argomento
-    #os.system('python /src/py2arango.py ' + file_path)
+    os.system('python /src/py2arango.py ' + file_path)
 
     return redirect(url_for('menu'))
 
