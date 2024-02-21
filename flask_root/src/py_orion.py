@@ -54,6 +54,11 @@ class OrionAPI(object):
         response = requests.get(url, headers=self.header)
         return response.json()
 
+    def entity_exists(self, entity_id):
+        url = f'http://{self.orionIP}/ngsi-ld/v1/entities/{entity_id}'
+        response = requests.get(url, headers=self.header)
+        return response.status_code == 200
+
     def get_entity_from_type(self, entity_type):
         url = f'http://{self.orionIP}/ngsi-ld/v1/entities?{entity_type}'
         response = requests.get(url, headers=self.header)
@@ -86,10 +91,20 @@ class OrionAPI(object):
         response = requests.put(url, headers=self.header, json=string_new_value)
         return response.status_code
 
+    def delete_entity(self, entity_id):
+        url = f'http://{self.orionIP}/ngsi-ld/v1/entities/{entity_id}'
+        response = requests.delete(url, headers=self.header)
+        return response.status_code
+
     def subscribe(self, data):
         url = f'http://{self.orionIP}/ngsi-ld/v1/subscriptions'
         response = requests.post(url, headers=self.header_subscription, json=data)
         return response.status_code
+
+    def get_subscriptions(self):
+        url = f'http://{self.orionIP}/ngsi-ld/v1/subscriptions'
+        response = requests.get(url, headers=self.header_subscription)
+        return response.json()
 
     @staticmethod
     def get_subscription_id_from_response(response):
@@ -99,6 +114,11 @@ class OrionAPI(object):
         data = {"status": "inactive"}
         url = f'http://{self.orionIP}/ngsi-ld/v1/subscriptions/{subscription_id}'
         response = requests.patch(url, headers=self.header, json=data)
+        return response.status_code
+
+    def delete_subscription(self, subscription_id):
+        url = f'http://{self.orionIP}/ngsi-ld/v1/subscriptions/{subscription_id}'
+        response = requests.delete(url, headers=self.header)
         return response.status_code
 
     def get_types(self):
@@ -112,7 +132,6 @@ class OrionAPI(object):
         return response.json()
 
     def register(self, data):
-
         url = f'http://{self.orionIP}/ngsi-ld/v1/types?option=values'
         response = requests.post(url, headers=self.header, json=data)
         return response.status_code
@@ -135,3 +154,49 @@ class OrionAPI(object):
         url = f'http://{self.orionIP}/ngsi-ld/v1/registrations/{regitration_id}'
         response = requests.delete(url, headers=self.header)
         return response.status_code
+
+    def init_entites(self):
+        if self.entity_exists("urn:ngsi-ld:TemperatureSensor:001"):
+            self.delete_entity("urn:ngsi-ld:TemperatureSensor:001")
+
+        payload = {
+            "id": "urn:ngsi-ld:TemperatureSensor:001",
+            "type": "TemperatureSensor",
+            "category": {
+                "type": "Property",
+                "value": "sensor"
+            },
+            "temperature": {
+                "type": "Property",
+                "value": 25
+            }
+        }
+        res = self.insert_entity(payload)
+        return res
+
+    def init_subscriptions(self, description, format, uri):
+        json = self.get_subscriptions()
+
+        for sub in json:
+            if sub["notification"]["endpoint"]["uri"] == uri:
+                self.delete_subscription(sub["id"])
+
+        payload = {
+            "description": description,
+            "type": "Subscription",
+            "entities": [
+                {
+                    "type": "TemperatureSensor",
+                }
+            ],
+            "notification": {
+                "attributes": ["temperature"],
+                "format": format,
+                "endpoint": {
+                    "uri": uri,
+                    "accept": "application/json"
+                }
+            }
+        }
+        res = self.subscribe(payload)
+        return res

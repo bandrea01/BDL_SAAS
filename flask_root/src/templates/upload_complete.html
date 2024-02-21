@@ -80,6 +80,19 @@
             background-size: cover;
         }
 
+        .card-grafana {
+            width: 200px;
+            height: 300px;
+            border-radius: 8px;
+            margin: 10px;
+            text-align: center;
+            padding: 20px;
+            box-shadow: 2px 2px 8px rgb(0 0 0);
+            transition: transform 0.2s ease-in-out;
+            background-image: url("{{ url_for('static', filename='grafana_image.png') }}");
+            background-size: cover;
+        }
+
         .card-container a {
             text-decoration: none;
             color: #333;
@@ -103,7 +116,7 @@
 
         }
 
-        .card-graph:hover, .card-remapping:hover, .card-react:hover {
+        .card-graph:hover, .card-remapping:hover, .card-react:hover, .card-grafana:hover {
             transform: scale(1.05);
             border-radius: 8px;
             margin: 10px;
@@ -136,6 +149,12 @@
             <div class="card-remapping">
                 <h2>Mapping IFC</h2>
                 <p>Do antoher IFC mapping in ArangoDB</p>
+            </div>
+        </a>
+        <a href="/monitoring">
+            <div class="card-grafana">
+                <h2>Temperature monitoration</h2>
+                <p>Grafana dashboard for data monitoration</p>
             </div>
         </a>
     </div>

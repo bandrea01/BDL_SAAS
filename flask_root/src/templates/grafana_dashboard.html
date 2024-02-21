@@ -5,6 +5,26 @@
     <title>BDLaaS | Grafana Temperature Monitoring</title>
 </head>
 <body>
+    <button id="generation">Inizia simulazione dati</button>
     <iframe src="http://localhost:3000/d/e59f102a-cc7b-4277-815b-e7f3fb52d160/temperaturemonitoration?from=1708442958695&to=1708444742877&refresh=auto&orgId=1&viewPanel=1" width="800" height="600"></iframe>
+    <button></button>
+    <script>
+        document.getElementById('generation').addEventListener('click', function() {
+            fetch('/generation')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Errore nella richiesta');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log(data);
+                })
+                .catch(error => {
+                    console.error('Si è verificato un errore:', error);
+                });
+        });
+    </script>
 </body>
 </html>
+
