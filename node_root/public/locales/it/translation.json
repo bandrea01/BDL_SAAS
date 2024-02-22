@@ -4,12 +4,14 @@
     "about": "Contesto",
     "technologies": "Tecnologie",
     "viewer":"Visualizzatore",
+    "management": "Gestione dati",
     "documentation": "Documentazione"
   },
   "hero": {
     "header": "Modelli 3d da file IFC",
     "first": "In questo progetto si vogliono rappresentare modelli 3d estratti da file IFC.",
     "second": "Tutti i file sono salvati in un database a grafo: ArangoDB.",
+    "third": "Se vuoi mappare un file IFC in ArangoDB o vedere la simulazione di un incendio, vai sulla voce del menù Gestione Dati.",
     "liftoff": "Scopri di più ↓"
   },
   "technologies": {

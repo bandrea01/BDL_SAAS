@@ -26,6 +26,10 @@ const navLinks = [
     title: "navbar.viewer",
   },
   {
+    id: "management",
+    title: "navbar.management"
+  },
+  {
     id: "documentation",
     title: "navbar.documentation",
   },
