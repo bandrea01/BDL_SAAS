@@ -104,7 +104,7 @@ const Navbar = () => {
                                 </a>
                             ) : (
                                 nav.id === "management" ? (
-                                    <a href="http://localhost:8432">
+                                    <a href="http://localhost:8432/menu">
                                         {t(nav.title)}
                                     </a>
                                 ) : (

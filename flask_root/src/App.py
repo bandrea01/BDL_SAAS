@@ -47,10 +47,10 @@ def update_entities(start_value):
         time.sleep(5)
 
 
-@app.route('/main_page')
+@app.route('/mapping')
 @login_required
 def main_page():
-    return render_template('main_page.html')
+    return render_template('upload_arango.html')
 
 
 @app.route('/')
@@ -70,7 +70,7 @@ def login():
         if username == os.getenv('DEBUG_USR') and password == os.getenv('DEBUG_PWD'):
             # if username == "admin" and password == "restapi":
             session['user_id'] = username
-            return redirect(url_for('main_page'))
+            return redirect(url_for('menu'))
         else:
             return redirect(url_for("login"))
     return render_template('login.html')
@@ -79,10 +79,10 @@ def login():
 @app.route('/menu', methods=['GET', 'POST'])
 @login_required
 def menu():
-    return render_template("upload_complete.html")
+    return render_template("menu.html")
 
 
-@app.route('/upload', methods=['GET', 'POST'])
+@app.route('/mapping', methods=['GET', 'POST'])
 @login_required
 def upload_file():
     uploaded_file = request.files['file']
