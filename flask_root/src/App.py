@@ -20,6 +20,7 @@ def login_required(f):
     :param f:
     :return:
     """
+
     @wraps(f)
     def decorated_function(*args, **kwargs):
         """
@@ -28,14 +29,16 @@ def login_required(f):
         if 'user_id' not in session:
             return redirect(url_for('login', next=request.url))
         return f(*args, **kwargs)
+
     return decorated_function
 
 
-def update_entities():
-    temperatures = dataGenerator.generate_temperature_values(100, 0.5, 25, 0.1)
+def update_entities(start_value):
+    temperatures = dataGenerator.generate_temperature_values(100, 0.5, start_value, 0.05)
+
     for i in range(0, 100):
         payload = {
-            "temperature" : temperatures[i]
+            "temperature": temperatures[i]
         }
         res_update = orion.update_entity("urn:ngsi-ld:TemperatureSensor:001", payload)
         if res_update != 204:
@@ -98,24 +101,37 @@ def monitoring():
 @app.route('/generation', methods=['GET', 'POST'])
 @login_required
 def generation():
-    res_init = orion.init_entites()
-    if res_init != 201:
-        err = "Error in init Orion: " + str(res_init)
+    sensor_type = "TemperatureSensor"
+    res_entity = orion.init_entites(sensor_type, 20.0)
+    if res_entity != 201 and res_entity != 200:
+        err = "Error in init Orion: " + str(res_entity)
         return render_template("error.html", message=err)
+
     res_subscription = orion.init_subscriptions("Quantumleap subscription",
+                                                sensor_type,
                                                 "normalized",
                                                 "http://quantumleap:8668/v2/notify")
     if res_subscription != 201:
         err = "Error in doing subscription: " + str(res_subscription)
         return render_template("error.html", message=err)
+
     res_subscription = orion.init_subscriptions("Perseo-FE subscription",
+                                                sensor_type,
                                                 "normalized",
                                                 "http://perseo-fe:9090/notices")
     if res_subscription != 201:
         err = "Error in doing subscription: " + str(res_subscription)
         return render_template("error.html", message=err)
 
-    update_entities()
+    res_rule = orion.init_rules("perseo-fe:9090", "temperature_rule",
+                                "SELECT *, temperature? AS temperature FROM iotEvent WHERE (CAST(CAST(temperature?,String), DOUBLE)>=40 AND type='TemperatureSensor')",
+                                "WARNING! Possible fire in progress/Temperature sensor malfunction... Detected temperature: ${temperature}°C",
+                                "mirkocaforio2002@gmail.com", "Temperature Notify")
+    if res_rule != 200:
+        err = "Error in rule creation: " + str(res_rule)
+        return render_template("error.html", message=err)
+
+    update_entities(20.0)
 
 
 if __name__ == '__main__':

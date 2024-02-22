@@ -155,6 +155,11 @@ class OrionAPI(object):
         response = requests.delete(url, headers=self.header)
         return response.status_code
 
+    def get_rule_by_name(self, perseoIP, rule_name):
+        url = f'http://{perseoIP}/rules/{rule_name}'
+        response = requests.get(url, headers=self.header_subscription)
+        return response.status_code
+
     def get_rules(self, perseoIP):
         url = f'http://{perseoIP}/rules'
         response = requests.get(url, headers=self.header_subscription)
@@ -170,26 +175,27 @@ class OrionAPI(object):
         response = requests.delete(url, headers=self.header_subscription)
         return response.status_code
 
-    def init_entites(self):
+    def init_entites(self, type, temperature_value):
         if self.entity_exists("urn:ngsi-ld:TemperatureSensor:001"):
-            self.delete_entity("urn:ngsi-ld:TemperatureSensor:001")
+            return 200
 
+        # self.delete_entity("urn:ngsi-ld:TemperatureSensor:001")
         payload = {
             "id": "urn:ngsi-ld:TemperatureSensor:001",
-            "type": "TemperatureSensor",
+            "type": type,
             "category": {
                 "type": "Property",
                 "value": "sensor"
             },
             "temperature": {
                 "type": "Property",
-                "value": 25
+                "value": temperature_value
             }
         }
         res = self.insert_entity(payload)
         return res
 
-    def init_subscriptions(self, description, format, uri):
+    def init_subscriptions(self, description, type, format, uri):
         json = self.get_subscriptions()
 
         for sub in json:
@@ -201,7 +207,7 @@ class OrionAPI(object):
             "type": "Subscription",
             "entities": [
                 {
-                    "type": "TemperatureSensor",
+                    "type": type,
                 }
             ],
             "notification": {
@@ -216,26 +222,25 @@ class OrionAPI(object):
         res = self.subscribe(payload)
         return res
 
-    def init_rules(self, perseoIP, rule_name):
-        json = self.get_rules(perseoIP)
+    def init_rules(self, perseoIP, rule_name, text, template, to, subject):
+        status = self.get_rule_by_name(perseoIP, rule_name)
 
-        for rul in json:
-            if rul["name"] == rule_name:
-                self.delete_rule(perseoIP, rul["name"])
+        if status == 200:
+            self.delete_rule(perseoIP, rule_name)
 
         payload = {
             "name": rule_name,
-            "text": "SELECT *, temperature? AS temperature FROM iotEvent WHERE (CAST(CAST(temperature?,String), DOUBLE)>=40 AND type='TemperatureSensor')",
+            "text": text,
             "action": {
                 "type": "email",
-                "template": "WARNING! Possible fire in progress/Temperature sensor malfunction... Detected temperature: ${temperature}°C",
+                "template": template,
                 "parameters": {
-                    "to": "mirkocaforio2002@gmail.com",
+                    "to": to,
                     "from": "perseobdl@gmail.com",
-                    "subject": "Temperature Notify"
+                    "subject": subject
                 }
             }
         }
 
-        res = self.insert_rule(payload, perseoIP, payload)
+        res = self.insert_rule(perseoIP, payload)
         return res

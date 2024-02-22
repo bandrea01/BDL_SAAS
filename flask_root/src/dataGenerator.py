@@ -26,7 +26,6 @@ def generate_temperature_values(n, std_dev, avg, outlier_probability):
             # Generate a normal temperature value
             temperature = np.random.normal(avg, std_dev)
             temperatures.append(temperature)
-
     return temperatures
 
 # Usage example
