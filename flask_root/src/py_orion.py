@@ -155,6 +155,21 @@ class OrionAPI(object):
         response = requests.delete(url, headers=self.header)
         return response.status_code
 
+    def get_rules(self, perseoIP):
+        url = f'http://{perseoIP}/rules'
+        response = requests.get(url, headers=self.header_subscription)
+        return response.json()
+
+    def insert_rule(self, perseoIP, data):
+        url = f'http://{perseoIP}/rules'
+        response = requests.post(url, headers=self.header_subscription, json=data)
+        return response.status_code
+
+    def delete_rule(self, perseoIP, rule_name):
+        url = f'http://{perseoIP}/rules/{rule_name}'
+        response = requests.delete(url, headers=self.header_subscription)
+        return response.status_code
+
     def init_entites(self):
         if self.entity_exists("urn:ngsi-ld:TemperatureSensor:001"):
             self.delete_entity("urn:ngsi-ld:TemperatureSensor:001")
@@ -199,4 +214,28 @@ class OrionAPI(object):
             }
         }
         res = self.subscribe(payload)
+        return res
+
+    def init_rules(self, perseoIP, rule_name):
+        json = self.get_rules(perseoIP)
+
+        for rul in json:
+            if rul["name"] == rule_name:
+                self.delete_rule(perseoIP, rul["name"])
+
+        payload = {
+            "name": rule_name,
+            "text": "SELECT *, temperature? AS temperature FROM iotEvent WHERE (CAST(CAST(temperature?,String), DOUBLE)>=40 AND type='TemperatureSensor')",
+            "action": {
+                "type": "email",
+                "template": "WARNING! Possible fire in progress/Temperature sensor malfunction... Detected temperature: ${temperature}°C",
+                "parameters": {
+                    "to": "mirkocaforio2002@gmail.com",
+                    "from": "perseobdl@gmail.com",
+                    "subject": "Temperature Notify"
+                }
+            }
+        }
+
+        res = self.insert_rule(payload, perseoIP, payload)
         return res
