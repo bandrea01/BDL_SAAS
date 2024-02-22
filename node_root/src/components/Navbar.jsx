@@ -104,7 +104,7 @@ const Navbar = () => {
                                 </a>
                             ) : (
                                 nav.id === "management" ? (
-                                    <a href="http://flask:8432">
+                                    <a href="http://localhost:8432">
                                         {t(nav.title)}
                                     </a>
                                 ) : (
