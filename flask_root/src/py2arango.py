@@ -18,6 +18,7 @@ def create_pure_node_from_ifc_entity(ifc_entity):
     return node
 
 
+existing_nodes = set()
 existing_edges = set()
 
 
@@ -26,12 +27,17 @@ existing_edges = set()
 # Output: a subgraph
 def create_graph_from_ifc_entity_all(db, ifc_entity, ifc_file, nodes_name, edges_name):
     node = create_pure_node_from_ifc_entity(ifc_entity)
-    collection = db[nodes_name]
+    # collection = db[nodes_name]
 
     # Check if node already exists in the database
-    existing_node = collection.get(node["_key"])
-    if not existing_node:
+    # existing_node = collection.get(node["_key"])
+    # if not existing_node:
+    #    collection.insert(node)
+    node_key = node["_key"]
+    if node_key not in existing_nodes:
+        collection = db[nodes_name]
         collection.insert(node)
+        existing_nodes.add(node_key)
 
     for i in range(ifc_entity.__len__()):
         if ifc_entity[i]:
@@ -40,15 +46,21 @@ def create_graph_from_ifc_entity_all(db, ifc_entity, ifc_file, nodes_name, edges
                     continue
                 else:
                     sub_node = create_pure_node_from_ifc_entity(ifc_entity[i])
-                    sub_collection = db[nodes_name]
+                    # sub_collection = db[nodes_name]
 
                     # Check if sub node already exists in the database
-                    existing_sub_node = sub_collection.get(sub_node["_key"])
-                    if not existing_sub_node:
+                    # existing_sub_node = sub_collection.get(sub_node["_key"])
+                    # if not existing_sub_node:
+                    #    sub_collection.insert(sub_node)
+
+                    sub_node_key = sub_node["_key"]
+                    if sub_node_key not in existing_nodes:
+                        sub_collection = db[nodes_name]
                         sub_collection.insert(sub_node)
+                        existing_nodes.add(sub_node_key)
 
                     # Controllo se l'arco esiste già
-                    edge_key = (node["_key"], sub_node["_key"])
+                    edge_key = (node["_key"], sub_node["_key"], ifc_entity.wrapped_data.get_argument_name(i))
                     if edge_key not in existing_edges:
                         rel_collection = db[edges_name]
                         rel_collection.insert({
@@ -61,15 +73,21 @@ def create_graph_from_ifc_entity_all(db, ifc_entity, ifc_file, nodes_name, edges
             elif ifc_entity.wrapped_data.get_argument_type(i) == 'AGGREGATE OF ENTITY INSTANCE':
                 for sub_entity in ifc_entity[i]:
                     sub_node = create_pure_node_from_ifc_entity(sub_entity)
-                    sub_collection = db[nodes_name]
+                    # sub_collection = db[nodes_name]
 
                     # Check if sub node already exists in the database
-                    existing_sub_node = sub_collection.get(sub_node["_key"])
-                    if not existing_sub_node:
+                    # existing_sub_node = sub_collection.get(sub_node["_key"])
+                    # if not existing_sub_node:
+                    #    sub_collection.insert(sub_node)
+
+                    sub_node_key = sub_node["_key"]
+                    if sub_node_key not in existing_nodes:
+                        sub_collection = db[nodes_name]
                         sub_collection.insert(sub_node)
+                        existing_nodes.add(sub_node_key)
 
                     # Controllo se l'arco esiste già
-                    edge_key = (node["_key"], sub_node["_key"])
+                    edge_key = (node["_key"], sub_node["_key"], ifc_entity.wrapped_data.get_argument_name(i))
                     if edge_key not in existing_edges:
                         rel_collection = db[edges_name]
                         rel_collection.insert({
@@ -85,15 +103,21 @@ def create_graph_from_ifc_entity_all(db, ifc_entity, ifc_file, nodes_name, edges
             for wrapped_rel in inverse_relations:
                 rel_entity = ifc_file.by_id(wrapped_rel.id())
                 sub_node = create_pure_node_from_ifc_entity(rel_entity)
-                sub_collection = db[nodes_name]
+                # sub_collection = db[nodes_name]
 
                 # Check if sub node already exists in the database
-                existing_sub_node = sub_collection.get(sub_node["_key"])
-                if not existing_sub_node:
+                # existing_sub_node = sub_collection.get(sub_node["_key"])
+                # if not existing_sub_node:
+                #    sub_collection.insert(sub_node)
+
+                sub_node_key = sub_node["_key"]
+                if sub_node_key not in existing_nodes:
+                    sub_collection = db[nodes_name]
                     sub_collection.insert(sub_node)
+                    existing_nodes.add(sub_node_key)
 
                 # Controllo se l'arco esiste già
-                edge_key = (sub_node["_key"], sub_node["_key"])
+                edge_key = (sub_node["_key"], sub_node["_key"], rel_name)
                 if edge_key not in existing_edges:
                     rel_collection = db[edges_name]
                     rel_collection.insert({
