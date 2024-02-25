@@ -3,7 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>OpenBIM App</title>
+    <link rel="icon" href="public/logo_black.png">
+    <title>Big Data Lab | Software as a service</title>
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/icon?family=Material+Icons"
@@ -54,13 +55,6 @@
         };
 
         closeButton.onclick = function () {
-          popupContainer.style.display = "none";
-        };
-
-        submitButton.onclick = function () {
-          const guideText = document.getElementById("guide-text").value;
-          // Qui puoi fare qualcosa con il testo della guida, ad esempio inviarlo a un server o trattarlo localmente
-          console.log("Guida:", guideText);
           popupContainer.style.display = "none";
         };
       });
