@@ -57,11 +57,17 @@ ifcLoader.onIfcLoaded.add(async (model) => {
   highlighter.update();
 });
 
+const length = new OBC.LengthMeasurement(viewer);
+length.enabled = true;
+length.snapDistance = 1;
+
+ondblclick = () => length.create();
+
 const mainToolbar = new OBC.Toolbar(viewer);
 mainToolbar.addChild(
   ifcLoader.uiElement.get("main"),
   ifcManager.uiElement.get("main"),
-  propertiesProcessor.uiElement.get("main")
+  propertiesProcessor.uiElement.get("main"),
 );
 viewer.ui.addToolbar(mainToolbar);
 
@@ -74,3 +80,9 @@ window.addEventListener("thatOpen", async (event: any) => {
     scene.add(model);
   }
 });
+
+window.onkeydown = (event) => {
+  if (event.code === "Delete" || event.code === "Backspace") {
+    length.delete();
+  }
+};

@@ -91,6 +91,91 @@ hr {
   /* 3 */
 }
 
+
+/* ! STILE PER IL BOTTONE */
+/* Aggiungi i tuoi stili CSS personalizzati qui */
+.popup-container {
+  justify-content: center;
+  align-items: center;
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+}
+
+.popup-content {
+  background-color: #06191D;
+  margin: 20% auto;
+  padding: 20px;
+  border: 1px solid #fafafa;
+  width: 80%;
+  max-width: 830px;
+  border-radius: 10px;
+  position: relative; /* Aggiungi questa regola */
+  transform: translateY(-50%); /* Centra verticalmente */
+}
+
+.popup-container h2 {
+  font-weight: bolder;
+  font-size: 30px;
+  color: #bef134;
+}
+
+.popup-container p {
+  font-weight: normal;
+  font-size: 15px;
+  color: #fafafa;
+}
+
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.help-button {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 10000;
+  width: 40px; /* Imposta la larghezza del bottone */
+  height: 40px; /* Imposta l'altezza del bottone */
+  border-radius: 50%; /* Rendi il bottone circolare */
+  background-color: #bef134; /* Cambia il colore di sfondo del bottone */
+  color: black; /* Cambia il colore del testo del bottone */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.3s ease-in-out;
+  transition: color 0.3s ease-in-out;
+}
+
+.help-button:hover {
+  background-color: black; /* Cambia il colore di sfondo del bottone al passaggio del mouse */
+  color: #bef134;
+  cursor: pointer;
+}
+
+
+
+
+
+
+
+
+
 /*
 Add the correct text decoration in Chrome, Edge, and Safari.
 */
