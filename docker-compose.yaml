@@ -15,14 +15,14 @@ services:
     networks:
       - general_network
 
-  react_app:
+  node_app:
     build:
       context: ./node_root
       dockerfile: Dockerfile
     ports:
       - "5173:5173"
     volumes:
-      - react_app:/app
+      - node_app:/app
     networks:
       - general_network
 
@@ -176,7 +176,7 @@ services:
 
 volumes:
   flask_app:
-  react_app:
+  node_app:
   arangodb_data:
   arangodb_apps:
   arangodb_backup:
