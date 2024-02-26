@@ -187,9 +187,17 @@ class OrionAPI(object):
                 "type": "Property",
                 "value": "sensor"
             },
+            "location": {
+                "type": "GeoProperty",
+                "value": {
+                    "type": "Point",
+                    "coordinates": [-8, 44]
+                }
+            },
             "temperature": {
                 "type": "Property",
-                "value": temperature_value
+                "value": temperature_value,
+                "unitCode": "CEL"
             }
         }
         res = self.insert_entity(payload)
