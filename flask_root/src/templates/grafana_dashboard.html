@@ -22,7 +22,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            flex-direction: column; /* Aggiunto per centrare i contenuti verticalmente */
+            flex-direction: column;
         }
 
         .button-container {
@@ -49,13 +49,106 @@
             background-color: #021823;
             color: #fafafa;
         }
-    </style>
 
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #021823;
+            color: #fafafa;
+            margin: 5% auto;
+            padding: 10px;
+            max-width: 500px;
+            border-radius: 15px;
+            width: 80%;
+            height: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content input[type=text] {
+            width: 100%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: vertical;
+            font-weight: bold;
+        }
+
+        /* Stile per la tendina */
+        .modal-content select {
+            width: 100%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background-color: #fff; /* Aggiunto colore di sfondo bianco */
+            color: #021823; /* Aggiunto colore del testo nero */
+            font-weight: bold;
+        }
+
+        .button-container {
+            padding-top: 10px; /* Ridimensiona lo spazio sopra il bottone */
+            align-self: flex-start; /* Posiziona il contenitore dei bottoni all'inizio del contenitore flessibile */
+        }
+
+        .modal-content button {
+            background-color: #aadb22;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+            color: #021823; /* Aggiunto colore del testo nero */
+            font-weight: bold;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .modal-content button:hover {
+            background-color: #021823;
+            color: #fafafa;
+            border: 1px solid #fafafa;
+        }
+    </style>
 </head>
 <body>
 <div class="flex-container">
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <form id="dataForm">
+                <label for="dataInput1">Notification canal:</label>
+                <select id="canal" name="Notification canal">
+                    <option value="mailOption" selected>Email</option>
+                    {#                    <option value="sms">SMS</option>#}
+                </select>
+                <label for="mailInput">SMS or email</label>
+                <input type="text" id="mailInput" name="mailInput">
+                <label for="threshold">Temperature threshold for notification</label>
+                <input type="range" id="thresholdSlider" name="threshold" min="35" max="50" value="40">
+                <output for="thresholdSlider" id="thresholdOutput">50</output>
+                <div class="button-container">
+                    <button type="button" id="saveButton">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
     <iframe src="http://grafana:3000/d/fd42fcb5-adbf-4f4e-89fb-c2b47b7dc1e6/temperaturemonitoration?orgId=1&refresh=auto&from=1708516289516&to=1708516589517&viewPanel=1"
-            width="100%" height="100%"></iframe>
+            width="100%" height="80%"></iframe>
     <div class="button-container">
         <button class="simulation-button" id="generation">Start simulation</button>
         <a href="/menu">
@@ -64,25 +157,75 @@
     </div>
 </div>
 <script>
-    document.getElementById('generation').addEventListener('click', function () {
-        // Disabilita il bottone
-        this.disabled = true;
+    var modal = document.getElementById("myModal");
+    var dataForm = document.getElementById("dataForm");
+    var saveButton = document.getElementById("saveButton");
+    var slider = document.getElementById("thresholdSlider");
+    var output = document.getElementById("thresholdOutput");
+    output.innerHTML = slider.value + "°C";
+    slider.oninput = function () {
+        output.innerHTML = this.value + "°C";
+    };
 
-        // Esegui la richiesta fetch
-        fetch('/generation')
-            .then(response => {
-                // Controlla se la risposta è ok
-                if (!response.ok) {
-                    throw new Error('Response error! Inspect console logs for more informations');
+    function isValidEmail(email) {
+        var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailPattern.test(email);
+    }
+
+    saveButton.onclick = function () {
+        {#var dataInput1 = document.getElementById("dataInput1").value;#}
+        var mailInserted = document.getElementById("mailInput").value;
+        var thresholdInserted = document.getElementById("thresholdSlider").value;
+
+        {#localStorage.setItem("dataInput1", dataInput1);#}
+        localStorage.setItem("mail", mailInserted);
+        localStorage.setItem("threshold", thresholdInserted);
+
+
+        if (mailInserted !== "") {
+            if (isValidEmail(mailInserted)) {
+                alert('Saved!');
+                modal.style.display = "none";
+                {#console.log(dataInput1);#}
+                console.log(mailInserted);
+                console.log(thresholdInserted);
+            } else {
+                alert('Error! Bad format email.');
+            }
+        } else {
+            alert("Error! Empty fields.");
+        }
+
+    }
+
+    document.getElementById("generation").onclick = function () {
+        {#var savedDataInput1 = localStorage.getItem("dataInput1");#}
+        var savedMailInserted = localStorage.getItem("mail");
+        var thresholdInserted = localStorage.getItem("threshold");
+
+        if (savedMailInserted && thresholdInserted) {
+            fetch('/generation', {
+                method: 'POST',
+                body: JSON.stringify({mail: savedMailInserted, threshold: thresholdInserted}),
+                headers: {
+                    'Content-Type': 'application/json'
                 }
-                alert('Simulation started! Watch on the dashboard');
-            }).finally(() => {
-            setTimeout(() => {
-                this.disabled = false;
-            }, 500 * 1000);
-        });
-    });
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Response error! Inspect console logs for more informations');
+                    }
+                }).catch(error => {
+                console.error('Error:', error);
+            });
+        } else {
+            alert('Please set your data before starting the simulation.');
+        }
+    };
+
+    window.onload = function () {
+        modal.style.display = "block";
+    }
 </script>
 </body>
 </html>
-

@@ -61,8 +61,6 @@ const length = new OBC.LengthMeasurement(viewer);
 length.enabled = true;
 length.snapDistance = 1;
 
-ondblclick = () => length.create();
-
 const mainToolbar = new OBC.Toolbar(viewer);
 mainToolbar.addChild(
   ifcLoader.uiElement.get("main"),
@@ -86,3 +84,13 @@ window.onkeydown = (event) => {
     length.delete();
   }
 };
+
+// Aggiungi un gestore di eventi per l'evento click della rotellina del mouse
+window.addEventListener("mousedown", function(event) {
+  // Verifica se il pulsante cliccato è il pulsante della rotellina del mouse
+  if (event.button === 1) { // Il pulsante della rotellina del mouse ha il codice 1
+      // Attiva la misurazione
+      length.create();
+  }
+});
+
