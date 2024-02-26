@@ -139,7 +139,7 @@
                 <label for="mailInput">SMS or email</label>
                 <input type="text" id="mailInput" name="mailInput">
                 <label for="threshold">Temperature threshold for notification</label>
-                <input type="range" id="thresholdSlider" name="threshold" min="35" max="50" value="40">
+                <input type="range" id="thresholdSlider" name="threshold" min="35" max="50" step="0.1" value="40">
                 <output for="thresholdSlider" id="thresholdOutput">50</output>
                 <div class="button-container">
                     <button type="button" id="saveButton">Save</button>
@@ -162,9 +162,10 @@
     var saveButton = document.getElementById("saveButton");
     var slider = document.getElementById("thresholdSlider");
     var output = document.getElementById("thresholdOutput");
-    output.innerHTML = slider.value + "°C";
+    output.innerHTML = parseFloat(slider.value).toFixed(1) + "°C";
+
     slider.oninput = function () {
-        output.innerHTML = this.value + "°C";
+        output.innerHTML = parseFloat(this.value).toFixed(1) + "°C";
     };
 
     function isValidEmail(email) {

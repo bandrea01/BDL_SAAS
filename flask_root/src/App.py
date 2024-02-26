@@ -129,9 +129,9 @@ def generation():
         return render_template("error.html", message=err)
 
     res_rule = orion.init_rules("perseo-fe:9090", "temperature_rule",
-                                "SELECT *, temperature? AS temperature FROM iotEvent WHERE (CAST(CAST(temperature?,String), DOUBLE)>=40 AND type='TemperatureSensor')",
+                                f"SELECT *, temperature? AS temperature FROM iotEvent WHERE (CAST(CAST(temperature?,String), DOUBLE)>={threshold} AND type='TemperatureSensor')",
                                 "WARNING! Possible fire in progress/Temperature sensor malfunction... Detected temperature: ${temperature}°C",
-                                "mirkocaforio2002@gmail.com", "Temperature Notify")
+                                mail, "Temperature Notify")
     if res_rule != 200:
         err = "Error in rule creation: " + str(res_rule)
         return render_template("error.html", message=err)
