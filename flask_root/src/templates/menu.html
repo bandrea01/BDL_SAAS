@@ -18,6 +18,7 @@
         }
 
         .flex-container h1 {
+            color: #021823;
             font-size: 50px;
             font-weight: bolder;
         }
@@ -49,8 +50,8 @@
             padding: 20px;
             box-shadow: 2px 2px 8px rgb(0 0 0);
             transition: transform 0.2s ease-in-out;
-            background-color: black;
-            background-image: url("{{ url_for('static', filename='ifc_image.png') }}");
+            background-color: #021823;
+            background-image: url("{{ url_for('static', filename='arangodb_image.png') }}");
             background-size: cover;
         }
 
@@ -64,19 +65,6 @@
             box-shadow: 2px 2px 8px rgb(0 0 0);
             transition: transform 0.2s ease-in-out;
             background-image: url("{{ url_for('static', filename='model_image.png') }}");
-            background-size: cover;
-        }
-
-        .card-graph {
-            width: 200px;
-            height: 300px;
-            border-radius: 8px;
-            margin: 10px;
-            text-align: center;
-            padding: 20px;
-            box-shadow: 2px 2px 8px rgb(0 0 0);
-            transition: transform 0.2s ease-in-out;
-            background-image: url("{{ url_for('static', filename='arangodb_image.png') }}");
             background-size: cover;
         }
 
@@ -133,7 +121,7 @@
 
         }
 
-        .card-graph:hover, .card-remapping:hover, .card-react:hover, .card-grafana:hover {
+        .card-remapping:hover, .card-react:hover, .card-grafana:hover {
             transform: scale(1.05);
             border-radius: 8px;
             margin: 10px;
@@ -143,23 +131,98 @@
             cursor: pointer;
         }
 
+        .navbar {
+            display: flex;
+            align-items: center;
+            background-color: #021823;
+            padding: 10px 20px;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: 12%;
+        }
+
+        .navbar-container {
+            display: flex;
+            align-items: center;
+            padding: 0 50px;
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        .title-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .menu {
+            display: flex;
+            justify-content: end;
+        }
+
+        .title-container img {
+            width: 90px;
+            height: auto;
+            margin-right: 10px;
+            padding-right: 40px;
+        }
+
+        .title-container h1 {
+            color: #fafafa;
+            margin: 0;
+            font-size: 40px;
+        }
+
+        .menu ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 10px;
+            font-weight: bold;
+        }
+
+        .menu li {
+            display: inline;
+            margin-left: 15px;
+        }
+
+        .menu a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .menu a:hover {
+            text-decoration: underline;
+        }
+
 
     </style>
 </head>
 <body>
 <div class="flex-container">
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="title-container">
+                <a href="https://datalab.unisalento.it/">
+                    <img src="../static/logo_black.png" alt="Logo">
+                </a>
+                <h1>Big Data Lab | Software as a Service</h1>
+            </div>
+            <div class="menu">
+                <ul>
+                    <li><a href="../static/manuale_utente.pdf" download="manuale_utente.pdf">Manuale Utente</a>
+                    </li>
+                    <li><a href="percorso/al/tuo/documento.pdf" download="manuale_tecnico.pdf">Manuale Tecnico</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
     <h1>Choose from one of this cards</h1>
     <div class="card-container">
         <a href="http://localhost:5173">
             <div class="card-react">
                 <h2>React Viewer</h2>
                 <p>Render 3D model of IFC file</p>
-            </div>
-        </a>
-        <a href="https://example.com/card2">
-            <div class="card-graph">
-                <h2>Graph viewer</h2>
-                <p>View the graph in ArangoDB</p>
             </div>
         </a>
         <a href="/mapping">

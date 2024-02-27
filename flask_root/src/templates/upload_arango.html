@@ -26,6 +26,7 @@
             width: 400px; /* Aumentato il width per lasciare spazio al testo */
             text-align: center; /* Centrare il testo */
             box-shadow: 2px 10px 20px 0 rgb(0 0 0 / 66%);
+
         }
 
         .upload-container h2 {
@@ -97,7 +98,7 @@
             justify-content: center;
             align-items: center;
             flex-direction: column; /* Aggiunto per centrare i contenuti verticalmente */
-            padding-bottom: 40px;
+            padding-bottom: 20%;
         }
 
         .flex-container h1 {
@@ -121,11 +122,91 @@
             height: auto;
         }
 
+        .navbar {
+            display: flex;
+            align-items: center;
+            background-color: #021823;
+            padding: 10px 20px;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            height: 12%;
+        }
+
+        .navbar-container {
+            display: flex;
+            align-items: center;
+            padding: 0 50px;
+            width: 100%;
+            justify-content: space-between;
+        }
+
+        .title-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .menu {
+            display: flex;
+            justify-content: end;
+        }
+
+        .title-container img {
+            width: 90px;
+            height: auto;
+            margin-right: 10px;
+            padding-right: 40px;
+        }
+
+        .title-container h1 {
+            color: #fafafa;
+            margin: 0;
+            font-size: 40px;
+        }
+
+        .menu ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 10px;
+            font-weight: bold;
+        }
+
+        .menu li {
+            display: inline;
+            margin-left: 15px;
+        }
+
+        .menu a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .menu a:hover {
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
 
 <div class="flex-container">
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="title-container">
+                <a href="https://datalab.unisalento.it/">
+                    <img src="../static/logo_black.png" alt="Logo">
+                </a>
+                <h1>Big Data Lab | Software as a Service</h1>
+            </div>
+            <div class="menu">
+                <ul>
+                    <li><a href="../static/manuale_utente.pdf" download="manuale_utente.pdf">Manuale Utente</a>
+                    </li>
+                    <li><a href="percorso/al/tuo/documento.pdf" download="manuale_tecnico.pdf">Manuale Tecnico</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
     <div class="flex-container">
         <h1>Upload IFC file to mapping in ArangoDB</h1>
     </div>
@@ -140,12 +221,12 @@
 </div>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
+    document.addEventListener("DOMContentLoaded", function () {
         const fileInput = document.getElementById("file-upload");
         const fileButton = document.querySelector(".file-button");
         const uploadForm = document.querySelector("form");
 
-        fileInput.addEventListener("change", function() {
+        fileInput.addEventListener("change", function () {
             const file = fileInput.files[0];
             const allowedExtensions = ["ifc"];
 
@@ -161,7 +242,7 @@
             }
         });
 
-        uploadForm.addEventListener("submit", function(event) {
+        uploadForm.addEventListener("submit", function (event) {
             const file = fileInput.files[0];
             if (!file) {
                 event.preventDefault(); // Impedisce l'invio del modulo se non è stato selezionato alcun file
@@ -170,7 +251,6 @@
         });
     });
 </script>
-
 
 
 </body>

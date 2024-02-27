@@ -168,7 +168,7 @@ services:
         - PERSEO_SMTP_PORT=465
         - PERSEO_SMTP_SECURE=true
         - PERSEO_SMTP_AUTH_USER=perseobdl@gmail.com
-        - PERSEO_SMTP_AUTH_PASS=ybxdpminubbnlcka
+        - PERSEO_SMTP_AUTH_PASS=klalocrosrjytoaz
     deploy:
         replicas: 1
         restart_policy:
