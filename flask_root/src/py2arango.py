@@ -4,6 +4,47 @@ from uuid import uuid4
 import ifcopenshell
 
 
+def insertSensor(db, nodes_name, edges_name, name):
+    # Inserimento sensore
+    sensor_node = {
+        "_key": "TemperatureSensor001",
+        "type": "sensor",
+        "name": "TemperatureSensor001",
+        "sensor_type": "temperature",
+        "properties": {
+            "accuracy": "+/- 0.1°C",
+            "measurement_range": "-20°C to 50°C"
+        }
+    }
+    sensor_key = sensor_node["_key"]
+
+    # Definire la query AQL per ottenere il nodo corrispondente al criterio di ricerca
+    query = f"""
+            FOR i IN {nodes_name}
+            FILTER i.name == {name}
+            LIMIT 1
+            RETURN i
+        """
+
+    # Eseguire la query AQL con il criterio di ricerca
+    cursor = db.aql.execute(query)
+
+    db[nodes_name].insert(sensor_node)
+
+    try:
+        # Ottenere il primo documento dalla query
+        wall = next(cursor, None)
+
+        sensor_edge = {
+            "_from": wall["_id"],
+            "_to": f"{nodes_name}/{sensor_key}",
+            "rel_name": "HasTemperatureSensor"
+        }
+        db[edges_name].insert(sensor_edge)
+    except StopIteration:
+        pass
+
+
 # Create the basic node with literal attributes and the class hierarchy
 # Input: ifc_entity - an instance, ifc_file - the parsed ifc-SPF
 # Output: basic nodes with properties for literal attributes and labels for ifc class hierarchy
@@ -161,8 +202,10 @@ if not (db.has_collection(nodes_name) and db.has_collection(edges_name)):
     ifc_file_path = sys.argv[1]
     ifc_file = ifcopenshell.open(ifc_file_path)
 
-    # Inizializzazione e utilizzo del grafo
+    # Creazione grafo
     create_full_graph(db, ifc_file, nodes_name, edges_name)
+
+    insertSensor(db, nodes_name, edges_name, 'IfcWallStandardCase')
 
     graph = db.create_graph(graph_name, edge_definitions=[
         {
