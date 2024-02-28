@@ -91,6 +91,15 @@ hr {
   /* 3 */
 }
 
+.tooltip {
+  background-color: rgba(6, 25, 29, 0.8);
+  border-radius: 15px;
+  color: white;
+  font-weight: bold;
+  font-size: 14px;
+  padding: 5px 10px;
+}
+
 
 /* ! STILE PER IL BOTTONE */
 /* Aggiungi i tuoi stili CSS personalizzati qui */
