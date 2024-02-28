@@ -8,7 +8,8 @@ import ifcopenshell
 # Input: ifc_entity - an instance, ifc_file - the parsed ifc-SPF
 # Output: basic nodes with properties for literal attributes and labels for ifc class hierarchy
 def create_pure_node_from_ifc_entity(ifc_entity):
-    node = {'_key': str(ifc_entity.id() if ifc_entity.id() != 0 else uuid4()), 'name': ifc_entity.is_a()}
+    key = f"{ifc_entity.is_a()}-{str(ifc_entity.id() if ifc_entity.id() != 0 else uuid4())}"
+    node = {'_key': key, 'name': ifc_entity.is_a()}
     attributes_type = ['ENTITY INSTANCE', 'AGGREGATE OF ENTITY INSTANCE', 'DERIVED']
     for i in range(ifc_entity.__len__()):
         if not ifc_entity.wrapped_data.get_argument_type(i) in attributes_type:
