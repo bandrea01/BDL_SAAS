@@ -1,10 +1,11 @@
 import requests
 
 
-class OrionAPI(object):
+class FiwareAPI(object):
 
     def __init__(self):
         self.orionIP = None
+        self.perseoIP =None
         self.header = {
             'Content-Type': 'application/json',
             'Link': '<https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.7.jsonld>; '
@@ -20,6 +21,12 @@ class OrionAPI(object):
 
     def getOrionIP(self):
         return self.orionIP
+
+    def setPerseoIP(self, perseoIP):
+        self.perseoIP = perseoIP
+
+    def getPerseoIP(self):
+        return self.perseoIP
 
     @staticmethod
     def custom_query(http_request_type, http_header, http_data, query_url):
@@ -155,23 +162,23 @@ class OrionAPI(object):
         response = requests.delete(url, headers=self.header)
         return response.status_code
 
-    def get_rule_by_name(self, perseoIP, rule_name):
-        url = f'http://{perseoIP}/rules/{rule_name}'
+    def get_rule_by_name(self, rule_name):
+        url = f'http://{self.perseoIP}/rules/{rule_name}'
         response = requests.get(url, headers=self.header_subscription)
         return response.status_code
 
-    def get_rules(self, perseoIP):
-        url = f'http://{perseoIP}/rules'
+    def get_rules(self):
+        url = f'http://{self.perseoIP}/rules'
         response = requests.get(url, headers=self.header_subscription)
         return response.json()
 
-    def insert_rule(self, perseoIP, data):
-        url = f'http://{perseoIP}/rules'
+    def insert_rule(self, data):
+        url = f'http://{self.perseoIP}/rules'
         response = requests.post(url, headers=self.header_subscription, json=data)
         return response.status_code
 
-    def delete_rule(self, perseoIP, rule_name):
-        url = f'http://{perseoIP}/rules/{rule_name}'
+    def delete_rule(self, rule_name):
+        url = f'http://{self.perseoIP}/rules/{rule_name}'
         response = requests.delete(url, headers=self.header_subscription)
         return response.status_code
 
@@ -230,11 +237,11 @@ class OrionAPI(object):
         res = self.subscribe(payload)
         return res
 
-    def init_rules(self, perseoIP, rule_name, text, template, to, subject):
-        status = self.get_rule_by_name(perseoIP, rule_name)
+    def init_rules(self, rule_name, text, template, to, subject):
+        status = self.get_rule_by_name(rule_name)
 
         if status == 200:
-            self.delete_rule(perseoIP, rule_name)
+            self.delete_rule(rule_name)
 
         payload = {
             "name": rule_name,
@@ -250,5 +257,5 @@ class OrionAPI(object):
             }
         }
 
-        res = self.insert_rule(perseoIP, payload)
+        res = self.insert_rule(payload)
         return res

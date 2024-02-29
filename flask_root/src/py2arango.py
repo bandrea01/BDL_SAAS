@@ -1,3 +1,4 @@
+import os
 import sys
 from arango import ArangoClient
 from uuid import uuid4
@@ -186,7 +187,7 @@ if len(sys.argv) != 2:
     sys.exit(1)
 
 # Initialize the ArangoDB client
-client = ArangoClient(hosts='http://bdl_saas-arangodb-1:8529')
+client = ArangoClient(hosts='http://arangodb:8529')
 db = client.db('prova', username='root', password='BDLaaS')
 
 filename = sys.argv[1].rsplit('/', 1)[-1].split('.')[-2]

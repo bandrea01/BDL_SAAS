@@ -1,4 +1,3 @@
-import json
 from functools import wraps
 from flask import Flask, request, session, jsonify
 from flask_cors import CORS
@@ -6,7 +5,7 @@ from flask import render_template
 from flask import redirect, url_for
 import dataGenerator
 import time
-from py_orion import OrionAPI
+from py_fiware import FiwareAPI
 from arango import ArangoClient
 
 import os
@@ -15,11 +14,12 @@ app = Flask(__name__)
 app.secret_key = 'cristian'
 CORS(app)
 
-orion = OrionAPI()
-orion.setOrionIP("orion:1026")
+fiware = FiwareAPI()
+fiware.setOrionIP("orion:1026")
+fiware.setPerseoIP("perseo-fe:9090")
 
 # Initialize the ArangoDB client
-client = ArangoClient(hosts='http://bdl_saas-arangodb-1:8529')
+client = ArangoClient(hosts='http://arangodb:8529')
 db = client.db('prova', username='root', password='BDLaaS')
 
 
@@ -49,7 +49,7 @@ def update_entities(start_value):
         payload = {
             "temperature": temperatures[i]
         }
-        res_update = orion.update_entity("urn:ngsi-ld:TemperatureSensor:001", payload)
+        res_update = fiware.update_entity("urn:ngsi-ld:TemperatureSensor:001", payload)
         if res_update != 204:
             err_update = "Error in update data " + str(res_update)
             return render_template("error.html", msg=err_update)
@@ -115,31 +115,31 @@ def generation():
     threshold = data.get("threshold")
 
     sensor_type = "TemperatureSensor"
-    res_entity = orion.init_entites(sensor_type, 20.0)
+    res_entity = fiware.init_entites(sensor_type, 20.0)
     if res_entity != 201 and res_entity != 200:
         err = "Error in init Orion: " + str(res_entity)
         return render_template("error.html", message=err)
 
-    res_subscription = orion.init_subscriptions("Quantumleap subscription",
-                                                sensor_type,
+    res_subscription = fiware.init_subscriptions("Quantumleap subscription",
+                                                 sensor_type,
                                                 "normalized",
                                                 "http://quantumleap:8668/v2/notify")
     if res_subscription != 201:
         err = "Error in doing subscription: " + str(res_subscription)
         return render_template("error.html", message=err)
 
-    res_subscription = orion.init_subscriptions("Perseo-FE subscription",
-                                                sensor_type,
+    res_subscription = fiware.init_subscriptions("Perseo-FE subscription",
+                                                 sensor_type,
                                                 "normalized",
                                                 "http://perseo-fe:9090/notices")
     if res_subscription != 201:
         err = "Error in doing subscription: " + str(res_subscription)
         return render_template("error.html", message=err)
 
-    res_rule = orion.init_rules("perseo-fe:9090", "temperature_rule",
+    res_rule = fiware.init_rules("perseo-fe:9090", "temperature_rule",
                                 f"SELECT *, temperature? AS temperature FROM iotEvent WHERE (CAST(CAST(temperature?,String), DOUBLE)>={threshold} AND type='TemperatureSensor')",
                                 "WARNING! Possible fire in progress/Temperature sensor malfunction... Detected temperature: ${temperature}°C",
-                                mail, "Temperature Notify")
+                                 mail, "Temperature Notify")
     if res_rule != 200:
         err = "Error in rule creation: " + str(res_rule)
         return render_template("error.html", message=err)
@@ -161,19 +161,10 @@ def get_all_nodes(nodes_name):
 
     if not nodes_list:
         # Se non ci sono nodi trovati, restituisci un messaggio di errore
-        return jsonify({'error': 'Nodo non trovato'}), 404
+        return jsonify({'error': 'Nodi non trovati'}), 404
 
     # Restituisci i dati JSON
     return jsonify(nodes_list)
-
-    # Inizializza una lista vuota per memorizzare i nodi JSON
-    # nodes_json = []
-
-    # Itera sui risultati del cursore e converte ciascun nodo in JSON
-    # for node in cursor:
-    #    nodes_json.append(node)
-
-    # return jsonify(nodes_json)
 
 
 @app.route("/get_all_edges/<string:edges_name>", methods=["GET"])
@@ -182,14 +173,34 @@ def get_all_edges(edges_name):
 
     cursor = edges.all()
 
-    # Inizializza una lista vuota per memorizzare i nodi JSON
-    edges_json = []
+    nodes_list = list(cursor)
 
-    # Itera sui risultati del cursore e converte ciascun nodo in JSON
-    for edge in cursor:
-        edges_json.append(edge)
+    if not nodes_list:
+        # Se non ci sono nodi trovati, restituisci un messaggio di errore
+        return jsonify({'error': 'Edge non trovati'}), 404
 
-    return jsonify(edges_json)
+    # Restituisci i dati JSON
+    return jsonify(nodes_list)
+
+
+@app.route("/get_nodes_by_name/<string:nodes_name>/<string:key>", methods=["GET"])
+def get_nodes_by_key(nodes_name, key):
+    nodes = db[nodes_name]
+
+    # Definire il criterio di ricerca
+    filter_key = {'_key': key}
+
+    # Ottenere il nodo dalla collezione utilizzando il metodo find() con limit=1
+    cursor = nodes.find(filter_key)
+
+    nodes_list = list(cursor)
+
+    if not nodes_list:
+        # Se non ci sono nodi trovati, restituisci un messaggio di errore
+        return jsonify({'error': 'Nodo non trovato'}), 404
+
+    # Restituisci i dati JSON
+    return jsonify(nodes_list)
 
 
 @app.route("/get_nodes_by_name/<string:nodes_name>/<string:name>", methods=["GET"])
@@ -202,17 +213,14 @@ def get_nodes_by_name(nodes_name, name):
     # Ottenere il nodo dalla collezione utilizzando il metodo find() con limit=1
     cursor = nodes.find(filter_name)
 
-    print(cursor)
+    nodes_list = list(cursor)
 
-    # Inizializza una lista vuota per memorizzare i nodi JSON
-    nodes_json = []
+    if not nodes_list:
+        # Se non ci sono nodi trovati, restituisci un messaggio di errore
+        return jsonify({'error': 'Nodo/i non trovato/i'}), 404
 
-    # Itera sui risultati del cursore e converte ciascun nodo in JSON
-    for node in cursor:
-        print(node)
-        nodes_json.append(node)
-
-    return jsonify(nodes_json)
+    # Restituisci i dati JSON
+    return jsonify(nodes_list)
 
 
 if __name__ == '__main__':
