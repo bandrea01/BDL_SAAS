@@ -1,17 +1,26 @@
+import json
 from functools import wraps
-from flask import Flask, request, session
+from flask import Flask, request, session, jsonify
+from flask_cors import CORS
 from flask import render_template
 from flask import redirect, url_for
 import dataGenerator
 import time
 from py_orion import OrionAPI
+from arango import ArangoClient
 
 import os
 
 app = Flask(__name__)
 app.secret_key = 'cristian'
+CORS(app)
+
 orion = OrionAPI()
 orion.setOrionIP("orion:1026")
+
+# Initialize the ArangoDB client
+client = ArangoClient(hosts='http://bdl_saas-arangodb-1:8529')
+db = client.db('prova', username='root', password='BDLaaS')
 
 
 def login_required(f):
@@ -68,7 +77,7 @@ def login():
         username = request.form['username']
         password = request.form['password']
         if username == os.getenv('DEBUG_USR') and password == os.getenv('DEBUG_PWD'):
-        # if username == "admin" and password == "restapi":
+            # if username == "admin" and password == "restapi":
             session['user_id'] = username
             return redirect(url_for('menu'))
         else:
@@ -101,7 +110,6 @@ def monitoring():
 @app.route('/generation', methods=['GET', 'POST'])
 @login_required
 def generation():
-
     data = request.json
     mail = data.get("mail")
     threshold = data.get("threshold")
@@ -137,6 +145,74 @@ def generation():
         return render_template("error.html", message=err)
 
     update_entities(20.0)
+
+
+"""-------------------    AQL    ---------------------"""
+
+
+@app.route("/get_all_nodes/<string:nodes_name>", methods=["GET"])
+def get_all_nodes(nodes_name):
+    nodes = db[nodes_name]
+
+    cursor = nodes.all()
+
+    # Convertire il cursore in una lista
+    nodes_list = list(cursor)
+
+    if not nodes_list:
+        # Se non ci sono nodi trovati, restituisci un messaggio di errore
+        return jsonify({'error': 'Nodo non trovato'}), 404
+
+    # Restituisci i dati JSON
+    return jsonify(nodes_list)
+
+    # Inizializza una lista vuota per memorizzare i nodi JSON
+    # nodes_json = []
+
+    # Itera sui risultati del cursore e converte ciascun nodo in JSON
+    # for node in cursor:
+    #    nodes_json.append(node)
+
+    # return jsonify(nodes_json)
+
+
+@app.route("/get_all_edges/<string:edges_name>", methods=["GET"])
+def get_all_edges(edges_name):
+    edges = db[edges_name]
+
+    cursor = edges.all()
+
+    # Inizializza una lista vuota per memorizzare i nodi JSON
+    edges_json = []
+
+    # Itera sui risultati del cursore e converte ciascun nodo in JSON
+    for edge in cursor:
+        edges_json.append(edge)
+
+    return jsonify(edges_json)
+
+
+@app.route("/get_nodes_by_name/<string:nodes_name>/<string:name>", methods=["GET"])
+def get_nodes_by_name(nodes_name, name):
+    nodes = db[nodes_name]
+
+    # Definire il criterio di ricerca
+    filter_name = {'name': name}
+
+    # Ottenere il nodo dalla collezione utilizzando il metodo find() con limit=1
+    cursor = nodes.find(filter_name)
+
+    print(cursor)
+
+    # Inizializza una lista vuota per memorizzare i nodi JSON
+    nodes_json = []
+
+    # Itera sui risultati del cursore e converte ciascun nodo in JSON
+    for node in cursor:
+        print(node)
+        nodes_json.append(node)
+
+    return jsonify(nodes_json)
 
 
 if __name__ == '__main__':

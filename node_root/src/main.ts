@@ -58,6 +58,21 @@ ifcLoader.onIfcLoaded.add(async (model) => {
         const expressID = Number([...selection[fragmentID]][0]);
         console.log(expressID);
         propertiesProcessor.renderProperties(model, expressID);
+
+        fetch('http://localhost:8432/get_all_nodes/IFC_Example_nodes')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                console.log(response);
+                return response.json();
+            })
+            .then(data => {
+                console.log(data);
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
     });
     highlighter.update();
 });
