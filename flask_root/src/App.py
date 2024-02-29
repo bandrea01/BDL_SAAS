@@ -122,23 +122,23 @@ def generation():
 
     res_subscription = fiware.init_subscriptions("Quantumleap subscription",
                                                  sensor_type,
-                                                "normalized",
-                                                "http://quantumleap:8668/v2/notify")
+                                                 "normalized",
+                                                 "http://quantumleap:8668/v2/notify")
     if res_subscription != 201:
         err = "Error in doing subscription: " + str(res_subscription)
         return render_template("error.html", message=err)
 
     res_subscription = fiware.init_subscriptions("Perseo-FE subscription",
                                                  sensor_type,
-                                                "normalized",
-                                                "http://perseo-fe:9090/notices")
+                                                 "normalized",
+                                                 "http://perseo-fe:9090/notices")
     if res_subscription != 201:
         err = "Error in doing subscription: " + str(res_subscription)
         return render_template("error.html", message=err)
 
-    res_rule = fiware.init_rules("perseo-fe:9090", "temperature_rule",
-                                f"SELECT *, temperature? AS temperature FROM iotEvent WHERE (CAST(CAST(temperature?,String), DOUBLE)>={threshold} AND type='TemperatureSensor')",
-                                "WARNING! Possible fire in progress/Temperature sensor malfunction... Detected temperature: ${temperature}°C",
+    res_rule = fiware.init_rules("temperature_rule",
+                                 f"SELECT *, temperature? AS temperature FROM iotEvent WHERE (CAST(CAST(temperature?,String), DOUBLE)>={threshold} AND type='TemperatureSensor')",
+                                 "WARNING! Possible fire in progress/Temperature sensor malfunction... Detected temperature: ${temperature}°C",
                                  mail, "Temperature Notify")
     if res_rule != 200:
         err = "Error in rule creation: " + str(res_rule)
@@ -183,7 +183,7 @@ def get_all_edges(edges_name):
     return jsonify(nodes_list)
 
 
-@app.route("/get_nodes_by_name/<string:nodes_name>/<string:key>", methods=["GET"])
+@app.route("/get_nodes_by_key/<string:nodes_name>/<string:key>", methods=["GET"])
 def get_nodes_by_key(nodes_name, key):
     nodes = db[nodes_name]
 
@@ -221,6 +221,26 @@ def get_nodes_by_name(nodes_name, name):
 
     # Restituisci i dati JSON
     return jsonify(nodes_list)
+
+
+@app.route("/traversal/<string:graph_name>/<string:start_vertex_collection>/<string:start_vertex_key>/<string:direction>", methods=["GET"])
+def traversal(graph_name, start_vertex_collection, start_vertex_key, direction):
+    graph = db.graph(graph_name)
+    start_vertex = f"{start_vertex_collection}/{start_vertex_key}"
+
+    travers = graph.traverse(
+        start_vertex=start_vertex,
+        direction=direction,
+        min_depth=1,
+        max_depth=1
+    )
+
+    if not travers:
+        # Se non ci sono nodi trovati, restituisci un messaggio di errore
+        return jsonify({'error': 'Traversal error'}), 404
+
+    # Restituisci i dati JSON
+    return jsonify(travers)
 
 
 if __name__ == '__main__':

@@ -226,7 +226,7 @@ class FiwareAPI(object):
                 }
             ],
             "notification": {
-                "attributes": ["temperature"],
+                "attributes": ["temperature", "location"],
                 "format": format,
                 "endpoint": {
                     "uri": uri,
