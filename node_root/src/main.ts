@@ -1,6 +1,7 @@
 import * as OBC from "openbim-components";
 import * as THREE from "three";
 
+
 const viewer = new OBC.Components();
 viewer.onInitialized.add(() => {
 });
@@ -157,6 +158,7 @@ window.addEventListener("mousedown", function (event) {
     if (event.button === 1) { // Il pulsante della rotellina del mouse ha il codice 1
         // Attiva la misurazione
         length.create();
+        // generateTable(jsonData);
     }
 });
 
@@ -176,3 +178,59 @@ function removeTooltip(tooltipElement: HTMLElement) {
         tooltipElement.parentElement.removeChild(tooltipElement);
     }
 }
+
+// Funzione per generare dinamicamente la tabella HTML
+function generateTable(jsonData: any[]) {
+    const tableContainer = document.getElementById('table-container');
+    if (tableContainer) {
+        const table = document.createElement('table');
+        const thead = document.createElement('thead');
+        const tbody = document.createElement('tbody');
+
+        // Creazione della riga dell'intestazione (thead)
+        const headerRow = document.createElement('tr');
+        for (const key in jsonData[0]) {
+            const th = document.createElement('th');
+            th.textContent = key;
+            headerRow.appendChild(th);
+        }
+        thead.appendChild(headerRow);
+
+        // Creazione delle righe dei dati (tbody)
+        jsonData.forEach(item => {
+            const row = document.createElement('tr');
+            for (const key in item) {
+                const cell = document.createElement('td');
+                cell.textContent = item[key];
+                row.appendChild(cell);
+            }
+            tbody.appendChild(row);
+        });
+
+        table.appendChild(thead);
+        table.appendChild(tbody);
+        tableContainer.appendChild(table);
+    }
+}
+//
+// // Funzione per creare e popolare la tabella con i dati JSON
+// function renderJSONTable(jsonData: any[]) {
+//     const tableContainer = document.querySelector('.json-viewer');
+//     if (tableContainer) {
+//         const table = document.createElement('table');
+//         const headerRow = table.insertRow();
+//         for (const key in jsonData[0]) {
+//             const th = document.createElement('th');
+//             th.textContent = key;
+//             headerRow.appendChild(th);
+//         }
+//         jsonData.forEach(item => {
+//             const row = table.insertRow();
+//             for (const key in item) {
+//                 const cell = row.insertCell();
+//                 cell.textContent = item[key];
+//             }
+//         });
+//         tableContainer.appendChild(table);
+//     }
+// }

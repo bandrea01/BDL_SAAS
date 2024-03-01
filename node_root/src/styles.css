@@ -157,7 +157,7 @@ hr {
 .help-button {
   position: fixed;
   top: 20px;
-  right: 20px;
+  right: 30%;
   z-index: 10000;
   width: 40px; /* Imposta la larghezza del bottone */
   height: 40px; /* Imposta l'altezza del bottone */
@@ -177,10 +177,50 @@ hr {
   cursor: pointer;
 }
 
+.model-manager{
+  display: flex;
+}
 
+.viewer-container {
+  width: 90%;
+}
 
+.json-viewer{
+  width: 100%;
+  padding: 20px 30px;
+  /*border: 2px solid black;*/
+  background-color: #1f283d;
+  z-index: 900;
+  box-shadow: 1px 0px 20px 0px rgba(0, 0, 0, 0.5);
+  max-height: 100vh;
+  overflow-y: auto;
+}
 
+.json-viewer li {
+  background-color: #475e8f;
+  border-radius: 2px;
+  border: 2px solid #1f283d;
+  color: white;
+  padding: 5px 5px;
+}
 
+.jsonview {
+  color: white;
+}
+
+.jsonview .string{
+  color: #bef134;
+}
+
+.jsonview .bool, .jsonview .num {
+  color: #b69eff;
+  font-weight: bold;
+}
+
+.json-viewer li:hover {
+  /*background-color: #8f8847;*/
+  cursor: pointer;
+}
 
 
 

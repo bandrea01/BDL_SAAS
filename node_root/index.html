@@ -1,78 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" href="/logo_black.png" />
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="icon" href="/logo_black.png"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-jsonview/1.2.3/jquery.jsonview.min.js"></script>
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/jquery-jsonview/1.2.3/jquery.jsonview.min.css"/>
     <title>Big Data Lab | Software as a service</title>
     <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/icon?family=Material+Icons"
     />
-    <link rel="stylesheet" href="src/styles.css" />
-  </head>
-  <body>
-    <div
-      id="webinar-sharepoint-viewer"
-      style="width: 100vw; height: 100vh"
-    ></div>
-    <button id="help-button" class="help-button">
-      <i class="material-icons">help_outline</i>
-    </button>
-    <div id="popup-container" class="popup-container">
-      <div class="popup-content">
+    <link rel="stylesheet" href="src/styles.css"/>
+</head>
+<body>
+<div class="model-manager">
+    <div class="viewer-container">
+        <div
+                id="webinar-sharepoint-viewer"
+                style="transform: translateX(0%); width: 100%; height: 100vh"
+        ></div>
+        <div style="width: 75vw; margin: 0 auto; text-align: center">
+            <button id="help-button" class="help-button">
+                <i class="material-icons">help_outline</i>
+            </button>
+        </div>
+    </div>
+    <div class="json-viewer" id="json-container"></div>
+</div>
+<div id="popup-container" class="popup-container">
+    <div class="popup-content">
         <span class="close">&times;</span>
         <h2>Help</h2>
         <p>&nbsp;</p>
         <p>In this viewer you can move in two ways:</p>
         <p>
-          • While holding <strong>LEFT</strong> click you can rotate the scene.
+            • While holding <strong>LEFT</strong> click you can rotate the scene.
         </p>
         <p>
-          • While holding <strong>RIGHT</strong> click you can move through the
-          axes.
+            • While holding <strong>RIGHT</strong> click you can move through the
+            axes.
         </p>
         <p>
-          • Double-clicking the <strong>SCROLL WHEEL</strong> initiates a length
-          measurement operation, which you can conclude simply by
-          double-clicking it again. If you want to delete a previous
-          measurament, you can simply point at it and press
-          <strong>DELETE</strong>.
+            • Double-clicking the <strong>SCROLL WHEEL</strong> initiates a length
+            measurement operation, which you can conclude simply by
+            double-clicking it again. If you want to delete a previous
+            measurament, you can simply point at it and press
+            <strong>DELETE</strong>.
         </p>
         <p>&nbsp;</p>
         <p>
-          In the toolbar on the bottom you can perform three different actions:
+            In the toolbar on the bottom you can perform three different actions:
         </p>
         <p>
-          • <strong>Load IFC:</strong> you can load a IFC file that you want to
-          visualize.
+            • <strong>Load IFC:</strong> you can load a IFC file that you want to
+            visualize.
         </p>
         <p>
-          • <strong>Models</strong>: you can handle objects in the scene, by
-          deleting them singularly.
+            • <strong>Models</strong>: you can handle objects in the scene, by
+            deleting them singularly.
         </p>
         <p>
-          • <strong>Properties</strong>: if you click on a fragment of the
-          loaded 3D model you can check all its properties in this window.
+            • <strong>Properties</strong>: if you click on a fragment of the
+            loaded 3D model you can check all its properties in this window.
         </p>
-      </div>
     </div>
-    <script type="module" src="/src/main.ts"></script>
-    <script>
-      document.addEventListener("DOMContentLoaded", function () {
+</div>
+<script type="module" src="/src/main.ts"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
         const helpButton = document.getElementById("help-button");
         const popupContainer = document.getElementById("popup-container");
         const closeButton = document.getElementsByClassName("close")[0];
-        const submitButton = document.getElementById("submit-guide");
 
         helpButton.onclick = function () {
-          popupContainer.style.display = "block";
+            popupContainer.style.display = "block";
         };
 
         closeButton.onclick = function () {
-          popupContainer.style.display = "none";
+            popupContainer.style.display = "none";
         };
-      });
-    </script>
-  </body>
+    });
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Dati JSON di esempio
+        const jsonData = [
+            {id: 1, name: 'John', age: 30},
+            {id: 2, name: 'Jane', age: [25, 2342, 28937, 28934]},
+            {id: 3, name: 'Bob', age: 35}
+        ];
+
+        // Seleziona l'elemento che conterrà il JSON
+        const jsonContainer = document.getElementById("json-container");
+
+        // Controlla se l'elemento è stato trovato e se jQuery è disponibile
+        if (jsonContainer && window.jQuery) {
+            // Visualizza il JSON utilizzando JSONView
+            $(jsonContainer).JSONView(jsonData);
+        }
+    });
+</script>
+</body>
 </html>
