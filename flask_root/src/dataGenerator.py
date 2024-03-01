@@ -16,7 +16,7 @@ def generate_temperature_values(n, std_dev, avg, outlier_probability):
     """
     temperatures = []
     actual_outlier_probability = outlier_probability
-    for i in range(1, n):
+    for i in range(0, n):
         if random.random() < outlier_probability:
             outlier = np.random.normal(avg + 20, std_dev)
             temperatures.append(outlier)

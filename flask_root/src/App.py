@@ -244,17 +244,17 @@ def get_nodes_by_name(nodes_name, name):
 
 
 @app.route(
-    "/traversal/<string:graph_name>/<string:start_vertex_collection>/<string:start_vertex_key>/<string:direction>",
+    "/traversal/<string:graph_name>/<string:start_vertex_collection>/<string:start_vertex_key>/<string:direction>/<int:min_depth>/<int:max_depth>",
     methods=["GET"])
-def traversal(graph_name, start_vertex_collection, start_vertex_key, direction):
+def traversal(graph_name, start_vertex_collection, start_vertex_key, direction, min_depth, max_depth):
     graph = db.graph(graph_name)
     start_vertex = f"{start_vertex_collection}/{start_vertex_key}"
 
     travers = graph.traverse(
         start_vertex=start_vertex,
         direction=direction,
-        min_depth=1,
-        max_depth=1
+        min_depth=min_depth,
+        max_depth=max_depth
     )
 
     if not travers:
