@@ -60,7 +60,7 @@ ifcLoader.onIfcLoaded.add(async (model) => {
         console.log(expressID);
         propertiesProcessor.renderProperties(model, expressID);
 
-        fetch('http://localhost:8432/get_all_nodes/IFC_Example_nodes')
+        fetch('http://localhost:8432/get_node_by_id/' + model.name.split(".")[0] + '_nodes/' + expressID)
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
