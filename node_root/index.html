@@ -84,24 +84,5 @@
         };
     });
 </script>
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        // Dati JSON di esempio
-        const jsonData = [
-            {id: 1, name: 'John', age: 30},
-            {id: 2, name: 'Jane', age: [25, 2342, 28937, 28934]},
-            {id: 3, name: 'Bob', age: 35}
-        ];
-
-        // Seleziona l'elemento che conterrà il JSON
-        const jsonContainer = document.getElementById("json-container");
-
-        // Controlla se l'elemento è stato trovato e se jQuery è disponibile
-        if (jsonContainer && window.jQuery) {
-            // Visualizza il JSON utilizzando JSONView
-            $(jsonContainer).JSONView(jsonData);
-        }
-    });
-</script>
 </body>
 </html>

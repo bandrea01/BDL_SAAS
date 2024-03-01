@@ -55,9 +55,9 @@ ifcLoader.onIfcLoaded.add(async (model) => {
     propertiesProcessor.process(model);
     highlighter.events.select.onHighlight.add((selection) => {
         const fragmentID = Object.keys(selection)[0];
-        console.log(fragmentID)
+        //console.log(fragmentID)
         const expressID = Number([...selection[fragmentID]][0]);
-        console.log(expressID);
+        //console.log(expressID);
         propertiesProcessor.renderProperties(model, expressID);
 
         fetch('http://localhost:8432/get_node_by_id/' + model.name.split(".")[0] + '_nodes/' + expressID)
@@ -65,11 +65,19 @@ ifcLoader.onIfcLoaded.add(async (model) => {
                 if (!response.ok) {
                     throw new Error('Network response was not ok');
                 }
-                console.log(response);
+                //console.log(response);
                 return response.json();
             })
             .then(data => {
-                console.log(data);
+                // Seleziona l'elemento che conterrà il JSON
+                const jsonContainer = document.getElementById("json-container");
+
+                // Controlla se l'elemento è stato trovato e se jQuery è disponibile
+                if (jsonContainer && window.jQuery) {
+                    // Visualizza il JSON utilizzando JSONView
+                    $(jsonContainer).JSONView(data);
+                }
+                // console.log(data);
             })
             .catch(error => {
                 console.error('There was a problem with the fetch operation:', error);
@@ -178,59 +186,3 @@ function removeTooltip(tooltipElement: HTMLElement) {
         tooltipElement.parentElement.removeChild(tooltipElement);
     }
 }
-
-// Funzione per generare dinamicamente la tabella HTML
-function generateTable(jsonData: any[]) {
-    const tableContainer = document.getElementById('table-container');
-    if (tableContainer) {
-        const table = document.createElement('table');
-        const thead = document.createElement('thead');
-        const tbody = document.createElement('tbody');
-
-        // Creazione della riga dell'intestazione (thead)
-        const headerRow = document.createElement('tr');
-        for (const key in jsonData[0]) {
-            const th = document.createElement('th');
-            th.textContent = key;
-            headerRow.appendChild(th);
-        }
-        thead.appendChild(headerRow);
-
-        // Creazione delle righe dei dati (tbody)
-        jsonData.forEach(item => {
-            const row = document.createElement('tr');
-            for (const key in item) {
-                const cell = document.createElement('td');
-                cell.textContent = item[key];
-                row.appendChild(cell);
-            }
-            tbody.appendChild(row);
-        });
-
-        table.appendChild(thead);
-        table.appendChild(tbody);
-        tableContainer.appendChild(table);
-    }
-}
-//
-// // Funzione per creare e popolare la tabella con i dati JSON
-// function renderJSONTable(jsonData: any[]) {
-//     const tableContainer = document.querySelector('.json-viewer');
-//     if (tableContainer) {
-//         const table = document.createElement('table');
-//         const headerRow = table.insertRow();
-//         for (const key in jsonData[0]) {
-//             const th = document.createElement('th');
-//             th.textContent = key;
-//             headerRow.appendChild(th);
-//         }
-//         jsonData.forEach(item => {
-//             const row = table.insertRow();
-//             for (const key in item) {
-//                 const cell = row.insertCell();
-//                 cell.textContent = item[key];
-//             }
-//         });
-//         tableContainer.appendChild(table);
-//     }
-// }
