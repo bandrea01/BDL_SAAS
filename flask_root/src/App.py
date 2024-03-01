@@ -183,8 +183,8 @@ def get_all_edges(edges_name):
     return jsonify(nodes_list)
 
 
-@app.route("/get_nodes_by_key/<string:nodes_name>/<string:key>", methods=["GET"])
-def get_nodes_by_key(nodes_name, key):
+@app.route("/get_node_by_key/<string:nodes_name>/<string:key>", methods=["GET"])
+def get_node_by_key(nodes_name, key):
     nodes = db[nodes_name]
 
     # Definire il criterio di ricerca
@@ -201,6 +201,26 @@ def get_nodes_by_key(nodes_name, key):
 
     # Restituisci i dati JSON
     return jsonify(nodes_list)
+
+
+@app.route("/get_node_by_id/<string:nodes_name>/<string:id>", methods=["GET"])
+def get_node_by_id(nodes_name, id):
+    query = f"""
+        FOR i IN {nodes_name}
+        FILTER i._key LIKE '%-{id}'
+        RETURN i
+    """
+
+    # Esegui la query e ottieni i risultati
+    cursor = db.aql.execute(query)
+    results = list(cursor)
+
+    if not results:
+        # Se non ci sono nodi trovati, restituisci un messaggio di errore
+        return jsonify({'error': 'Nodo non trovato'}), 404
+
+    # Restituisci i dati JSON
+    return jsonify(results)
 
 
 @app.route("/get_nodes_by_name/<string:nodes_name>/<string:name>", methods=["GET"])
@@ -223,7 +243,9 @@ def get_nodes_by_name(nodes_name, name):
     return jsonify(nodes_list)
 
 
-@app.route("/traversal/<string:graph_name>/<string:start_vertex_collection>/<string:start_vertex_key>/<string:direction>", methods=["GET"])
+@app.route(
+    "/traversal/<string:graph_name>/<string:start_vertex_collection>/<string:start_vertex_key>/<string:direction>",
+    methods=["GET"])
 def traversal(graph_name, start_vertex_collection, start_vertex_key, direction):
     graph = db.graph(graph_name)
     start_vertex = f"{start_vertex_collection}/{start_vertex_key}"
