@@ -1,7 +1,6 @@
 import * as OBC from "openbim-components";
 import * as THREE from "three";
 
-
 const viewer = new OBC.Components();
 viewer.onInitialized.add(() => {
 });
@@ -73,8 +72,10 @@ ifcLoader.onIfcLoaded.add(async (model) => {
                 const jsonContainer = document.getElementById("json-container");
 
                 // Controlla se l'elemento è stato trovato e se jQuery è disponibile
+                // @ts-ignore
                 if (jsonContainer && window.jQuery) {
                     // Visualizza il JSON utilizzando JSONView
+                    // @ts-ignore
                     $(jsonContainer).JSONView(data);
                 }
                 // console.log(data);
@@ -90,11 +91,35 @@ const length = new OBC.LengthMeasurement(viewer);
 length.enabled = true;
 length.snapDistance = 1;
 
+
+const cubeTools = new OBC.Button(viewer);
+cubeTools.materialIcon = "widgets";
+cubeTools.tooltip = "Tools";
+
+const allNodesButton = new OBC.Button(viewer);
+const allEdgesButton = new OBC.Button(viewer);
+const nodesByTypeButton = new OBC.Button(viewer);
+allNodesButton.onClick.add(() => fetchAllNodes());
+allEdgesButton.onClick.add(() => fetchAllEdges());
+
+
+allNodesButton.label = "Mostra tutti i nodi";
+allEdgesButton.label = "Mostra tutte le relazioni";
+nodesByTypeButton.label = "Mostra nodi per tipo";
+
+cubeTools.addChild(allNodesButton);
+cubeTools.addChild(allEdgesButton);
+cubeTools.addChild(nodesByTypeButton);
+
+
+nodesByTypeButton.onClick.add(() => showQueryFields());
+
 const mainToolbar = new OBC.Toolbar(viewer);
 mainToolbar.addChild(
     ifcLoader.uiElement.get("main"),
     ifcManager.uiElement.get("main"),
     propertiesProcessor.uiElement.get("main"),
+    cubeTools
 );
 viewer.ui.addToolbar(mainToolbar);
 
@@ -125,9 +150,14 @@ ifcLoader.onIfcLoaded.add(async (model) => {
         const intersectedObject = viewer.raycaster.castRay();
         if (intersectedObject) {
             //Ottengo il fragmentID
+            console.log(intersectedObject.object.id);
             const fragmentID = intersectedObject.object.uuid;
             //Con ifcManager accedo alla lista e prelevo l'expressID dalla lista
+            // console.log(generateExpressIDFragmentIDMap(model.items));
             const expressID = parseInt(ifcManager.list[fragmentID].items[0]);
+            // console.log(expressID);
+
+            // console.log("Express: ", ifcManager.list[fragmentID].items[0]);
 
             //Se il modello caricato ha delle proprietà accedo per rappresentarle col tooltip
             if (model.properties && model.properties[expressID]) {
@@ -184,5 +214,117 @@ function createTooltip(text: string, x: number, y: number) {
 function removeTooltip(tooltipElement: HTMLElement) {
     if (tooltipElement && tooltipElement.parentElement) {
         tooltipElement.parentElement.removeChild(tooltipElement);
+    }
+}
+
+function showQueryFields() {
+    const queryContainer = document.getElementById("query-container") as HTMLElement;
+    const closeButton = document.getElementById("query-close") as HTMLElement;
+
+    queryContainer.style.display = "block";
+
+    closeButton.onclick = function () {
+        queryContainer.style.display = "none";
+    };
+}
+
+function fetchAllNodes() {
+    try {
+        const modelName = ifcManager.groups[0].name;
+        if (modelName) {
+            fetch('http://localhost:8432/get_all_nodes/' + modelName.split(".")[0] + '_nodes/')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    console.log(ifcManager.list);
+                    return response.json();
+                })
+                .then(data => {
+                    // Seleziona l'elemento che conterrà il JSON
+                    const jsonContainer = document.getElementById("json-container");
+
+                    // Controlla se l'elemento è stato trovato e se jQuery è disponibile
+                    // @ts-ignore
+                    if (jsonContainer && window.jQuery) {
+                        // Visualizza il JSON utilizzando JSONView
+                        // @ts-ignore
+                        $(jsonContainer).JSONView(data);
+                    }
+                    // console.log(data);
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                });
+        } else {
+            const jsonContainer = document.getElementById("json-container");
+            // Controlla se l'elemento è stato trovato e se jQuery è disponibile
+            // @ts-ignore
+            if (jsonContainer && window.jQuery) {
+                // Visualizza il JSON utilizzando JSONView
+                // @ts-ignore
+                $(jsonContainer).JSONView("No model loaded");
+            }
+        }
+    } catch (error) {
+        const jsonContainer = document.getElementById("json-container");
+            // Controlla se l'elemento è stato trovato e se jQuery è disponibile
+            // @ts-ignore
+            if (jsonContainer && window.jQuery) {
+                // Visualizza il JSON utilizzando JSONView
+                // @ts-ignore
+                $(jsonContainer).JSONView({"Error" : "No model loaded"});
+            }
+    }
+}
+
+
+function fetchAllEdges() {
+    try {
+        const modelName = ifcManager.groups[0].name;
+        if (modelName) {
+            fetch('http://localhost:8432/get_all_edges/' + modelName.split(".")[0] + '_edges/')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    console.log(ifcManager.list);
+                    return response.json();
+                })
+                .then(data => {
+                    // Seleziona l'elemento che conterrà il JSON
+                    const jsonContainer = document.getElementById("json-container");
+
+                    // Controlla se l'elemento è stato trovato e se jQuery è disponibile
+                    // @ts-ignore
+                    if (jsonContainer && window.jQuery) {
+                        // Visualizza il JSON utilizzando JSONView
+                        // @ts-ignore
+                        $(jsonContainer).JSONView(data);
+                    }
+                    // console.log(data);
+                })
+                .catch(error => {
+                    console.error('There was a problem with the fetch operation:', error);
+                });
+        } else {
+            const jsonContainer = document.getElementById("json-container");
+            // Controlla se l'elemento è stato trovato e se jQuery è disponibile
+            // @ts-ignore
+            if (jsonContainer && window.jQuery) {
+                // Visualizza il JSON utilizzando JSONView
+                // @ts-ignore
+                $(jsonContainer).JSONView("No model loaded");
+            }
+        }
+    } catch (error) {
+        const jsonContainer = document.getElementById("json-container");
+            // Controlla se l'elemento è stato trovato e se jQuery è disponibile
+            // @ts-ignore
+            if (jsonContainer && window.jQuery) {
+                // Visualizza il JSON utilizzando JSONView
+                // @ts-ignore
+                $(jsonContainer).JSONView({"Error" : "No model loaded"});
+            }
     }
 }

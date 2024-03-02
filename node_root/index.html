@@ -28,7 +28,9 @@
             </button>
         </div>
     </div>
-    <div class="json-viewer" id="json-container"></div>
+    <div class="json-viewer" id="json-container">
+        <div></div>
+    </div>
 </div>
 <div id="popup-container" class="popup-container">
     <div class="popup-content">
@@ -67,6 +69,32 @@
             loaded 3D model you can check all its properties in this window.
         </p>
     </div>
+</div>
+<div id="query-container" class="query-container">
+    <div class="query-content">
+        <span id="query-close" class="close">&times;</span>
+        <h2>Mostra nodi per tipo</h2>
+        <p>&nbsp;</p>
+        <div>
+            <label class="input-container">
+                <input type="text" name="node_name" placeholder="Es. IfcWallStandardCase" required>
+            </label>
+            <label class="input-container">
+                <input type="text" name="min_depth" placeholder="Es. 0" required>
+            </label>
+            <label class="input-container">
+                <input type="text" name="max_depth" placeholder="Es. 5" required>
+            </label>
+            <label class="input-container">
+                <input type="text" name="direction" placeholder="Es. Inbound/Outbound/Any" required>
+            </label>
+            <div class="button-container">
+                <button>Conferma</button>
+                <button>Reset</button>
+            </div>
+        </div>
+    </div>
+</div>
 </div>
 <script type="module" src="/src/main.ts"></script>
 <script>
