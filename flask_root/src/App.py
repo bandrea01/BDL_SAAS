@@ -265,5 +265,31 @@ def traversal(graph_name, start_vertex_collection, start_vertex_key, direction, 
     return jsonify(travers)
 
 
+@app.route(
+    "/traversal_by_name/<string:graph_name>/<string:start_vertex_collection>/<string:vertex_type>/<string:direction>/<int:min_depth>/<int:max_depth>",
+    methods=["GET"])
+def traversal_by_name(graph_name, start_vertex_collection, vertex_type, direction, min_depth, max_depth):
+    graph = db.graph(graph_name)
+
+    query = f"""
+            FOR node IN {start_vertex_collection}
+                FILTER node.name == "{vertex_type}"
+                FOR v, e, p IN {min_depth}..{max_depth} {direction} 
+                node GRAPH "{graph_name}"
+                RETURN p
+            """
+
+    # Esegui la query e ottieni i risultati
+    cursor = db.aql.execute(query)
+    results = list(cursor)
+
+    if not results:
+        # Se non ci sono nodi trovati, restituisci un messaggio di errore
+        return jsonify({'error': 'Traversal error'}), 404
+
+    # Restituisci i dati JSON
+    return jsonify(results)
+
+
 if __name__ == '__main__':
     app.run(debug=True)
