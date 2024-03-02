@@ -52,37 +52,35 @@ highlighter.events.select.onClear.add(() => {
 
 ifcLoader.onIfcLoaded.add(async (model) => {
     propertiesProcessor.process(model);
-    highlighter.events.select.onHighlight.add((selection) => {
+    highlighter.events.select.onHighlight.add(async (selection) => {
         const fragmentID = Object.keys(selection)[0];
-        //console.log(fragmentID)
         const expressID = Number([...selection[fragmentID]][0]);
-        //console.log(expressID);
-        propertiesProcessor.renderProperties(model, expressID);
+        const jsonContainer = document.getElementById("json-container");
 
-        fetch('http://localhost:8432/get_node_by_id/' + model.name.split(".")[0] + '_nodes/' + expressID)
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                //console.log(response);
-                return response.json();
-            })
-            .then(data => {
-                // Seleziona l'elemento che conterrà il JSON
-                const jsonContainer = document.getElementById("json-container");
+        try {
+            propertiesProcessor.renderProperties(model, expressID);
 
-                // Controlla se l'elemento è stato trovato e se jQuery è disponibile
-                // @ts-ignore
-                if (jsonContainer && window.jQuery) {
-                    // Visualizza il JSON utilizzando JSONView
-                    // @ts-ignore
-                    $(jsonContainer).JSONView(data);
-                }
-                // console.log(data);
-            })
-            .catch(error => {
-                console.error('There was a problem with the fetch operation:', error);
-            });
+            const response1 = await fetch('http://localhost:8432/get_node_by_id/' + model.name.split(".")[0] + '_nodes/' + expressID);
+            if (!response1.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const data1 = await response1.json();
+            const key = data1[0]["_key"];
+
+            const response2 = await fetch('http://localhost:8432/traversal/' + model.name.split(".")[0] + '_graph/' + model.name.split(".")[0] + '_nodes/' + key + '/any/1/2');
+            if (!response2.ok) {
+                throw new Error('Network response was not ok');
+            }
+            const data2 = await response2.json();
+
+            if (jsonContainer && window.jQuery) {
+                $(jsonContainer).JSONView(data2);
+            }
+        } catch (error) {
+            if (jsonContainer && window.jQuery) {
+                $(jsonContainer).JSONView({"error": error});
+            }
+        }
     });
     highlighter.update();
 });
@@ -220,12 +218,92 @@ function removeTooltip(tooltipElement: HTMLElement) {
 function showQueryFields() {
     const queryContainer = document.getElementById("query-container") as HTMLElement;
     const closeButton = document.getElementById("query-close") as HTMLElement;
+    const confirmButton = document.getElementById("confirm-button") as HTMLElement;
+    const resetButton = document.getElementById("reset-button") as HTMLElement;
 
     queryContainer.style.display = "block";
 
     closeButton.onclick = function () {
         queryContainer.style.display = "none";
     };
+    confirmButton.onclick = function() {
+        fetchTraversalByName();
+        queryContainer.style.display = "none";
+    }
+    resetButton.onclick = function() {
+        const inputFields = document.querySelectorAll('input');
+        const selectField = document.querySelector('select[name="direction"]');
+        inputFields.forEach((input) => {
+            input.value = '';
+        });
+        selectField.value = 'Any';
+    }
+}
+
+function fetchTraversalByName(){
+
+    const nodeNameInput = (document.getElementById("node-name-input") as HTMLSelectElement).value;
+    const minDepthInput = (document.getElementById("min-depth-input") as HTMLSelectElement).value;
+    const maxDepthInput = (document.getElementById("max-depth-input") as HTMLSelectElement).value;
+    const directionInput = (document.getElementById("direction-input") as HTMLSelectElement).value;
+
+    if (nodeNameInput && minDepthInput && maxDepthInput && directionInput) {
+        if (minDepthInput < 0 || maxDepthInput < 0) {
+            alert("Please insert a positive number for depth");
+        } else if (minDepthInput > maxDepthInput) {
+            alert("Invalid numbers for depht, minimum depth should be less than max depth");
+        }
+        try {
+            const modelName = ifcManager.groups[0].name;
+            if (modelName) {
+                fetch('http://localhost:8432/traversal_by_name/' + modelName.split(".")[0] + '_graph/' + modelName.split(".")[0] + '_nodes/' + nodeNameInput + '/' + directionInput + '/' + minDepthInput + '/' + maxDepthInput)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        console.log(ifcManager.list);
+                        return response.json();
+                    })
+                    .then(data => {
+                        // Seleziona l'elemento che conterrà il JSON
+                        const jsonContainer = document.getElementById("json-container");
+
+                        // Controlla se l'elemento è stato trovato e se jQuery è disponibile
+                        // @ts-ignore
+                        if (jsonContainer && window.jQuery) {
+                            // Visualizza il JSON utilizzando JSONView
+                            // @ts-ignore
+                            $(jsonContainer).JSONView(data);
+                        }
+                        // console.log(data);
+                    })
+                    .catch(error => {
+                        console.error('There was a problem with the fetch operation:', error);
+                    });
+            } else {
+                const jsonContainer = document.getElementById("json-container");
+                // Controlla se l'elemento è stato trovato e se jQuery è disponibile
+                // @ts-ignore
+                if (jsonContainer && window.jQuery) {
+                    // Visualizza il JSON utilizzando JSONView
+                    // @ts-ignore
+                    $(jsonContainer).JSONView("No model loaded");
+                }
+            }
+        } catch (error) {
+            const jsonContainer = document.getElementById("json-container");
+            // Controlla se l'elemento è stato trovato e se jQuery è disponibile
+            // @ts-ignore
+            if (jsonContainer && window.jQuery) {
+                // Visualizza il JSON utilizzando JSONView
+                // @ts-ignore
+                $(jsonContainer).JSONView({"Error": "No model loaded"});
+            }
+        }
+    } else {
+        alert("Please fill all the fields ;)");
+    }
+
 }
 
 function fetchAllNodes() {
@@ -268,16 +346,15 @@ function fetchAllNodes() {
         }
     } catch (error) {
         const jsonContainer = document.getElementById("json-container");
-            // Controlla se l'elemento è stato trovato e se jQuery è disponibile
+        // Controlla se l'elemento è stato trovato e se jQuery è disponibile
+        // @ts-ignore
+        if (jsonContainer && window.jQuery) {
+            // Visualizza il JSON utilizzando JSONView
             // @ts-ignore
-            if (jsonContainer && window.jQuery) {
-                // Visualizza il JSON utilizzando JSONView
-                // @ts-ignore
-                $(jsonContainer).JSONView({"Error" : "No model loaded"});
-            }
+            $(jsonContainer).JSONView({"Error": "No model loaded"});
+        }
     }
 }
-
 
 function fetchAllEdges() {
     try {
@@ -319,12 +396,12 @@ function fetchAllEdges() {
         }
     } catch (error) {
         const jsonContainer = document.getElementById("json-container");
-            // Controlla se l'elemento è stato trovato e se jQuery è disponibile
+        // Controlla se l'elemento è stato trovato e se jQuery è disponibile
+        // @ts-ignore
+        if (jsonContainer && window.jQuery) {
+            // Visualizza il JSON utilizzando JSONView
             // @ts-ignore
-            if (jsonContainer && window.jQuery) {
-                // Visualizza il JSON utilizzando JSONView
-                // @ts-ignore
-                $(jsonContainer).JSONView({"Error" : "No model loaded"});
-            }
+            $(jsonContainer).JSONView({"Error": "No model loaded"});
+        }
     }
 }

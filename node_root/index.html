@@ -77,20 +77,24 @@
         <p>&nbsp;</p>
         <div>
             <label class="input-container">
-                <input type="text" name="node_name" placeholder="Es. IfcWallStandardCase" required>
+                <input type="text" id ="node-name-input" name="node_name" placeholder="Es. IfcWallStandardCase" required>
             </label>
             <label class="input-container">
-                <input type="text" name="min_depth" placeholder="Es. 0" required>
+                <input type="text" id="min-depth-input" name="min_depth" placeholder="Es. 0" required>
             </label>
             <label class="input-container">
-                <input type="text" name="max_depth" placeholder="Es. 5" required>
+                <input type="text" id="max-depth-input" name="max_depth" placeholder="Es. 5" required>
             </label>
-            <label class="input-container">
-                <input type="text" name="direction" placeholder="Es. Inbound/Outbound/Any" required>
+           <label class="input-container">
+                <select id="direction-input" name="direction" required>
+                    <option value="Inbound">Inbound</option>
+                    <option value="Outbound">Outbound</option>
+                    <option value="Any" selected>Any</option>
+                </select>
             </label>
             <div class="button-container">
-                <button>Conferma</button>
-                <button>Reset</button>
+                <button id="confirm-button">Conferma</button>
+                <button id="reset-button">Reset</button>
             </div>
         </div>
     </div>
