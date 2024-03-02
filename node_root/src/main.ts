@@ -232,7 +232,7 @@ function fetchAllNodes() {
     try {
         const modelName = ifcManager.groups[0].name;
         if (modelName) {
-            fetch('http://localhost:8432/get_all_nodes/' + modelName.split(".")[0] + '_nodes/')
+            fetch('http://localhost:8432/get_all_nodes/' + modelName.split(".")[0] + '_nodes')
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
@@ -283,7 +283,7 @@ function fetchAllEdges() {
     try {
         const modelName = ifcManager.groups[0].name;
         if (modelName) {
-            fetch('http://localhost:8432/get_all_edges/' + modelName.split(".")[0] + '_edges/')
+            fetch('http://localhost:8432/get_all_edges/' + modelName.split(".")[0] + '_edges')
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
