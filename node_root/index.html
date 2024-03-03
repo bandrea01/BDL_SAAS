@@ -4,10 +4,7 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <link rel="icon" href="/logo_black.png"/>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-jsonview/1.2.3/jquery.jsonview.min.js"></script>
-    <link rel="stylesheet" type="text/css"
-          href="https://cdnjs.cloudflare.com/ajax/libs/jquery-jsonview/1.2.3/jquery.jsonview.min.css"/>
+    <script src="https://unpkg.com/@alenaksu/json-viewer@2.0.0/dist/json-viewer.bundle.js"></script>
     <title>Big Data Lab | Software as a service</title>
     <link
             rel="stylesheet"
@@ -28,8 +25,8 @@
             </button>
         </div>
     </div>
-    <div class="json-viewer" id="json-container">
-        <div></div>
+    <div class="json-viewer" id="json-viewer">
+        <json-viewer id="json"></json-viewer>
     </div>
 </div>
 <div id="popup-container" class="popup-container">
@@ -77,7 +74,7 @@
         <p>&nbsp;</p>
         <div>
             <label class="input-container">
-                <input type="text" id ="node-name-input" name="node_name" placeholder="Es. IfcWallStandardCase" required>
+                <input type="text" id="node-name-input" name="node_name" placeholder="Es. IfcWallStandardCase" required>
             </label>
             <label class="input-container">
                 <input type="text" id="min-depth-input" name="min_depth" placeholder="Es. 0" required>
@@ -85,7 +82,7 @@
             <label class="input-container">
                 <input type="text" id="max-depth-input" name="max_depth" placeholder="Es. 5" required>
             </label>
-           <label class="input-container">
+            <label class="input-container">
                 <select id="direction-input" name="direction" required>
                     <option value="Inbound">Inbound</option>
                     <option value="Outbound">Outbound</option>
@@ -102,19 +99,97 @@
 </div>
 <script type="module" src="/src/main.ts"></script>
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const helpButton = document.getElementById("help-button");
-        const popupContainer = document.getElementById("popup-container");
-        const closeButton = document.getElementsByClassName("close")[0];
-
-        helpButton.onclick = function () {
-            popupContainer.style.display = "block";
-        };
-
-        closeButton.onclick = function () {
-            popupContainer.style.display = "none";
-        };
-    });
+    jsonData = {
+        "data": {
+            "users": [
+                {
+                    "id": 1,
+                    "name": "John",
+                    "age": 30,
+                    "email": "john@example.com",
+                    "address": {
+                        "street": "123 Main St",
+                        "city": "New York",
+                        "zip": "10001",
+                        "country": "USA"
+                    },
+                    "orders": [
+                        {
+                            "id": 101,
+                            "date": "2024-03-01",
+                            "total": 50.25,
+                            "items": [
+                                {
+                                    "name": "T-shirt",
+                                    "quantity": 2,
+                                    "price": 15.99
+                                },
+                                {
+                                    "name": "Jeans",
+                                    "quantity": 1,
+                                    "price": 29.99
+                                },
+                                {
+                                    "name": "Socks",
+                                    "quantity": 3,
+                                    "price": 5.99
+                                }
+                            ]
+                        },
+                        {
+                            "id": 102,
+                            "date": "2024-03-02",
+                            "total": 75.50,
+                            "items": [
+                                {
+                                    "name": "Hoodie",
+                                    "quantity": 1,
+                                    "price": 45.99
+                                },
+                                {
+                                    "name": "Sneakers",
+                                    "quantity": 1,
+                                    "price": 29.51
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "id": 2,
+                    "name": "Alice",
+                    "age": 25,
+                    "email": "alice@example.com",
+                    "address": {
+                        "street": "456 Elm St",
+                        "city": "Los Angeles",
+                        "zip": "90001",
+                        "country": "USA"
+                    },
+                    "orders": [
+                        {
+                            "id": 201,
+                            "date": "2024-03-01",
+                            "total": 120.75,
+                            "items": [
+                                {
+                                    "name": "Dress",
+                                    "quantity": 1,
+                                    "price": 79.99
+                                },
+                                {
+                                    "name": "Sandals",
+                                    "quantity": 1,
+                                    "price": 40.76
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+    document.querySelector('#json').data = jsonData;
 </script>
 </body>
 </html>
