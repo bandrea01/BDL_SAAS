@@ -113,6 +113,8 @@ def generation():
     data = request.json
     mail = data.get("mail")
     threshold = data.get("threshold")
+    dataAmount = data.get("dataAmount")
+    # TODO: Eventualmente mettere uno slider per far scegliere la temperatura di partenza all'utente
 
     sensor_type = "TemperatureSensor"
     res_entity = fiware.init_entites(sensor_type, 20.0)
@@ -144,7 +146,7 @@ def generation():
         err = "Error in rule creation: " + str(res_rule)
         return render_template("error.html", message=err)
 
-    update_entities(100, 20.0)
+    update_entities(dataAmount, 20.0)
 
 
 """-------------------    AQL    ---------------------"""
