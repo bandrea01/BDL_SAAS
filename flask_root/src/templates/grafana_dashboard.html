@@ -266,18 +266,9 @@
         var mailInserted = document.getElementById("emailAddress").value;
         var phoneInserted = document.getElementById("phoneNumber").value;
         var thresholdInserted = parseFloat(document.getElementById("thresholdSlider").value);
-        var dataAmount = parseInt(document.getElementById("dataAmount").value);
+        var dataAmount = parseInt(document.getElementById("dataAmountSlider").value);
 
-        // Verifica se dataAmount è un numero intero valido
-        if (!isNaN(dataAmount)) {
-            // Continua con il salvataggio e l'invio della richiesta
-            localStorage.setItem("dataAmount", dataAmount); // Salva il numero di dati
-
-            // Resto del codice rimane invariato
-        } else {
-            alert("Error! Please enter a valid number for data amount.");
-        }
-
+        localStorage.setItem("dataAmount", dataAmount);
         localStorage.setItem("threshold", thresholdInserted);
 
         if (canal === "mailOption") {
