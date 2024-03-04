@@ -142,9 +142,9 @@ hr {
 }
 
 .query-container {
+    display: flex;
     justify-content: center;
     align-items: center;
-    display: none;
     position: fixed;
     top: 0;
     left: 0;
@@ -156,76 +156,102 @@ hr {
 
 .query-content {
     background-color: #06191D;
-    margin: 20% auto;
-    padding: 20px;
+    padding: 40px;
     border: 1px solid #fafafa;
-    width: 80%;
-    max-width: 1000px;
+    max-width: 400px;
     border-radius: 10px;
     position: relative;
-    transform: translateY(-50%);
     z-index: 10100;
-    display: grid; /* Utilizza il grid layout */
-    grid-template-columns: auto auto; /* Divide in due colonne, una per i bottoni e una per gli input */
-    gap: 10px; /* Aggiungi spazio tra le celle */
+    margin-top: 10%;
+    margin-left: 40%;
 }
 
 .query-content .close {
     position: absolute;
-    top: 0;
-    right: 10%;
-}
-
-.query-content button {
-    background-color: #bef134;
-    padding: 10px 20px;
-    border-radius: 5px;
-}
-
-.query-container h2 {
-    font-weight: bolder;
-    font-size: 30px;
-    color: #bef134;
-}
-
-.query-container p {
-    font-weight: normal;
-    font-size: 10px;
+    top: 10px;
+    right: 10px;
     color: #fafafa;
+    font-size: 24px;
+}
+
+.query-content h2 {
+    font-weight: bolder;
+    font-size: 24px;
+    color: #bef134;
+    margin-bottom: 10px;
+}
+
+.query-content p {
+    font-size: 14px;
+    color: #fafafa;
+    margin-bottom: 10px;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.input-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
 }
 
 .input-container {
-    grid-column: 2 / 3; /* Occupa la seconda colonna */
-    border: 1px solid #fafafa;
-    border-radius: 5px;
-    background-color: #0b2d34;
-    display: flex;
-    align-items: center; /* Centra verticalmente gli input */
+    width: 100%;
+    margin-bottom: 10px;
 }
 
 .input-container label {
-    width: 40%;
+    width: 70%;
+    color: #fafafa;
+    font-size: 14px;
 }
 
-.query-container input {
+.input-container input,
+.input-container select {
     height: 40px;
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #fafafa;
+    border-radius: 5px;
+    background-color: #0b2d34;
+    color: #fafafa;
+    margin-right: 0;
+}
+
+.label-text {
+    width: 150px; /* Larghezza fissa per le etichette */
+    margin-right: 10px; /* Spazio tra etichetta e input */
+    color: #fafafa;
+    font-size: 14px;
 }
 
 .button-container {
-    padding-top: 20px;
-    gap: 20px;
+    display: flex;
+    justify-content: center;
+    margin-top: 10px;
+    gap: 10px;
 }
 
-.close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
+.button-container button {
+    background-color: #bef134;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    color: #06191D;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.button-container button:hover {
+    background-color: #8CBF26;
 }
 
 .close:hover,
 .close:focus {
-    color: black;
+    color: #fafafa;
     text-decoration: none;
     cursor: pointer;
 }

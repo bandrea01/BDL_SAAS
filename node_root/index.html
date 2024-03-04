@@ -72,19 +72,22 @@
 <div id="query-container" class="query-container">
     <div class="query-content">
         <span id="query-close" class="close">&times;</span>
-        <h2>Mostra nodi per tipo</h2>
-        <p>&nbsp;</p>
-        <div>
+        <h2>Show nodes by type</h2>
+        <div class="input-group">
             <label class="input-container">
+                <span class="label-text">Node Type</span>
                 <input type="text" id="node-name-input" name="node_name" placeholder="Es. IfcWallStandardCase" required>
             </label>
             <label class="input-container">
+                <span class="label-text">Minimum depth</span>
                 <input type="text" id="min-depth-input" name="min_depth" placeholder="Es. 0" required>
             </label>
             <label class="input-container">
+                <span class="label-text">Maximum depth</span>
                 <input type="text" id="max-depth-input" name="max_depth" placeholder="Es. 5" required>
             </label>
             <label class="input-container">
+                <span class="label-text">Direction</span>
                 <select id="direction-input" name="direction" required>
                     <option value="Inbound">Inbound</option>
                     <option value="Outbound">Outbound</option>
