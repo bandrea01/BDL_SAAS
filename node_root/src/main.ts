@@ -90,7 +90,7 @@ ifcLoader.onIfcLoaded.add(async (model) => {
                             }
                             const options = {};
                             const editor = new JSONEditor(jsonContainer, options);
-                            editor.set({"error" : error});
+                            editor.set({"error": error});
                         }
                     });
             } else {
@@ -112,7 +112,7 @@ ifcLoader.onIfcLoaded.add(async (model) => {
                 }
                 const options = {};
                 const editor = new JSONEditor(jsonContainer, options);
-                editor.set({"error" : error});
+                editor.set({"error": error});
             }
         }
         highlighter.update();
@@ -188,8 +188,15 @@ function showTraversalFields() {
     const closeButton = document.getElementById("query-close") as HTMLElement;
     const confirmButton = document.getElementById("confirm-button") as HTMLElement;
     const resetButton = document.getElementById("reset-button") as HTMLElement;
+    const title = document.getElementById("title-label") as HTMLElement;
+    const subtitle = document.getElementById("subtitle-label") as HTMLElement;
 
     queryContainer.style.display = "block";
+
+    function updateLabelText(titleText: string, subtitleText: string) {
+        title.innerText = titleText;
+        subtitle.innerText = subtitleText;
+    }
 
     closeButton.onclick = function () {
         queryContainer.style.display = "none";
@@ -206,6 +213,7 @@ function showTraversalFields() {
         });
         selectField.value = 'Any';
     }
+    updateLabelText("Show node details", "Node key");
 }
 
 function showTraversalByTypeFields() {
@@ -213,8 +221,15 @@ function showTraversalByTypeFields() {
     const closeButton = document.getElementById("query-close") as HTMLElement;
     const confirmButton = document.getElementById("confirm-button") as HTMLElement;
     const resetButton = document.getElementById("reset-button") as HTMLElement;
+    const title = document.getElementById("title-label") as HTMLElement;
+    const subtitle = document.getElementById("subtitle-label") as HTMLElement;
 
     queryContainer.style.display = "block";
+
+    function updateLabelText(titleText: string, subtitleText: string) {
+        title.innerText = titleText;
+        subtitle.innerText = subtitleText;
+    }
 
     closeButton.onclick = function () {
         queryContainer.style.display = "none";
@@ -231,6 +246,7 @@ function showTraversalByTypeFields() {
         });
         selectField.value = 'Any';
     }
+    updateLabelText("Show nodes by type", "Node type");
 }
 
 function fetchAllNodes() {
