@@ -4,7 +4,9 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <link rel="icon" href="/logo_black.png"/>
-    <script src="https://unpkg.com/@alenaksu/json-viewer@2.0.0/dist/json-viewer.bundle.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/10.0.1/jsoneditor.min.css" rel="stylesheet"
+          type="text/css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/10.0.1/jsoneditor.min.js"></script>
     <title>Big Data Lab | Software as a service</title>
     <link
             rel="stylesheet"
@@ -26,7 +28,7 @@
         </div>
     </div>
     <div class="json-viewer" id="json-viewer">
-        <json-viewer id="json"></json-viewer>
+        <div id="jsoneditor"></div>
     </div>
 </div>
 <div id="popup-container" class="popup-container">
@@ -99,7 +101,13 @@
 </div>
 <script type="module" src="/src/main.ts"></script>
 <script>
-    jsonData = {
+    // create the editor
+    const container = document.getElementById("jsoneditor")
+    const options = {}
+    const editor = new JSONEditor(container, options)
+
+    // set json
+    const jsonData = {
         "data": {
             "users": [
                 {
@@ -189,7 +197,10 @@
             ]
         }
     }
-    document.querySelector('#json').data = jsonData;
+    editor.set(jsonData)
+
+    // get json
+    const updatedJson = editor.get()
 </script>
 </body>
 </html>
