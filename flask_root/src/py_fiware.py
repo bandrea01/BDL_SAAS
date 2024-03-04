@@ -5,7 +5,7 @@ class FiwareAPI(object):
 
     def __init__(self):
         self.orionIP = None
-        self.perseoIP =None
+        self.perseoIP = None
         self.header = {
             'Content-Type': 'application/json',
             'Link': '<https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.7.jsonld>; '
@@ -237,7 +237,7 @@ class FiwareAPI(object):
         res = self.subscribe(payload)
         return res
 
-    def init_rules(self, rule_name, text, template, to, subject):
+    def init_rules_mail(self, rule_name, text, template, to, subject):
         status = self.get_rule_by_name(rule_name)
 
         if status == 200:
@@ -253,6 +253,27 @@ class FiwareAPI(object):
                     "to": to,
                     "from": "perseobdl@gmail.com",
                     "subject": subject
+                }
+            }
+        }
+
+        res = self.insert_rule(payload)
+        return res
+
+    def init_rules_sms(self, rule_name, text, template, to):
+        status = self.get_rule_by_name(rule_name)
+
+        if status == 200:
+            self.delete_rule(rule_name)
+
+        payload = {
+            "name": rule_name,
+            "text": text,
+            "action": {
+                "type": "sms",
+                "template": template,
+                "parameters": {
+                    "to": to
                 }
             }
         }
