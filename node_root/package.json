@@ -12,6 +12,7 @@
     "vite": "^4.4.5"
   },
   "dependencies": {
+    "jsoneditor": "^10.0.1",
     "openbim-components": "1.1.1",
     "three": "0.152.2"
   }
