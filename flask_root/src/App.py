@@ -76,8 +76,8 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        if username == os.getenv('DEBUG_USR') and password == os.getenv('DEBUG_PWD'):
-        # if username == "admin" and password == "restapi":
+        # if username == os.getenv('DEBUG_USR') and password == os.getenv('DEBUG_PWD'):
+        if username == "admin" and password == "restapi":
             session['user_id'] = username
             return redirect(url_for('menu'))
         else:
@@ -112,9 +112,9 @@ def monitoring():
 def generation():
     data = request.json
     mail = data.get("mail")
+    phone = data.get("phone")
     threshold = data.get("threshold")
     dataAmount = data.get("dataAmount")
-    # TODO: Eventualmente mettere uno slider per far scegliere la temperatura di partenza all'utente
 
     sensor_type = "TemperatureSensor"
     res_entity = fiware.init_entites(sensor_type, 20.0)
@@ -138,10 +138,23 @@ def generation():
         err = "Error in doing subscription: " + str(res_subscription)
         return render_template("error.html", message=err)
 
-    res_rule = fiware.init_rules("temperature_rule",
-                                 f"SELECT *, temperature? AS temperature FROM iotEvent WHERE (CAST(CAST(temperature?,String), DOUBLE)>={threshold} AND type='TemperatureSensor')",
-                                 "WARNING! Possible fire in progress/Temperature sensor malfunction... Detected temperature: ${temperature}°C",
-                                 mail, "Temperature Notify")
+    res_rule = None
+
+    if mail != "":
+        res_rule = fiware.init_rules("temperature_rule_mail",
+                                     f"SELECT *, temperature? AS temperature FROM iotEvent WHERE (CAST(CAST(temperature?,String), DOUBLE)>={threshold} AND type='TemperatureSensor')",
+                                     "WARNING! Possible fire in progress/Temperature sensor malfunction... Detected temperature: ${temperature}°C",
+                                     mail, "Temperature Notify")
+    else:
+        # res_rule = fiware.init_rules("temperature_rule_phone",
+        #                              f"SELECT *, temperature? AS temperature FROM iotEvent WHERE (CAST(CAST(temperature?,String), DOUBLE)>={threshold} AND type='TemperatureSensor')",
+        #                              "WARNING! Possible fire in progress/Temperature sensor malfunction... Detected temperature: ${temperature}°C",
+        #                              phone, "Temperature Notify")
+        # if res_rule != 200:
+        #     err = "Error in rule creation: " + str(res_rule)
+        #     return render_template("error.html", message=
+        return
+
     if res_rule != 200:
         err = "Error in rule creation: " + str(res_rule)
         return render_template("error.html", message=err)

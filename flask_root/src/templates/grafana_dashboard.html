@@ -13,12 +13,16 @@
             align-items: center;
             height: 100vh;
             margin: 0;
-            background-image: url("{{ url_for('static', filename='graph_image.png') }}");
+        }
+
+        .title {
+            color: #aadb22;
+            font-weight: bold;
         }
 
         .flex-container {
-            width: 95%;
-            height: 95%;
+            width: 100%;
+            height: 100%;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -26,10 +30,9 @@
         }
 
         .button-container {
-            padding-top: 25px;
             display: flex;
             flex-direction: row;
-            width: 100%; /* Aggiunto per allineare i bottoni */
+            width: 98%; /* Aggiunto per allineare i bottoni */
             gap: 10px;
         }
 
@@ -56,66 +59,51 @@
 
         .modal {
             display: none;
+            justify-content: center;
+            align-items: center;
             position: fixed;
-            z-index: 1;
-            left: 0;
             top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.4);
-            padding-top: 60px;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 10100;
         }
 
         .modal-content {
-            background-color: #021823;
-            color: #fafafa;
-            margin: 5% auto;
-            padding: 10px;
-            max-width: 500px;
+            background-color: #06191D;
+            padding: 20px; /* Ridotto il padding */
+            border: 1px solid #fafafa;
+            max-width: 450px; /* Aumentata la larghezza massima */
             border-radius: 15px;
-            width: 80%;
-            height: auto;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Aggiunto box-shadow */
+            position: relative;
+            z-index: 10100;
+            margin: 10% auto; /* Centrato verticalmente e orizzontalmente */
         }
 
         .modal-content input[type=text],
         .modal-content input[type=email],
-        .modal-content input[type=number] {
-            width: 100%;
-            padding: 12px 20px;
-            margin: 8px 0;
-            box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            resize: vertical;
-            font-weight: bold;
-        }
-
-        /* Stile per la tendina */
+        .modal-content input[type=number],
         .modal-content select {
-            width: 100%;
-            padding: 12px 20px;
-            margin: 8px 0;
-            box-sizing: border-box;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            background-color: #fff;
-            color: #021823;
-            font-weight: bold;
-        }
-
-        .button-container {
-            padding-top: 10px;
-            align-self: flex-start;
+            height: 35px; /* Aumentata l'altezza */
+            width: calc(100% - 20px); /* Corretta la larghezza */
+            border: 1px solid #fafafa;
+            border-radius: 5px;
+            background-color: #0b2d34;
+            color: #fafafa;
+            margin-bottom: 20px; /* Aumentato lo spazio tra i campi */
         }
 
         .thresholdInput {
+            display: block;
             margin-bottom: 20px;
+        }
+
+        .dataInput {
+            display: block;
+            margin-bottom: 20px;
+            width: 300px;
         }
 
         .modal-content button {
@@ -128,7 +116,13 @@
             color: #021823;
             font-weight: bold;
             transition: background-color 0.3s ease-in-out;
-            width: 48%; /* Aggiunto per fare in modo che i bottoni siano uguali */
+            width: 100%; /* Aggiunto per allineare i bottoni */
+        }
+
+        .modal-content label {
+            color: white;
+            font-weight: bold;
+            margin-bottom: 5px; /* Aggiunto margine inferiore */
         }
 
         .modal-content button:hover {
@@ -136,20 +130,53 @@
             color: #fafafa;
             border: 1px solid #fafafa;
         }
+
+        .slider {
+            display: flex;
+            color: white;
+            font-weight: bold;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .dashboard {
+            align-items: center;
+            justify-content: center;
+            width: 98%;
+            height: 85%;
+            margin-bottom: 20px; /* Aggiunto margine inferiore */
+        }
+
+        .close {
+            top: 20px;
+            right: 20px;
+            color: #fafafa;
+            font-size: 24px;
+            position: absolute;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #fafafa;
+            text-decoration: none;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
 <div class="flex-container">
     <div id="myModal" class="modal">
         <div class="modal-content">
+            <span id="goBackButton" class="close">&times;</span>
+            <h1 class="title">Notification data</h1>
             <form id="dataForm">
-                <label for="canal">Notification canal:</label>
-                <select id="canal" name="Notification canal">
-                    <option value="mailOption" selected>Email</option>
-                    <option value="smsOption">SMS</option>
-                </select>
-                {#  <label for="mailInput">SMS or email</label> #}
-                {# <input type="text" id="mailInput" name="mailInput"> #}
+                <div>
+                    <label for="canal">Notification canal:</label>
+                    <select id="canal" name="Notification canal">
+                        <option value="mailOption" selected>Email</option>
+                        <option value="smsOption">SMS</option>
+                    </select>
+                </div>
                 <div id="emailFields" class="notification-fields">
                     <label id="emailLabel" for="emailAddress">Email address:</label>
                     <input type="email" id="emailAddress" name="emailAddress">
@@ -158,23 +185,36 @@
                     <label id="phoneLabel" for="phoneNumber">Phone number:</label>
                     <input type="text" id="phoneNumber" name="phoneNumber">
                 </div>
-                <label for="threshold">Temperature threshold for notification</label>
-                <input class="thresholdInput" type="range" id="thresholdSlider" name="threshold" min="35" max="50"
-                       step="0.1" value="40">
-                <output for="thresholdSlider" id="thresholdOutput">50</output>
-                <label for="dataAmount">Number of data to generate:</label>
-                <input type="number" id="dataAmount" name="dataAmount" min="1" value="1">
+                <div>
+                    <label for="threshold">Temperature threshold for notification</label>
+                    <div class="slider">
+                        <input class="thresholdInput" type="range" id="thresholdSlider" name="threshold" min="35"
+                               max="50"
+                               step="0.1" value="40">
+                        <output for="thresholdSlider" id="thresholdOutput">50</output>
+                    </div>
+                </div>
+                <div>
+                    <label for="dataAmount">Number of data to generate:</label>
+                    <div class="slider">
+                        <input class="dataInput" type="range" id="dataAmountSlider" name="dataAmount" min="1"
+                               max="500"
+                               step="1" value="100">
+                        <output for="dataAmountSlider" id="dataAmountOutput">100</output>
+                    </div>
+                </div>
                 <div class="button-container">
                     <button type="button" id="saveButton">Save</button>
                     <button type="button" id="resetButton">Reset</button>
-                    <button type="button" id="goBackButton">Go back</button>
                 </div>
             </form>
         </div>
     </div>
 
-    <iframe src="http://grafana:3000/d/fd42fcb5-adbf-4f4e-89fb-c2b47b7dc1e6/temperaturemonitoration?orgId=1&refresh=auto&from=1708516289516&to=1708516589517&viewPanel=1"
-            width="100%" height="80%"></iframe>
+    <div class="dashboard">
+        <iframe src="http://grafana:3000/d/fd42fcb5-adbf-4f4e-89fb-c2b47b7dc1e6/temperaturemonitoration?orgId=1&refresh=auto&from=1708516289516&to=1708516589517&viewPanel=1"
+                width="100%" height="100%"></iframe>
+    </div>
     <div class="button-container">
         <!-- Modifica il pulsante per avviare la simulazione -->
         <button class="simulation-button" id="startSimulation">Start simulation</button>
@@ -183,17 +223,25 @@
         </a>
     </div>
 </div>
+
 <script>
     // Rimuovi la parte che gestisce il modal alla caricamento della pagina
     var modal = document.getElementById("myModal");
     var dataForm = document.getElementById("dataForm");
     var saveButton = document.getElementById("saveButton");
-    var slider = document.getElementById("thresholdSlider");
-    var output = document.getElementById("thresholdOutput");
-    output.innerHTML = parseFloat(slider.value).toFixed(1) + "°C";
+    var sliderTemperature = document.getElementById("thresholdSlider");
+    var outputTemperature = document.getElementById("thresholdOutput");
+    var sliderData = document.getElementById("dataAmountSlider");
+    var outputData = document.getElementById("dataAmountOutput");
 
-    slider.oninput = function () {
-        output.innerHTML = parseFloat(this.value).toFixed(1) + "°C";
+    outputTemperature.innerHTML = parseFloat(sliderTemperature.value).toFixed(1) + "°C";
+    outputData.innerHTML = parseInt(sliderData.value);
+
+    sliderTemperature.oninput = function () {
+        outputTemperature.innerHTML = parseFloat(this.value).toFixed(1) + "°C";
+    };
+    sliderData.oninput = function () {
+        outputData.innerHTML = parseInt(this.value);
     };
 
     function isValidEmail(email) {
@@ -258,13 +306,13 @@
             alert("Error! Please select a notification canal.");
         }
 
-        if (canal && (canal === "mailOption" || isValidPhoneNumber(phoneInserted)) && thresholdInserted && dataAmount) {
+        if (canal && ((canal === "mailOption" && isValidEmail(mailInserted)) || (canal === "smsOption" && isValidPhoneNumber(phoneInserted))) && thresholdInserted && dataAmount) {
             fetch('/generation', {
                 method: 'POST',
                 body: JSON.stringify({
                     canal: canal,
-                    mail: mailInserted,
-                    phone: phoneInserted,
+                    mail: canal === "mailOption" ? mailInserted : "",
+                    phone: canal === "smsOption" ? phoneInserted : "",
                     threshold: thresholdInserted,
                     dataAmount: dataAmount
                 }),
@@ -274,44 +322,43 @@
             })
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error('Response error! Inspect console logs for more informations');
+                        throw new Error('Response error! Inspect console logs for more information');
                     }
-                }).catch(error => {
-                console.error('Error:', error);
-            });
-        } else {
-            alert('Please set your data before starting the simulation.');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
         }
-    };
-    // Gestisci il click sul pulsante "Reset"
-    document.getElementById("resetButton").onclick = function () {
-        // Resetta tutti i campi del form
-        document.getElementById("dataAmount").value = 1;
-        document.getElementById("canal").value = "mailOption";
-        document.getElementById("emailAddress").value = "";
-        document.getElementById("phoneNumber").value = "";
-        document.getElementById("thresholdSlider").value = 40.0;
-        document.getElementById("thresholdOutput").innerHTML = "40°C";
-    };
-
-    // Gestisci il click sul pulsante "Get back"
-    document.getElementById("goBackButton").onclick = function () {
-        // Chiudi il modal senza fare alcuna operazione
-        modal.style.display = "none";
-    };
-
-    document.addEventListener("DOMContentLoaded", function () {
-        document.getElementById("canal").onchange = function () {
-            let selectedOption = this.value;
-            if (selectedOption === "mailOption") {
-                document.getElementById("emailFields").style.display = "block";
-                document.getElementById("smsFields").style.display = "none";
-            } else if (selectedOption === "smsOption") {
-                document.getElementById("emailFields").style.display = "none";
-                document.getElementById("smsFields").style.display = "block";
-            }
+        // Gestisci il click sul pulsante "Reset"
+        document.getElementById("resetButton").onclick = function () {
+            // Resetta tutti i campi del form
+            document.getElementById("canal").value = "mailOption";
+            document.getElementById("emailAddress").value = "";
+            document.getElementById("phoneNumber").value = "";
+            document.getElementById("thresholdSlider").value = 40.0;
+            document.getElementById("thresholdOutput").innerHTML = "40°C";
+            document.getElementById("dataAmountSlider").value = 100;
+            document.getElementById("dataAmountOutput").value = 100;
         };
-    });
+
+        // Gestisci il click sul pulsante "Get back"
+        document.getElementById("goBackButton").onclick = function () {
+            // Chiudi il modal senza fare alcuna operazione
+            modal.style.display = "none";
+        };
+
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById("canal").onchange = function () {
+                let selectedOption = this.value;
+                if (selectedOption === "mailOption") {
+                    document.getElementById("emailFields").style.display = "block";
+                    document.getElementById("smsFields").style.display = "none";
+                } else if (selectedOption === "smsOption") {
+                    document.getElementById("emailFields").style.display = "none";
+                    document.getElementById("smsFields").style.display = "block";
+                }
+            };
+        });
 
 </script>
 </body>
