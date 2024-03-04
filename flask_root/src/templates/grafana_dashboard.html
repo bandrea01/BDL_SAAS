@@ -131,32 +131,48 @@
     <div id="myModal" class="modal">
         <div class="modal-content">
             <form id="dataForm">
-                <label for="dataInput1">Notification canal:</label>
+                <label for="canal">Notification canal:</label>
                 <select id="canal" name="Notification canal">
                     <option value="mailOption" selected>Email</option>
-                    {#                    <option value="sms">SMS</option>#}
+                    <option value="sms">SMS</option>
                 </select>
-                <label for="mailInput">SMS or email</label>
-                <input type="text" id="mailInput" name="mailInput">
+                {#  <label for="mailInput">SMS or email</label> #}
+                {# <input type="text" id="mailInput" name="mailInput"> #}
+                <div id="emailFields" class="notification-fields">
+                    <label for="emailAddress">Email address:</label>
+                    <input type="email" id="emailAddress" name="emailAddress">
+                </div>
+
+                <div id="smsFields" class="notification-fields" style="display: none;">
+                    <label for="phoneNumber">Phone number:</label>
+                    <input type="text" id="phoneNumber" name="phoneNumber">
+                </div>
                 <label for="threshold">Temperature threshold for notification</label>
                 <input type="range" id="thresholdSlider" name="threshold" min="35" max="50" step="0.1" value="40">
                 <output for="thresholdSlider" id="thresholdOutput">50</output>
+                <label for="dataAmount">Number of data to generate:</label>
+                <input type="number" id="dataAmount" name="dataAmount" min="1" value="1">
                 <div class="button-container">
                     <button type="button" id="saveButton">Save</button>
+                    <button type="button" id="resetButton">Reset</button>
+                    <button type="button" id="getBackButton">Get back</button>
                 </div>
             </form>
         </div>
     </div>
+
     <iframe src="http://grafana:3000/d/fd42fcb5-adbf-4f4e-89fb-c2b47b7dc1e6/temperaturemonitoration?orgId=1&refresh=auto&from=1708516289516&to=1708516589517&viewPanel=1"
             width="100%" height="80%"></iframe>
     <div class="button-container">
-        <button class="simulation-button" id="generation">Start simulation</button>
+        <!-- Modifica il pulsante per avviare la simulazione -->
+        <button class="simulation-button" id="startSimulation">Start simulation</button>
         <a href="/menu">
             <button class="cards-button">Return to cards</button>
         </a>
     </div>
 </div>
 <script>
+    // Rimuovi la parte che gestisce il modal alla caricamento della pagina
     var modal = document.getElementById("myModal");
     var dataForm = document.getElementById("dataForm");
     var saveButton = document.getElementById("saveButton");
@@ -173,23 +189,35 @@
         return emailPattern.test(email);
     }
 
-    saveButton.onclick = function () {
-        {#var dataInput1 = document.getElementById("dataInput1").value;#}
-        var mailInserted = document.getElementById("mailInput").value;
-        var thresholdInserted = document.getElementById("thresholdSlider").value;
+    // Gestisci il click sul pulsante "Start simulation"
+    document.getElementById("startSimulation").onclick = function () {
+        // Mostra il modal
+        modal.style.display = "block";
+    };
 
-        {#localStorage.setItem("dataInput1", dataInput1);#}
+    // Gestisci il click sul pulsante "Save"
+    saveButton.onclick = function () {
+        var mailInserted = document.getElementById("mailInput").value;
+        var thresholdInserted = parseFloat(document.getElementById("thresholdSlider").value);
+        var dataAmount = parseInt(document.getElementById("dataAmount").value);
+
+        // Verifica se dataAmount è un numero intero valido
+        if (!isNaN(dataAmount)) {
+            // Continua con il salvataggio e l'invio della richiesta
+            localStorage.setItem("dataAmount", dataAmount); // Salva il numero di dati
+
+            // Resto del codice rimane invariato
+        } else {
+            alert("Error! Please enter a valid number for data amount.");
+        }
+
         localStorage.setItem("mail", mailInserted);
         localStorage.setItem("threshold", thresholdInserted);
-
 
         if (mailInserted !== "") {
             if (isValidEmail(mailInserted)) {
                 alert('Saved!');
                 modal.style.display = "none";
-                {#console.log(dataInput1);#}
-                console.log(mailInserted);
-                console.log(thresholdInserted);
             } else {
                 alert('Error! Bad format email.');
             }
@@ -197,17 +225,10 @@
             alert("Error! Empty fields.");
         }
 
-    }
-
-    document.getElementById("generation").onclick = function () {
-        {#var savedDataInput1 = localStorage.getItem("dataInput1");#}
-        var savedMailInserted = localStorage.getItem("mail");
-        var thresholdInserted = localStorage.getItem("threshold");
-
-        if (savedMailInserted && thresholdInserted) {
+        if (mailInserted && thresholdInserted && dataAmount) {
             fetch('/generation', {
                 method: 'POST',
-                body: JSON.stringify({mail: savedMailInserted, threshold: thresholdInserted}),
+                body: JSON.stringify({mail: mailInserted, threshold: thresholdInserted, dataAmount: dataAmount}),
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -224,9 +245,22 @@
         }
     };
 
-    window.onload = function () {
-        modal.style.display = "block";
-    }
+    // Gestisci il click sul pulsante "Reset"
+    document.getElementById("resetButton").onclick = function () {
+        // Resetta tutti i campi del form
+        document.getElementById("dataAmount").value = 1;
+        document.getElementById("canal").value = "mailOption";
+        document.getElementById("mailInput").value = "";
+        document.getElementById("thresholdSlider").value = 40.0;
+        document.getElementById("thresholdOutput").innerHTML = "40°C";
+    };
+
+    // Gestisci il click sul pulsante "Get back"
+    document.getElementById("getBackButton").onclick = function () {
+        // Chiudi il modal senza fare alcuna operazione
+        modal.style.display = "none";
+    };
 </script>
 </body>
 </html>
+

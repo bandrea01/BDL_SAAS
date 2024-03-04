@@ -42,10 +42,10 @@ def login_required(f):
     return decorated_function
 
 
-def update_entities(start_value):
-    temperatures = dataGenerator.generate_temperature_values(100, 0.5, start_value, 0.05)
+def update_entities(n, start_value):
+    temperatures = dataGenerator.generate_temperature_values(n, 0.5, start_value, 0.05)
 
-    for i in range(0, 100):
+    for i in range(0, n):
         payload = {
             "temperature": temperatures[i]
         }
@@ -113,6 +113,8 @@ def generation():
     data = request.json
     mail = data.get("mail")
     threshold = data.get("threshold")
+    dataAmount = data.get("dataAmount")
+    # TODO: Eventualmente mettere uno slider per far scegliere la temperatura di partenza all'utente
 
     sensor_type = "TemperatureSensor"
     res_entity = fiware.init_entites(sensor_type, 20.0)
@@ -144,7 +146,7 @@ def generation():
         err = "Error in rule creation: " + str(res_rule)
         return render_template("error.html", message=err)
 
-    update_entities(20.0)
+    update_entities(dataAmount, 20.0)
 
 
 """-------------------    AQL    ---------------------"""
