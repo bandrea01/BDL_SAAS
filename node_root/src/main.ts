@@ -142,6 +142,12 @@ allEdgesButton.label = "Mostra tutte le relazioni";
 traversalNodeButton.label = "Mostra dettagli nodo";
 nodesByTypeButton.label = "Mostra nodi per tipo";
 
+const goBackButton = new OBC.Button(viewer);
+goBackButton.materialIcon = "exit_to_app";
+goBackButton.tooltip = "Go back";
+
+goBackButton.onClick.add(() => redirectTo("http://localhost:8432/menu"));
+
 queryTool.addChild(allNodesButton);
 queryTool.addChild(allEdgesButton);
 queryTool.addChild(traversalNodeButton);
@@ -149,12 +155,14 @@ queryTool.addChild(nodesByTypeButton);
 traversalNodeButton.onClick.add(() => showTraversalFields());
 nodesByTypeButton.onClick.add(() => showTraversalByTypeFields());
 
+
 const mainToolbar = new OBC.Toolbar(viewer);
 mainToolbar.addChild(
     ifcLoader.uiElement.get("main"),
     ifcManager.uiElement.get("main"),
     propertiesProcessor.uiElement.get("main"),
-    queryTool
+    queryTool,
+    goBackButton
 );
 viewer.ui.addToolbar(mainToolbar);
 
@@ -182,6 +190,10 @@ window.addEventListener("mousedown", function (event) {
         // generateTable(jsonData);
     }
 });
+
+function redirectTo(url: string): void {
+    window.location.href = url;
+}
 
 function showTraversalFields() {
     const queryContainer = document.getElementById("query-container") as HTMLElement;
