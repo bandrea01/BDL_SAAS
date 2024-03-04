@@ -27,6 +27,10 @@
 
         .button-container {
             padding-top: 25px;
+            display: flex;
+            flex-direction: row;
+            width: 100%; /* Aggiunto per allineare i bottoni */
+            gap: 10px;
         }
 
         .flex-container iframe {
@@ -76,9 +80,12 @@
             flex-direction: column;
             justify-content: center;
             align-items: center;
+            gap: 20px;
         }
 
-        .modal-content input[type=text] {
+        .modal-content input[type=text],
+        .modal-content input[type=email],
+        .modal-content input[type=number] {
             width: 100%;
             padding: 12px 20px;
             margin: 8px 0;
@@ -97,14 +104,18 @@
             box-sizing: border-box;
             border: 1px solid #ccc;
             border-radius: 4px;
-            background-color: #fff; /* Aggiunto colore di sfondo bianco */
-            color: #021823; /* Aggiunto colore del testo nero */
+            background-color: #fff;
+            color: #021823;
             font-weight: bold;
         }
 
         .button-container {
-            padding-top: 10px; /* Ridimensiona lo spazio sopra il bottone */
-            align-self: flex-start; /* Posiziona il contenitore dei bottoni all'inizio del contenitore flessibile */
+            padding-top: 10px;
+            align-self: flex-start;
+        }
+
+        .thresholdInput {
+            margin-bottom: 20px;
         }
 
         .modal-content button {
@@ -114,9 +125,10 @@
             border-radius: 4px;
             cursor: pointer;
             margin-top: 10px;
-            color: #021823; /* Aggiunto colore del testo nero */
+            color: #021823;
             font-weight: bold;
             transition: background-color 0.3s ease-in-out;
+            width: 48%; /* Aggiunto per fare in modo che i bottoni siano uguali */
         }
 
         .modal-content button:hover {
@@ -134,28 +146,28 @@
                 <label for="canal">Notification canal:</label>
                 <select id="canal" name="Notification canal">
                     <option value="mailOption" selected>Email</option>
-                    <option value="sms">SMS</option>
+                    <option value="smsOption">SMS</option>
                 </select>
                 {#  <label for="mailInput">SMS or email</label> #}
                 {# <input type="text" id="mailInput" name="mailInput"> #}
                 <div id="emailFields" class="notification-fields">
-                    <label for="emailAddress">Email address:</label>
+                    <label id="emailLabel" for="emailAddress">Email address:</label>
                     <input type="email" id="emailAddress" name="emailAddress">
                 </div>
-
                 <div id="smsFields" class="notification-fields" style="display: none;">
-                    <label for="phoneNumber">Phone number:</label>
+                    <label id="phoneLabel" for="phoneNumber">Phone number:</label>
                     <input type="text" id="phoneNumber" name="phoneNumber">
                 </div>
                 <label for="threshold">Temperature threshold for notification</label>
-                <input type="range" id="thresholdSlider" name="threshold" min="35" max="50" step="0.1" value="40">
+                <input class="thresholdInput" type="range" id="thresholdSlider" name="threshold" min="35" max="50"
+                       step="0.1" value="40">
                 <output for="thresholdSlider" id="thresholdOutput">50</output>
                 <label for="dataAmount">Number of data to generate:</label>
                 <input type="number" id="dataAmount" name="dataAmount" min="1" value="1">
                 <div class="button-container">
                     <button type="button" id="saveButton">Save</button>
                     <button type="button" id="resetButton">Reset</button>
-                    <button type="button" id="getBackButton">Get back</button>
+                    <button type="button" id="goBackButton">Go back</button>
                 </div>
             </form>
         </div>
@@ -189,6 +201,11 @@
         return emailPattern.test(email);
     }
 
+    function isValidPhoneNumber(phoneNumber) {
+        var phonePattern = /^[0-9]{10}$/; // Il numero di telefono deve essere esattamente di 10 cifre
+        return phonePattern.test(phoneNumber);
+    }
+
     // Gestisci il click sul pulsante "Start simulation"
     document.getElementById("startSimulation").onclick = function () {
         // Mostra il modal
@@ -197,7 +214,9 @@
 
     // Gestisci il click sul pulsante "Save"
     saveButton.onclick = function () {
-        var mailInserted = document.getElementById("mailInput").value;
+        var canal = document.getElementById("canal").value;
+        var mailInserted = document.getElementById("emailAddress").value;
+        var phoneInserted = document.getElementById("phoneNumber").value;
         var thresholdInserted = parseFloat(document.getElementById("thresholdSlider").value);
         var dataAmount = parseInt(document.getElementById("dataAmount").value);
 
@@ -211,24 +230,44 @@
             alert("Error! Please enter a valid number for data amount.");
         }
 
-        localStorage.setItem("mail", mailInserted);
         localStorage.setItem("threshold", thresholdInserted);
 
-        if (mailInserted !== "") {
-            if (isValidEmail(mailInserted)) {
-                alert('Saved!');
-                modal.style.display = "none";
+        if (canal === "mailOption") {
+            if (mailInserted !== "") {
+                if (isValidEmail(mailInserted)) {
+                    alert('Saved!');
+                    modal.style.display = "none";
+                } else {
+                    alert('Error! Invalid email format.');
+                }
             } else {
-                alert('Error! Bad format email.');
+                alert("Error! Email field is empty.");
+            }
+        } else if (canal === "smsOption") {
+            if (phoneInserted !== "") {
+                if (isValidPhoneNumber(phoneInserted)) {
+                    alert('Saved!');
+                    modal.style.display = "none";
+                } else {
+                    alert('Error! Invalid phone number format.');
+                }
+            } else {
+                alert("Error! Phone number field is empty.");
             }
         } else {
-            alert("Error! Empty fields.");
+            alert("Error! Please select a notification canal.");
         }
 
-        if (mailInserted && thresholdInserted && dataAmount) {
+        if (canal && (canal === "mailOption" || isValidPhoneNumber(phoneInserted)) && thresholdInserted && dataAmount) {
             fetch('/generation', {
                 method: 'POST',
-                body: JSON.stringify({mail: mailInserted, threshold: thresholdInserted, dataAmount: dataAmount}),
+                body: JSON.stringify({
+                    canal: canal,
+                    mail: mailInserted,
+                    phone: phoneInserted,
+                    threshold: thresholdInserted,
+                    dataAmount: dataAmount
+                }),
                 headers: {
                     'Content-Type': 'application/json'
                 }
@@ -244,22 +283,36 @@
             alert('Please set your data before starting the simulation.');
         }
     };
-
     // Gestisci il click sul pulsante "Reset"
     document.getElementById("resetButton").onclick = function () {
         // Resetta tutti i campi del form
         document.getElementById("dataAmount").value = 1;
         document.getElementById("canal").value = "mailOption";
-        document.getElementById("mailInput").value = "";
+        document.getElementById("emailAddress").value = "";
+        document.getElementById("phoneNumber").value = "";
         document.getElementById("thresholdSlider").value = 40.0;
         document.getElementById("thresholdOutput").innerHTML = "40°C";
     };
 
     // Gestisci il click sul pulsante "Get back"
-    document.getElementById("getBackButton").onclick = function () {
+    document.getElementById("goBackButton").onclick = function () {
         // Chiudi il modal senza fare alcuna operazione
         modal.style.display = "none";
     };
+
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("canal").onchange = function () {
+            let selectedOption = this.value;
+            if (selectedOption === "mailOption") {
+                document.getElementById("emailFields").style.display = "block";
+                document.getElementById("smsFields").style.display = "none";
+            } else if (selectedOption === "smsOption") {
+                document.getElementById("emailFields").style.display = "none";
+                document.getElementById("smsFields").style.display = "block";
+            }
+        };
+    });
+
 </script>
 </body>
 </html>
