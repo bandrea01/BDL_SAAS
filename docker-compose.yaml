@@ -128,56 +128,66 @@ services:
       - perseomongoconfig:/data/configdb
       - perseomongolog:/var/log/mongodb
     networks:
-        - general_network
+      - general_network
     deploy:
-        replicas: 1
-        restart_policy:
-            condition: on-failure
+      replicas: 1
+      restart_policy:
+        condition: on-failure
 
   perseo-core:
     image: fiware/perseo-core:1.13.0
     environment:
-        - PERSEO_FE_URL=http://perseo-fe:9090
-        - MAX_AGE=6000
+      - PERSEO_FE_URL=http://perseo-fe:9090
+      - MAX_AGE=6000
     networks:
-        - general_network
+      - general_network
     depends_on:
-        - perseo-mongo
+      - perseo-mongo
     deploy:
-        replicas: 1
-        restart_policy:
-            condition: on-failure
+      replicas: 1
+      restart_policy:
+        condition: on-failure
 
   perseo-fe:
     image: fiware/perseo:1.26.0
     networks:
-        - general_network
+      - general_network
     ports:
-        - "9090:9090"
+      - "9090:9090"
     depends_on:
-        - perseo-core
+      - perseo-core
     environment:
-        - PERSEO_MONGO_ENDPOINT=perseo-mongo
-        - PERSEO_CORE_URL=http://perseo-core:8080
-        - PERSEO_LOG_LEVEL=debug
-        - PERSEO_ORION_URL=http://orion:1026/
-        - PERSEO_SMTP_HOST=smtp.gmail.com
-        - PERSEO_SMTP_PORT=465
-        - PERSEO_SMTP_SECURE=true
-        - PERSEO_SMTP_AUTH_USER=perseobdl@gmail.com
-        - PERSEO_SMTP_AUTH_PASS=ybxdpminubbnlcka
-        - PERSEO_SMS_URL=https://api.twilio.com/2010-04-01/Accounts/AC7ecc793aad32d43e008ab0987edb7896/Messages.json
-        - PERSEO_SMS_API_KEY=AC7ecc793aad32d43e008ab0987edb7896
-        - PERSEO_SMS_API_SECRET=9ab27852e4908b344eb78f9df3faaeec
-        - PERSEO_SMS_FROM=tel:2163036185;phone-context=+1
+      - PERSEO_MONGO_ENDPOINT=perseo-mongo
+      - PERSEO_CORE_URL=http://perseo-core:8080
+      - PERSEO_LOG_LEVEL=debug
+      - PERSEO_ORION_URL=http://orion:1026/
+      - PERSEO_SMTP_HOST=smtp.gmail.com
+      - PERSEO_SMTP_PORT=465
+      - PERSEO_SMTP_SECURE=true
+      - PERSEO_SMTP_AUTH_USER=perseobdl@gmail.com
+      - PERSEO_SMTP_AUTH_PASS=ybxdpminubbnlcka
+      - PERSEO_SMS_URL=https://api.twilio.com/2010-04-01/Accounts/SKf8d11c76ea922ba5d92c5d9515b4c23e/Messages.json
+      - PERSEO_SMS_API_KEY=AC7ecc793aad32d43e008ab0987edb7896
+      - PERSEO_SMS_API_SECRET=9ab27852e4908b344eb78f9df3faaeec
+      - PERSEO_SMS_FROM=+12163036185
     deploy:
-        replicas: 1
-        restart_policy:
-            condition: on-failure
+      replicas: 1
+      restart_policy:
+        condition: on-failure
 
 volumes:
   flask_app:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: C:\Users\mirko\OneDrive\Desktop\BDL_SAAS\flask_root
   node_app:
+  #  driver: local
+  #  driver_opts:
+  #    type: none
+  #    o: bind
+  #    device: C:/Users/mirko/OneDrive/Desktop/BDL_SAAS/node_root
   arangodb_data:
   arangodb_apps:
   arangodb_backup:
