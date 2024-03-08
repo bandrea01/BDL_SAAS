@@ -11,7 +11,7 @@ services:
       - DEBUG_USR=admin
       - DEBUG_PWD=restapi
     volumes:
-      - flask_app:/app
+      - ./flask_root:/app
     networks:
       - general_network
 
@@ -176,18 +176,7 @@ services:
         condition: on-failure
 
 volumes:
-  flask_app:
-    driver: local
-    driver_opts:
-      type: none
-      o: bind
-      device: C:\Users\mirko\OneDrive\Desktop\BDL_SAAS\flask_root
   node_app:
-  #  driver: local
-  #  driver_opts:
-  #    type: none
-  #    o: bind
-  #    device: C:/Users/mirko/OneDrive/Desktop/BDL_SAAS/node_root
   arangodb_data:
   arangodb_apps:
   arangodb_backup:

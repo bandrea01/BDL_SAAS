@@ -1,3 +1,6 @@
+import base64
+import os
+
 import requests
 
 
@@ -266,14 +269,32 @@ class FiwareAPI(object):
         if status == 200:
             self.delete_rule(rule_name)
 
+        # Account SID e Auth Token
+        account_sid = "AC7ecc793aad32d43e008ab0987edb7896"
+        auth_token = "9ab27852e4908b344eb78f9df3faaeec"
+
+        # Concatena Account SID e Auth Token separati da ":"
+        credentials = f"{account_sid}:{auth_token}"
+
+        # Codifica in Base64
+        encoded_credentials = base64.b64encode(credentials.encode()).decode()
+
         payload = {
             "name": rule_name,
             "text": text,
             "action": {
-                "type": "sms",
+                "type": "post",
                 "template": template,
                 "parameters": {
-                    "to": to
+                    "url": f"https://api.twilio.com/2010-04-01/Accounts/{account_sid}/Messages.json",
+                    "headers": {
+                        "Authorization": f"{encoded_credentials}",
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    "body": {
+                        "From": "+12163036185",
+                        "To": to
+                    }
                 }
             }
         }
