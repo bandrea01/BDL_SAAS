@@ -64,7 +64,7 @@ ifcLoader.onIfcLoaded.add(async (model) => {
         try {
             const modelName = ifcManager.groups[0].name;
             if (modelName) {
-                fetch('http://localhost:8432/get_node_by_id/' + modelName.split(".")[0] + '_nodes/' + expressID)
+                fetch('http://flask_app:8432/get_node_by_id/' + modelName.split(".")[0] + '_nodes/' + expressID)
                     .then(response => {
                         if (!response.ok) {
                             throw new Error('Network response was not ok');
@@ -146,7 +146,7 @@ const goBackButton = new OBC.Button(viewer);
 goBackButton.materialIcon = "exit_to_app";
 goBackButton.tooltip = "Go back";
 
-goBackButton.onClick.add(() => redirectTo("http://localhost:8432/menu"));
+goBackButton.onClick.add(() => redirectTo("http://flask_app:8432/menu"));
 
 queryTool.addChild(allNodesButton);
 queryTool.addChild(allEdgesButton);
@@ -265,7 +265,7 @@ function fetchAllNodes() {
     try {
         const modelName = ifcManager.groups[0].name;
         if (modelName) {
-            fetch('http://localhost:8432/get_all_nodes/' + modelName.split(".")[0] + '_nodes')
+            fetch('http://flask_app:8432/get_all_nodes/' + modelName.split(".")[0] + '_nodes')
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
@@ -322,7 +322,7 @@ function fetchAllEdges() {
     try {
         const modelName = ifcManager.groups[0].name;
         if (modelName) {
-            fetch('http://localhost:8432/get_all_edges/' + modelName.split(".")[0] + '_edges')
+            fetch('http://flask_app:8432/get_all_edges/' + modelName.split(".")[0] + '_edges')
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
@@ -390,7 +390,7 @@ function fetchTraversal() {
         try {
             const modelName = ifcManager.groups[0].name;
             if (modelName) {
-                fetch('http://localhost:8432/traversal/' + modelName.split(".")[0] + '_graph/' + modelName.split(".")[0] + '_nodes/' + nodeNameInput + '/' + directionInput + '/' + minDepthInput + '/' + maxDepthInput)
+                fetch('http://flask_app:8432/traversal/' + modelName.split(".")[0] + '_graph/' + modelName.split(".")[0] + '_nodes/' + nodeNameInput + '/' + directionInput + '/' + minDepthInput + '/' + maxDepthInput)
                     .then(response => {
                         if (!response.ok) {
                             throw new Error('Network response was not ok');
@@ -461,7 +461,7 @@ function fetchTraversalByName() {
         try {
             const modelName = ifcManager.groups[0].name;
             if (modelName) {
-                fetch('http://localhost:8432/traversal_by_name/' + modelName.split(".")[0] + '_graph/' + modelName.split(".")[0] + '_nodes/' + nodeNameInput + '/' + directionInput + '/' + minDepthInput + '/' + maxDepthInput)
+                fetch('http://flask_app:8432/traversal_by_name/' + modelName.split(".")[0] + '_graph/' + modelName.split(".")[0] + '_nodes/' + nodeNameInput + '/' + directionInput + '/' + minDepthInput + '/' + maxDepthInput)
                     .then(response => {
                         if (!response.ok) {
                             throw new Error('Network response was not ok');
