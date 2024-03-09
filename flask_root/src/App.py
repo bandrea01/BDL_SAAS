@@ -112,7 +112,6 @@ def monitoring():
 def generation():
     data = request.json
     mail = data.get("mail")
-    phone = data.get("phone")
     threshold = data.get("threshold")
     dataAmount = data.get("dataAmount")
 
@@ -138,18 +137,10 @@ def generation():
         err = "Error in doing subscription: " + str(res_subscription)
         return render_template("error.html", message=err)
 
-    res_rule = None
-
-    if mail != "":
-        res_rule = fiware.init_rules_mail("temperature_rule_mail",
-                                          f"SELECT *, temperature? AS temperature FROM iotEvent WHERE (CAST(CAST(temperature?,String), DOUBLE)>={threshold} AND type='TemperatureSensor')",
-                                          "WARNING! Possible fire in progress/Temperature sensor malfunction... Detected temperature: ${temperature}°C",
-                                          mail, "Temperature Notify")
-    else:
-        res_rule = fiware.init_rules_sms("temperature_rule_phone",
-                                         f"SELECT *, temperature? AS temperature FROM iotEvent WHERE (CAST(CAST(temperature?,String), DOUBLE)>={threshold} AND type='TemperatureSensor')",
-                                         "WARNING! Possible fire in progress/Temperature sensor malfunction... Detected temperature: ${temperature}°C",
-                                         phone)
+    res_rule = fiware.init_rules_mail("temperature_rule_mail",
+                                      f"SELECT *, temperature? AS temperature FROM iotEvent WHERE (CAST(CAST(temperature?,String), DOUBLE)>={threshold} AND type='TemperatureSensor')",
+                                      "WARNING! Possible fire in progress/Temperature sensor malfunction... Detected temperature: ${temperature}°C",
+                                      mail, "Temperature Notify")
 
     if res_rule != 200:
         err = "Error in rule creation: " + str(res_rule)

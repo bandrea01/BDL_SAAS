@@ -263,41 +263,4 @@ class FiwareAPI(object):
         res = self.insert_rule(payload)
         return res
 
-    def init_rules_sms(self, rule_name, text, template, to):
-        status = self.get_rule_by_name(rule_name)
 
-        if status == 200:
-            self.delete_rule(rule_name)
-
-        # Account SID e Auth Token
-        account_sid = "AC7ecc793aad32d43e008ab0987edb7896"
-        auth_token = "9ab27852e4908b344eb78f9df3faaeec"
-
-        # Concatena Account SID e Auth Token separati da ":"
-        credentials = f"{account_sid}:{auth_token}"
-
-        # Codifica in Base64
-        encoded_credentials = base64.b64encode(credentials.encode()).decode()
-
-        payload = {
-            "name": rule_name,
-            "text": text,
-            "action": {
-                "type": "post",
-                "template": template,
-                "parameters": {
-                    "url": f"https://api.twilio.com/2010-04-01/Accounts/{account_sid}/Messages.json",
-                    "headers": {
-                        "Authorization": f"{encoded_credentials}",
-                        "Content-Type": "application/x-www-form-urlencoded"
-                    },
-                    "body": {
-                        "From": "+12163036185",
-                        "To": to
-                    }
-                }
-            }
-        }
-
-        res = self.insert_rule(payload)
-        return res

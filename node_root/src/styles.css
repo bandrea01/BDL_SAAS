@@ -259,7 +259,7 @@ hr {
 .help-button {
     position: fixed;
     top: 20px;
-    right: 30%;
+    right: 32%;
     z-index: 10000;
     width: 40px; /* Imposta la larghezza del bottone */
     height: 40px; /* Imposta l'altezza del bottone */
@@ -284,12 +284,12 @@ hr {
 }
 
 .viewer-container {
-    width: 90%;
+    width: 70%;
 }
 
 .json-viewer {
     width: 100%;
-    padding: 20px 30px;
+    /*padding: 7px 7px;*/
     background-color: #06191D;
     z-index: 900;
     box-shadow: 1px 0px 20px 0px rgba(0, 0, 0, 0.5);
