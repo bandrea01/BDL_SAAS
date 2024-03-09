@@ -166,10 +166,6 @@ services:
       - PERSEO_SMTP_SECURE=true
       - PERSEO_SMTP_AUTH_USER=perseobdl@gmail.com
       - PERSEO_SMTP_AUTH_PASS=ybxdpminubbnlcka
-      - PERSEO_SMS_URL=https://api.twilio.com/2010-04-01/Accounts/SKf8d11c76ea922ba5d92c5d9515b4c23e/Messages.json
-      - PERSEO_SMS_API_KEY=AC7ecc793aad32d43e008ab0987edb7896
-      - PERSEO_SMS_API_SECRET=9ab27852e4908b344eb78f9df3faaeec
-      - PERSEO_SMS_FROM=+12163036185
     deploy:
       replicas: 1
       restart_policy:
