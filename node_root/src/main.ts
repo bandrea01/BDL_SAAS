@@ -56,10 +56,11 @@ highlighter.events.select.onClear.add(() => {
 
 ifcLoader.onIfcLoaded.add(async (model) => {
     propertiesProcessor.process(model);
+    highlighter.clear();
     highlighter.events.select.onHighlight.add(async (selection) => {
         const fragmentID = Object.keys(selection)[0];
         const expressID = Number([...selection[fragmentID]][0]);
-        // const jsonContainer = document.getElementById("json-container");
+        propertiesProcessor.renderProperties(model, expressID);
 
         try {
             const modelName = ifcManager.groups[0].name;
@@ -115,8 +116,8 @@ ifcLoader.onIfcLoaded.add(async (model) => {
                 editor.set({"error": error});
             }
         }
-        highlighter.update();
     });
+    highlighter.update();
 });
 
 
@@ -155,11 +156,18 @@ queryTool.addChild(nodesByTypeButton);
 traversalNodeButton.onClick.add(() => showTraversalFields());
 nodesByTypeButton.onClick.add(() => showTraversalByTypeFields());
 
+const refreshButton = new OBC.Button(viewer);
+refreshButton.materialIcon = "refresh";
+refreshButton.tooltip = "Reset model";
+refreshButton.onClick.add(() => {
+  window.location.reload();
+});
 
 const mainToolbar = new OBC.Toolbar(viewer);
 mainToolbar.addChild(
     ifcLoader.uiElement.get("main"),
-    ifcManager.uiElement.get("main"),
+    // ifcManager.uiElement.get("main"),
+    refreshButton,
     propertiesProcessor.uiElement.get("main"),
     queryTool,
     goBackButton

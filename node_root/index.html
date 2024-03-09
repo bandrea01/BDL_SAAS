@@ -33,7 +33,7 @@
 </div>
 <div id="popup-container" class="popup-container">
     <div class="popup-content">
-        <span class="close">&times;</span>
+        <span class="close" id="close">&times;</span>
         <h2>Help</h2>
         <p>&nbsp;</p>
         <p>In this viewer you can move in two ways:</p>
@@ -60,12 +60,16 @@
             visualize.
         </p>
         <p>
-            • <strong>Models</strong>: you can handle objects in the scene, by
-            deleting them singularly.
+            • <strong>Refresh</strong>: you can dispose model added before in the scene.
         </p>
         <p>
             • <strong>Properties</strong>: if you click on a fragment of the
             loaded 3D model you can check all its properties in this window.
+        </p>
+        <p>
+            • <strong>Query tool</strong>: in this menu you can choose which AQL query perform
+            in order to visualize certain datas. All the information will be shown in the Json Viewer
+            on the right.
         </p>
     </div>
 </div>
@@ -102,5 +106,13 @@
     </div>
 </div>
 <script type="module" src="/src/main.ts"></script>
+<script>
+    document.getElementById("help-button").addEventListener("click", function () {
+        document.getElementById("popup-container").style.display = "block";
+    });
+    document.getElementById("close").addEventListener("click", function () {
+        document.getElementById("popup-container").style.display = "none";
+    });
+</script>
 </body>
 </html>

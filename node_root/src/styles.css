@@ -70,6 +70,7 @@ html {
 */
 
 body {
+    background-color: #222a32;
     margin: 0;
     /* 1 */
     line-height: inherit;
@@ -139,6 +140,14 @@ hr {
     font-weight: normal;
     font-size: 15px;
     color: #fafafa;
+}
+
+.popup-container .close {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    color: #fafafa;
+    font-size: 24px;
 }
 
 .query-container {
@@ -290,7 +299,7 @@ hr {
 .json-viewer {
     width: 100%;
     /*padding: 7px 7px;*/
-    background-color: #06191D;
+    background-image: linear-gradient(180deg, #4084fc, #06191D);
     z-index: 900;
     box-shadow: 1px 0px 20px 0px rgba(0, 0, 0, 0.5);
     max-height: 100vh;
