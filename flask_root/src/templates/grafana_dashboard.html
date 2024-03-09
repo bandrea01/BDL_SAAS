@@ -174,16 +174,11 @@
                     <label for="canal">Notification canal:</label>
                     <select id="canal" name="Notification canal">
                         <option value="mailOption" selected>Email</option>
-                        <option value="smsOption">SMS</option>
                     </select>
                 </div>
                 <div id="emailFields" class="notification-fields">
                     <label id="emailLabel" for="emailAddress">Email address:</label>
                     <input type="email" id="emailAddress" name="emailAddress">
-                </div>
-                <div id="smsFields" class="notification-fields" style="display: none;">
-                    <label id="phoneLabel" for="phoneNumber">Phone number:</label>
-                    <input type="text" id="phoneNumber" name="phoneNumber">
                 </div>
                 <div>
                     <label for="threshold">Temperature threshold for notification</label>
@@ -212,7 +207,7 @@
     </div>
 
     <div class="dashboard">
-        <iframe src="http://localhost:3000/d/fd42fcb5-adbf-4f4e-89fb-c2b47b7dc1e6/temperaturemonitoration?orgId=1&refresh=5s&from=1709883072337&to=1709904672337"
+        <iframe src="http://grafana:3000/d/fd42fcb5-adbf-4f4e-89fb-c2b47b7dc1e6/temperaturemonitoration?orgId=1&refresh=5s&from=1709883072337&to=1709904672337"
                 width="100%" height="100%"></iframe>
     </div>
     <div class="button-container">
@@ -249,11 +244,6 @@
         return emailPattern.test(email);
     }
 
-    function isValidPhoneNumber(phoneNumber) {
-        var phonePattern = /^[0-9]{10}$/; // Il numero di telefono deve essere esattamente di 10 cifre
-        return phonePattern.test(phoneNumber);
-    }
-
     // Gestisci il click sul pulsante "Start simulation"
     document.getElementById("startSimulation").onclick = function () {
         // Mostra il modal
@@ -264,7 +254,6 @@
     saveButton.onclick = function () {
         var canal = document.getElementById("canal").value;
         var mailInserted = document.getElementById("emailAddress").value;
-        var phoneInserted = document.getElementById("phoneNumber").value;
         var thresholdInserted = parseFloat(document.getElementById("thresholdSlider").value);
         var dataAmount = parseInt(document.getElementById("dataAmountSlider").value);
 
@@ -282,28 +271,16 @@
             } else {
                 alert("Error! Email field is empty.");
             }
-        } else if (canal === "smsOption") {
-            if (phoneInserted !== "") {
-                if (isValidPhoneNumber(phoneInserted)) {
-                    alert('Saved!');
-                    modal.style.display = "none";
-                } else {
-                    alert('Error! Invalid phone number format.');
-                }
-            } else {
-                alert("Error! Phone number field is empty.");
-            }
         } else {
             alert("Error! Please select a notification canal.");
         }
 
-        if (canal && ((canal === "mailOption" && isValidEmail(mailInserted)) || (canal === "smsOption" && isValidPhoneNumber(phoneInserted))) && thresholdInserted && dataAmount) {
+        if (canal && ((canal === "mailOption" && isValidEmail(mailInserted)) && thresholdInserted && dataAmount)) {
             fetch('/generation', {
                 method: 'POST',
                 body: JSON.stringify({
                     canal: canal,
                     mail: canal === "mailOption" ? mailInserted : "",
-                    phone: canal === "smsOption" ? phoneInserted : "",
                     threshold: thresholdInserted,
                     dataAmount: dataAmount
                 }),
@@ -321,36 +298,22 @@
                 });
         }
     }
-        // Gestisci il click sul pulsante "Reset"
-        document.getElementById("resetButton").onclick = function () {
-            // Resetta tutti i campi del form
-            document.getElementById("canal").value = "mailOption";
-            document.getElementById("emailAddress").value = "";
-            document.getElementById("phoneNumber").value = "";
-            document.getElementById("thresholdSlider").value = 40.0;
-            document.getElementById("thresholdOutput").innerHTML = "40°C";
-            document.getElementById("dataAmountSlider").value = 100;
-            document.getElementById("dataAmountOutput").value = 100;
-        };
+    // Gestisci il click sul pulsante "Reset"
+    document.getElementById("resetButton").onclick = function () {
+        // Resetta tutti i campi del form
+        document.getElementById("canal").value = "mailOption";
+        document.getElementById("emailAddress").value = "";
+        document.getElementById("thresholdSlider").value = 40.0;
+        document.getElementById("thresholdOutput").innerHTML = "40°C";
+        document.getElementById("dataAmountSlider").value = 100;
+        document.getElementById("dataAmountOutput").value = 100;
+    };
 
-        // Gestisci il click sul pulsante "Get back"
-        document.getElementById("goBackButton").onclick = function () {
-            // Chiudi il modal senza fare alcuna operazione
-            modal.style.display = "none";
-        };
-
-        document.addEventListener("DOMContentLoaded", function () {
-            document.getElementById("canal").onchange = function () {
-                let selectedOption = this.value;
-                if (selectedOption === "mailOption") {
-                    document.getElementById("emailFields").style.display = "block";
-                    document.getElementById("smsFields").style.display = "none";
-                } else if (selectedOption === "smsOption") {
-                    document.getElementById("emailFields").style.display = "none";
-                    document.getElementById("smsFields").style.display = "block";
-                }
-            };
-        });
+    // Gestisci il click sul pulsante "Get back"
+    document.getElementById("goBackButton").onclick = function () {
+        // Chiudi il modal senza fare alcuna operazione
+        modal.style.display = "none";
+    };
 </script>
 </body>
 </html>
