@@ -95,9 +95,9 @@ def menu():
 @login_required
 def upload_file():
     uploaded_file = request.files['file']
-    file_path = '/src/ifc/' + uploaded_file.filename
+    file_path = '/app/src/ifc/' + uploaded_file.filename
     uploaded_file.save(file_path)
-    os.system('python /src/py2arango.py ' + file_path)
+    os.system('python /app/src/py2arango.py ' + file_path)
     return redirect(url_for('menu'))
 
 

@@ -22,7 +22,7 @@ def insertSensor(db, nodes_name, edges_name, name):
     # Definire la query AQL per ottenere il nodo corrispondente al criterio di ricerca
     query = f"""
             FOR i IN {nodes_name}
-            FILTER i.name == {name}
+            FILTER i.name == '{name}'
             LIMIT 1
             RETURN i
         """

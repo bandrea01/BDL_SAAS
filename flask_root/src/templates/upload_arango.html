@@ -19,6 +19,7 @@
             background-size: cover;
             max-width: 100%;
             overflow-x: hidden;
+            overflow-y: hidden;
         }
 
         .upload-container {
@@ -196,16 +197,23 @@
             display: flex;
             background-color: rgba(156, 163, 175, 0.5);
             backdrop-filter: blur(5px);
+            justify-content: center;
+            align-items: center;
             z-index: 9999;
         }
 
-        .loader .material-symbols-outlined {
+        .loader-wrapper {
             font-size: 50px;
             display: flex;
             justify-items: center;
             align-items: center;
-            margin-left: 50%;
+            margin-left: 48%;
+            margin-top: 20%;
+        }
+
+        .loader .material-symbols-outlined {
             animation: spin 2s linear infinite;
+            font-size: 50px;
         }
 
         @keyframes spin {
@@ -253,9 +261,11 @@
 </div>
 
 <div class="loader" id="loader">
-    <span class="material-symbols-outlined">
-        progress_activity
-    </span>
+    <div class="loader-wrapper">
+        <span class="material-symbols-outlined">
+            progress_activity
+        </span>
+    </div>
 </div>
 
 <script>
