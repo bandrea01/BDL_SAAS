@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" href="{{ url_for('static', filename='logo_black.png') }}">
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200"/>
     <title>Big Data Lab | Software as a Service</title>
     <style>
         body {
@@ -184,6 +186,36 @@
         .menu a:hover {
             text-decoration: underline;
         }
+
+        .loader {
+            position: fixed; /* Posizione fissa rispetto alla finestra del browser */
+            top: 0; /* Posizione in alto della finestra del browser */
+            left: 0; /* Posizione a sinistra della finestra del browser */
+            width: 100%; /* Larghezza pari alla larghezza della finestra del browser */
+            height: 100%; /* Altezza pari all'altezza della finestra del browser */
+            display: flex;
+            background-color: rgba(156, 163, 175, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 9999;
+        }
+
+        .loader .material-symbols-outlined {
+            font-size: 50px;
+            display: flex;
+            justify-items: center;
+            align-items: center;
+            margin-left: 50%;
+            animation: spin 2s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
     </style>
 </head>
 <body>
@@ -220,11 +252,19 @@
     </div>
 </div>
 
+<div class="loader" id="loader">
+    <span class="material-symbols-outlined">
+        progress_activity
+    </span>
+</div>
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const fileInput = document.getElementById("file-upload");
         const fileButton = document.querySelector(".file-button");
         const uploadForm = document.querySelector("form");
+        const loader = document.getElementById("loader");
+        loader.style.display = "none";
 
         fileInput.addEventListener("change", function () {
             const file = fileInput.files[0];
@@ -247,6 +287,8 @@
             if (!file) {
                 event.preventDefault(); // Impedisce l'invio del modulo se non è stato selezionato alcun file
                 alert("Please insert an .ifc file.");
+            } else {
+                loader.style.display = "block";
             }
         });
     });
