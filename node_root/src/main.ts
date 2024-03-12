@@ -91,7 +91,7 @@ ifcLoader.onIfcLoaded.add(async (model) => {
                             }
                             const options = {};
                             const editor = new JSONEditor(jsonContainer, options);
-                            editor.set({"error": error});
+                            editor.set({"error": "Please go back ad start mapping procedure with file insert here"});
                         }
                     });
             } else {
@@ -102,7 +102,7 @@ ifcLoader.onIfcLoaded.add(async (model) => {
                     }
                     const options = {};
                     const editor = new JSONEditor(jsonContainer, options);
-                    editor.set({"Error": "No model loaded"});
+                    editor.set({"Error": "No model found in scene"});
                 }
             }
         } catch (error) {
@@ -299,7 +299,7 @@ function fetchAllNodes() {
                         }
                         const options = {};
                         const editor = new JSONEditor(jsonContainer, options);
-                        editor.set({"error": error});
+                        editor.set({"error": "Please go back ad start mapping procedure with file insert here"});
                     }
                 });
         } else {
@@ -310,7 +310,7 @@ function fetchAllNodes() {
                 }
                 const options = {};
                 const editor = new JSONEditor(jsonContainer, options);
-                editor.set({"Error": "No model loaded"});
+                editor.set({"Error": "No model found in scene"});
             }
         }
     } catch (error) {
@@ -321,7 +321,7 @@ function fetchAllNodes() {
             }
             const options = {};
             const editor = new JSONEditor(jsonContainer, options);
-            editor.set({"Error": error});
+            editor.set({"error": "Please go back ad start mapping procedure with file insert here"});
         }
     }
 }
@@ -356,7 +356,7 @@ function fetchAllEdges() {
                         }
                         const options = {};
                         const editor = new JSONEditor(jsonContainer, options);
-                        editor.set({"error": error});
+                        editor.set({"error": "Please go back ad start mapping procedure with file insert here"});
                     }
                 });
         } else {
@@ -367,7 +367,7 @@ function fetchAllEdges() {
                 }
                 const options = {};
                 const editor = new JSONEditor(jsonContainer, options);
-                editor.set({"error": "No model loaded"});
+                editor.set({"error": "No model found in scene"});
             }
         }
     } catch (error) {
@@ -378,7 +378,7 @@ function fetchAllEdges() {
             }
             const options = {};
             const editor = new JSONEditor(jsonContainer, options);
-            editor.set({"error": error});
+            editor.set({"error": "Please go back ad start mapping procedure with file insert here"});
         }
     }
 }
@@ -424,7 +424,7 @@ function fetchTraversal() {
                             }
                             const options = {};
                             const editor = new JSONEditor(jsonContainer, options);
-                            editor.set({"error": error});
+                            editor.set({"error": "Please go back ad start mapping procedure with file insert here"});
                         }
                     });
             } else {
@@ -435,7 +435,7 @@ function fetchTraversal() {
                     }
                     const options = {};
                     const editor = new JSONEditor(jsonContainer, options);
-                    editor.set({"error": "No model loaded"});
+                    editor.set({"error": "No model found in scene"});
                 }
             }
         } catch (error) {
@@ -446,7 +446,7 @@ function fetchTraversal() {
                 }
                 const options = {};
                 const editor = new JSONEditor(jsonContainer, options);
-                editor.set({"error": error});
+                editor.set({"error": "Please go back ad start mapping procedure with file insert here"});
             }
         }
     } else {
@@ -495,7 +495,7 @@ function fetchTraversalByName() {
                             }
                             const options = {};
                             const editor = new JSONEditor(jsonContainer, options);
-                            editor.set({"error": error});
+                            editor.set({"error": "Please go back ad start mapping procedure with file insert here"});
                         }
                     });
             } else {
@@ -506,7 +506,7 @@ function fetchTraversalByName() {
                     }
                     const options = {};
                     const editor = new JSONEditor(jsonContainer, options);
-                    editor.set({"error": "No model loaded"});
+                    editor.set({"error": "No model found in scene"});
                 }
             }
         } catch (error) {
@@ -517,7 +517,7 @@ function fetchTraversalByName() {
                 }
                 const options = {};
                 const editor = new JSONEditor(jsonContainer, options);
-                editor.set({"error": error});
+                editor.set({"error": "Please go back ad start mapping procedure with file insert here"});
             }
         }
     } else {
