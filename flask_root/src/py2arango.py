@@ -70,12 +70,8 @@ existing_edges = set()
 # Output: a subgraph
 def create_graph_from_ifc_entity_all(db, ifc_entity, ifc_file, nodes_name, edges_name):
     node = create_pure_node_from_ifc_entity(ifc_entity)
-    # collection = db[nodes_name]
 
     # Check if node already exists in the database
-    # existing_node = collection.get(node["_key"])
-    # if not existing_node:
-    #    collection.insert(node)
     node_key = node["_key"]
     if node_key not in existing_nodes:
         collection = db[nodes_name]
@@ -89,13 +85,8 @@ def create_graph_from_ifc_entity_all(db, ifc_entity, ifc_file, nodes_name, edges
                     continue
                 else:
                     sub_node = create_pure_node_from_ifc_entity(ifc_entity[i])
-                    # sub_collection = db[nodes_name]
 
                     # Check if sub node already exists in the database
-                    # existing_sub_node = sub_collection.get(sub_node["_key"])
-                    # if not existing_sub_node:
-                    #    sub_collection.insert(sub_node)
-
                     sub_node_key = sub_node["_key"]
                     if sub_node_key not in existing_nodes:
                         sub_collection = db[nodes_name]
@@ -116,13 +107,8 @@ def create_graph_from_ifc_entity_all(db, ifc_entity, ifc_file, nodes_name, edges
             elif ifc_entity.wrapped_data.get_argument_type(i) == 'AGGREGATE OF ENTITY INSTANCE':
                 for sub_entity in ifc_entity[i]:
                     sub_node = create_pure_node_from_ifc_entity(sub_entity)
-                    # sub_collection = db[nodes_name]
 
                     # Check if sub node already exists in the database
-                    # existing_sub_node = sub_collection.get(sub_node["_key"])
-                    # if not existing_sub_node:
-                    #    sub_collection.insert(sub_node)
-
                     sub_node_key = sub_node["_key"]
                     if sub_node_key not in existing_nodes:
                         sub_collection = db[nodes_name]
@@ -146,13 +132,8 @@ def create_graph_from_ifc_entity_all(db, ifc_entity, ifc_file, nodes_name, edges
             for wrapped_rel in inverse_relations:
                 rel_entity = ifc_file.by_id(wrapped_rel.id())
                 sub_node = create_pure_node_from_ifc_entity(rel_entity)
-                # sub_collection = db[nodes_name]
 
                 # Check if sub node already exists in the database
-                # existing_sub_node = sub_collection.get(sub_node["_key"])
-                # if not existing_sub_node:
-                #    sub_collection.insert(sub_node)
-
                 sub_node_key = sub_node["_key"]
                 if sub_node_key not in existing_nodes:
                     sub_collection = db[nodes_name]
@@ -191,6 +172,7 @@ client = ArangoClient(hosts='http://arangodb:8529')
 db = client.db('prova', username='root', password='BDLaaS')
 
 filename = sys.argv[1].rsplit('/', 1)[-1].split('.')[-2]
+print(filename)
 nodes_name = f"{filename}_nodes"
 edges_name = f"{filename}_edges"
 graph_name = f"{filename}_graph"

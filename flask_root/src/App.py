@@ -42,14 +42,15 @@ def login_required(f):
     return decorated_function
 
 
-def update_entities(n, start_value):
+def update_entities(n, start_value, entity_id):
     temperatures = dataGenerator.generate_temperature_values(n, 0.5, start_value, 0.05)
 
     for i in range(0, n):
         payload = {
-            "temperature": temperatures[i]
+            "numValue": temperatures[i]
         }
-        res_update = fiware.update_entity("urn:ngsi-ld:TemperatureSensor:001", payload)
+        # TODO CAMBIARE ENTITY_ID PASSANDOLO DINAMICAMENTE COME PARAMETRO PER FUNZIONE E DA FRONT-END
+        res_update = fiware.update_entity(entity_id, payload)
         if res_update != 204:
             err_update = "Error in update data " + str(res_update)
             return render_template("error.html", msg=err_update)
@@ -77,7 +78,7 @@ def login():
         username = request.form['username']
         password = request.form['password']
         if username == os.getenv('DEBUG_USR') and password == os.getenv('DEBUG_PWD'):
-        # if username == "admin" and password == "restapi":
+            # if username == "admin" and password == "restapi":
             session['user_id'] = username
             return redirect(url_for('menu'))
         else:
@@ -114,6 +115,7 @@ def generation():
     mail = data.get("mail")
     threshold = data.get("threshold")
     dataAmount = data.get("dataAmount")
+    # TODO PRENDERE ENTITY ID DAL FORM
 
     sensor_type = "TemperatureSensor"
     res_entity = fiware.init_entites(sensor_type, 20.0)
@@ -146,7 +148,8 @@ def generation():
         err = "Error in rule creation: " + str(res_rule)
         return render_template("error.html", message=err)
 
-    update_entities(dataAmount, 20.0)
+    # TODO SISTEMARE IL TIPO DI ENTITA' DA AGGIORNARE
+    update_entities(dataAmount, 20.0, "DA SISTEMARE")
 
 
 """-------------------    AQL    ---------------------"""
