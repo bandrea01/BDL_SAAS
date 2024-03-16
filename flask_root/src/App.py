@@ -47,7 +47,10 @@ def update_entities(n, start_value, entity_id):
 
     for i in range(0, n):
         payload = {
-            "numValue": temperatures[i]
+            "https://smartdatamodels.org/dataModel.Device/numValue": {
+                "type": "Property",
+                "value": temperatures[i]
+            }
         }
         # TODO CAMBIARE ENTITY_ID PASSANDOLO DINAMICAMENTE COME PARAMETRO PER FUNZIONE E DA FRONT-END
         res_update = fiware.update_entity(entity_id, payload)
@@ -115,41 +118,59 @@ def generation():
     mail = data.get("mail")
     threshold = data.get("threshold")
     dataAmount = data.get("dataAmount")
+    entity_id = data.get("entityId")
     # TODO PRENDERE ENTITY ID DAL FORM
 
-    sensor_type = "TemperatureSensor"
-    res_entity = fiware.init_entites(sensor_type, 20.0)
-    if res_entity != 201 and res_entity != 200:
-        err = "Error in init Orion: " + str(res_entity)
+    # sensor_type = "TemperatureSensor"
+    # res_entity = fiware.init_entites(sensor_type, 20.0)
+    # if res_entity != 201 and res_entity != 200:
+    #     err = "Error in init Orion: " + str(res_entity)
+    #     return render_template("error.html", message=err)
+
+    res_device_model = fiware.init_device_model("Temperature", "200", "", "temperature", "", "", "Temperature sensor")
+    if res_device_model != 201 and res_device_model != 200:
+        err = "Error in init Orion: " + str(res_device_model)
         return render_template("error.html", message=err)
 
-    res_subscription = fiware.init_subscriptions("Quantumleap subscription",
-                                                 sensor_type,
-                                                 "normalized",
-                                                 "http://quantumleap:8668/v2/notify")
-    if res_subscription != 201:
-        err = "Error in doing subscription: " + str(res_subscription)
+    res_device_measurement = fiware.init_device_measurement("Temperature", "200", "temperature", "Temperature measure",
+                                                            2, 0, 1, "Temperature", "Temperature measurement", 25.0)
+    if res_device_measurement != 201 and res_device_measurement != 200:
+        err = "Error in init Orion: " + str(res_device_measurement)
         return render_template("error.html", message=err)
 
-    res_subscription = fiware.init_subscriptions("Perseo-FE subscription",
-                                                 sensor_type,
-                                                 "normalized",
-                                                 "http://perseo-fe:9090/notices")
-    if res_subscription != 201:
-        err = "Error in doing subscription: " + str(res_subscription)
-        return render_template("error.html", message=err)
+    # res_subscription = fiware.init_subscriptions("Quantumleap subscription",
+    #                                              sensor_type,
+    #                                              "normalized",
+    #                                              "http://quantumleap:8668/v2/notify")
+    # if res_subscription != 201:
+    #     err = "Error in doing subscription: " + str(res_subscription)
+    #     return render_template("error.html", message=err)
 
-    res_rule = fiware.init_rules_mail("temperature_rule_mail",
-                                      f"SELECT *, temperature? AS temperature FROM iotEvent WHERE (CAST(CAST(temperature?,String), DOUBLE)>={threshold} AND type='TemperatureSensor')",
-                                      "WARNING! Possible fire in progress/Temperature sensor malfunction... Detected temperature: ${temperature}°C",
-                                      mail, "Temperature Notify")
+    # res_subscription = fiware.init_subscriptions("Perseo-FE subscription",
+    #                                              sensor_type,
+    #                                              "normalized",
+    #                                              "http://perseo-fe:9090/notices")
+    # if res_subscription != 201:
+    #     err = "Error in doing subscription: " + str(res_subscription)
+    #     return render_template("error.html", message=err)
 
-    if res_rule != 200:
-        err = "Error in rule creation: " + str(res_rule)
-        return render_template("error.html", message=err)
+    # res_rule = fiware.init_rules_mail("temperature_rule_mail",
+    #                                   f"SELECT *, temperature? AS temperature FROM iotEvent WHERE (CAST(CAST(temperature?,String), DOUBLE)>={threshold} AND type='TemperatureSensor')",
+    #                                   "WARNING! Possible fire in progress/Temperature sensor malfunction... Detected temperature: ${temperature}°C",
+    #                                   mail, "Temperature Notify")
+    #
+    # if res_rule != 200:
+    #     err = "Error in rule creation: " + str(res_rule)
+    #     return render_template("error.html", message=err)
 
     # TODO SISTEMARE IL TIPO DI ENTITA' DA AGGIORNARE
-    update_entities(dataAmount, 20.0, "DA SISTEMARE")
+    # update_entities(dataAmount, 20.0, entity_id)
+    update_entities(dataAmount, 20.0, f"urn:ngsi-ld:MEASUREMENT:id:Sensor{type}-{id}")
+
+
+@app.route('/create_sensor', methods=['GET', 'POST'])
+def create_sensor():
+    return
 
 
 """-------------------    AQL    ---------------------"""

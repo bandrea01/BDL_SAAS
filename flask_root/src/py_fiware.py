@@ -8,10 +8,7 @@ class FiwareAPI(object):
         self.orionIP = None
         self.perseoIP = None
         self.header = {
-            'Content-Type': 'application/json',
-            'Link': '<https://uri.etsi.org/ngsi-ld/v1/ngsi-ld-core-context-v1.7.jsonld>; '
-                    'rel="http://www.w3.org/ns/json-ld#context"; '
-                    'type="application/ld+json"'
+            'Content-Type': 'application/ld+json',
         }
         self.header_subscription = {
             'Content-Type': 'application/json'
@@ -184,171 +181,168 @@ class FiwareAPI(object):
         return response.status_code
 
     def init_device_model(self, type, id, brandName, controlledProperty, manufacturerName, modelName, name):
-        if self.entity_exists(f"urn:ngsi-ld::DeviceModel:Sensor{type}-{id}"):
+        if self.entity_exists(f"urn:ngsi-ld:DeviceModel:Sensor{type}-{id}"):
             return 200
 
         payload = {
-            {
-                "id": f"urn:ngsi-ld:DeviceModel:Sensor{type}-{id}",
-                "type": "DeviceModel",
-                "brandName": {
-                    "type": "Property",
-                    "value": brandName
-                },
-                "deviceCategory": {
-                    "type": "Property",
-                    "value": [
-                        "sensor"
-                    ]
-                },
-                "category": {
-                    "type": "Property",
-                    "value": [
-                        "sensor"
-                    ]
-                },
-                "controlledProperty": {
-                    "type": "Property",
-                    "value": [
-                        controlledProperty
-                    ]
-                },
-                "function": {
-                    "type": "Property",
-                    "value": [
-                        "sensing"
-                    ]
-                },
-                "manufacturerName": {
-                    "type": "Property",
-                    "value": manufacturerName
-                },
-                "modelName": {
-                    "type": "Property",
-                    "value": modelName
-                },
-                "name": {
-                    "type": "Property",
-                    "value": name
-                },
-                "@context": [
-                    "https://raw.githubusercontent.com/smart-data-models/dataModel.Device/master/context.jsonld"
+            "id": f"urn:ngsi-ld:DeviceModel:Sensor{type}-{id}",
+            "type": "DeviceModel",
+            "brandName": {
+                "type": "Property",
+                "value": brandName
+            },
+            "deviceCategory": {
+                "type": "Property",
+                "value": [
+                    "sensor"
                 ]
-            }
+            },
+            "category": {
+                "type": "Property",
+                "value": [
+                    "sensor"
+                ]
+            },
+            "controlledProperty": {
+                "type": "Property",
+                "value": [
+                    controlledProperty
+                ]
+            },
+            "function": {
+                "type": "Property",
+                "value": [
+                    "sensing"
+                ]
+            },
+            "manufacturerName": {
+                "type": "Property",
+                "value": manufacturerName
+            },
+            "modelName": {
+                "type": "Property",
+                "value": modelName
+            },
+            "name": {
+                "type": "Property",
+                "value": name
+            },
+            "@context": [
+                "https://raw.githubusercontent.com/smart-data-models/dataModel.Device/master/context.jsonld"
+            ]
         }
         res = self.insert_entity(payload)
         return res
 
-    def init_device_measurement(self, type, id, controlledProperty, description, x, y, z, measurementType, name, numValue, ):
+    def init_device_measurement(self, type, id, controlledProperty, description, x, y, z, measurementType, name,
+                                numValue):
         if self.entity_exists(f"urn:ngsi-ld:MEASUREMENT:id:Sensor{type}-{id}"):
             return 200
 
         payload = {
-            {
-                "id": f"urn:ngsi-ld:MEASUREMENT:id:Sensor{type}-{id}",
-                "type": "DeviceMeasurement",
-                "address": {
-                    "type": "Property",
-                    "value": {
-                        "streetAddress": "",
-                        "addressLocality": "",
-                        "addressRegion": "",
-                        "addressCountry": "",
-                        "postalCode": "",
-                        "postOfficeBoxNumber": ""
-                    }
-                },
-                "alternateName": {
-                    "type": "Property",
-                    "value": ""
-                },
-                "areaServed": {
-                    "type": "Property",
-                    "value": ""
-                },
-                "controlledProperty": {
-                    "type": "Property",
-                    "value": controlledProperty
-                },
-                "dataProvider": {
-                    "type": "Property",
-                    "value": ""
-                },
-                "dateCreated": {
-                    "type": "Property",
-                    "value": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
-                },
-                "dateModified": {
-                    "type": "Property",
-                    "value": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
-                },
-                "dateObserved": {
-                    "type": "Property",
-                    "value": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
-                },
-                "description": {
-                    "type": "Property",
-                    "value": description
-                },
-                "deviceType": {
-                    "type": "Property",
-                    "value": "sensor"
-                },
-                "location": {
-                    "type": "Property",
-                    "value": {
-                        "type": "Point",
-                        "coordinates": [
-                            x,
-                            y,
-                            z
-                        ]
-                    }
-                },
-                "measurementType": {
-                    "type": "Property",
-                    "value": measurementType
-                },
-                "name": {
-                    "type": "Property",
-                    "value": name
-                },
-                "numValue": {
-                    "type": "Property",
-                    "value": numValue
-                },
-                "outlier": {
-                    "type": "Property",
-                    "value": False
-                },
-                "owner": {
-                    "type": "Property",
-                    "value": []
-                },
-                "refDevice": {
-                    "type": "Property",
-                    "value": f"urn:ngsi-ld::DeviceModel:Sensor{type}-{id}"
-                },
-                "seeAlso": {
-                    "type": "Property",
-                    "value": []
-                },
-                "source": {
-                    "type": "Property",
-                    "value": ""
-                },
-                "textValue": {
-                    "type": "Property",
-                    "value": ""
-                },
-                "unit": {
-                    "type": "Property",
-                    "value": "CEL"
-                },
-                "@context": [
-                    "https://raw.githubusercontent.com/smart-data-models/dataModel.Device/master/context.jsonld"
-                ]
-            }
+            "id": f"urn:ngsi-ld:MEASUREMENT:id:Sensor{type}-{id}",
+            "type": "DeviceMeasurement",
+            "address": {
+                "type": "Property",
+                "value": {
+                    "streetAddress": "",
+                    "addressLocality": "",
+                    "addressRegion": "",
+                    "addressCountry": "",
+                    "postalCode": "",
+                    "postOfficeBoxNumber": ""
+                }
+            },
+            "alternateName": {
+                "type": "Property",
+                "value": ""
+            },
+            "areaServed": {
+                "type": "Property",
+                "value": ""
+            },
+            "controlledProperty": {
+                "type": "Property",
+                "value": controlledProperty
+            },
+            "dataProvider": {
+                "type": "Property",
+                "value": ""
+            },
+            "dateCreated": {
+                "type": "Property",
+                "value": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+            },
+            "dateModified": {
+                "type": "Property",
+                "value": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+            },
+            "dateObserved": {
+                "type": "Property",
+                "value": datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+            },
+            "description": {
+                "type": "Property",
+                "value": description
+            },
+            "deviceType": {
+                "type": "Property",
+                "value": "sensor"
+            },
+            "location": {
+                "type": "Property",
+                "value": {
+                    "type": "Point",
+                    "coordinates": [
+                        x,
+                        y,
+                        z
+                    ]
+                }
+            },
+            "measurementType": {
+                "type": "Property",
+                "value": measurementType
+            },
+            "name": {
+                "type": "Property",
+                "value": name
+            },
+            "numValue": {
+                "type": "Property",
+                "value": numValue
+            },
+            "outlier": {
+                "type": "Property",
+                "value": False
+            },
+            "owner": {
+                "type": "Property",
+                "value": []
+            },
+            "refDevice": {
+                "type": "Property",
+                "value": f"urn:ngsi-ld:DeviceModel:Sensor{type}-{id}"
+            },
+            "seeAlso": {
+                "type": "Property",
+                "value": []
+            },
+            "source": {
+                "type": "Property",
+                "value": ""
+            },
+            "textValue": {
+                "type": "Property",
+                "value": ""
+            },
+            "unit": {
+                "type": "Property",
+                "value": "CEL"
+            },
+            "@context": [
+                "https://raw.githubusercontent.com/smart-data-models/dataModel.Device/master/context.jsonld"
+            ]
         }
         res = self.insert_entity(payload)
         return res
