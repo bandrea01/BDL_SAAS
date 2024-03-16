@@ -175,6 +175,20 @@ hr {
     margin-left: 40%;
 }
 
+.sensor-form-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Modificato per adattarsi dinamicamente */
+    grid-gap: 10px; /* Aggiunto spazio tra le colonne */
+    background-color: #06191D;
+    padding: 20px;
+    border: 2px solid #fafafa;
+    max-width: 800px; /* Aumentata la larghezza massima per una migliore leggibilità */
+    border-radius: 15px;
+    position: relative;
+    z-index: 1;
+    margin: 10% auto;
+}
+
 .query-content .close {
     position: absolute;
     top: 10px;
@@ -235,6 +249,10 @@ hr {
     margin-right: 10px; /* Spazio tra etichetta e input */
     color: #fafafa;
     font-size: 14px;
+}
+
+.input-flex-text{
+    display: inline-grid;
 }
 
 .button-container {

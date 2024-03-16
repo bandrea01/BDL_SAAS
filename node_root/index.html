@@ -73,6 +73,7 @@
         </p>
     </div>
 </div>
+{# Query form #}
 <div id="query-container" class="query-container">
     <div class="query-content">
         <span id="query-close" class="close">&times;</span>
@@ -105,6 +106,90 @@
         </div>
     </div>
 </div>
+
+{# Sensor form #}
+<div id="sensor-form-container" class="query-container">
+    <div>
+        <span id="sensor-close" class="close">&times;</span>
+        <h2 id="sensor-title-label">Add Sensor</h2>
+    </div>
+    <div class="sensor-form-content">
+        <div class="input-group">
+            <label class="input-container">
+                <span class="label-text" id="subtitle-label">Component ID</span>
+                <input type="text" id="node-name-input" name="node_name" placeholder="Es. IfcWallStandardCase-200" required>
+            </label>
+        </div>
+        <div>
+            <label class="input-container">
+                <span class="label-text" id="subtitle-label">Sensor Type</span>
+                <input type="text" id="node-name-input" name="node_name" placeholder="Es. Temperature" required>
+            </label>
+        </div>
+        <div>
+            <label class="input-container">
+                <span class="label-text">Brand Name</span>
+                <input type="text" id="min-depth-input" name="min_depth" placeholder="Es. STMicroelectronics" required>
+            </label>
+        </div>
+        <div>
+            <label class="input-container">
+                <span class="label-text">Manufacturer Name</span>
+                <input type="text" id="min-depth-input" name="min_depth" placeholder="Es. STMicroelectronics" required>
+            </label>
+        </div>
+        <div>
+            <label class="input-container">
+                <span class="label-text">Model Name</span>
+                <input type="text" id="min-depth-input" name="min_depth" placeholder="Es. AC412" required>
+            </label>
+        </div>
+        <div>
+            <label class="input-container">
+                <span class="label-text">Name</span>
+                <input type="text" id="min-depth-input" name="min_depth" placeholder="Es. MySensor" required>
+            </label>
+        </div>
+        <div>
+            <label class="input-container">
+                <span class="label-text">Description</span>
+                <input type="text" id="min-depth-input" name="min_depth" placeholder="Es. Sensor of this component..." required>
+            </label>
+        </div>
+        <div>
+            <label class="input-container">
+                <span class="label-text">Controlled property</span>
+                <input type="text" id="max-depth-input" name="max_depth" placeholder="Es. Temperature" required>
+            </label>
+        </div>
+        <div>
+            <label class="input-container">
+                <span class="label-text">Measurament type</span>
+                <input type="text" id="max-depth-input" name="max_depth" placeholder="Es. ..." required>
+            </label>
+        </div>
+        <div>
+            <label class="input-container">
+                <span class="label-text">Coordinates</span>
+                <div>
+                    <input type="text" id="min-depth-input" name="min_depth" placeholder="X coordinate" required>
+                </div>
+                <div>
+                    <input type="text" id="min-depth-input" name="min_depth" placeholder="Y coordinate" required>
+                </div>
+                <div>
+                    <input type="text" id="min-depth-input" name="min_depth" placeholder="Z coordinate" required>
+                </div>
+            </label>
+        </div>
+        <div class="button-container">
+            <button id="confirm-button">Conferma</button>
+            <button id="reset-button">Reset</button>
+        </div>
+    </div>
+</div>
+
+
 <script type="module" src="/src/main.ts"></script>
 <script>
     document.getElementById("help-button").addEventListener("click", function () {

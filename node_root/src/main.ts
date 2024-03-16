@@ -62,6 +62,7 @@ ifcLoader.onIfcLoaded.add(async (model) => {
         const expressID = Number([...selection[fragmentID]][0]);
         propertiesProcessor.renderProperties(model, expressID);
 
+        //Function for query information about selected component
         try {
             const modelName = ifcManager.groups[0].name;
             if (modelName) {
@@ -118,6 +119,7 @@ ifcLoader.onIfcLoaded.add(async (model) => {
         }
     });
     highlighter.update();
+
 });
 
 
@@ -143,6 +145,11 @@ allEdgesButton.label = "Mostra tutte le relazioni";
 traversalNodeButton.label = "Mostra dettagli nodo";
 nodesByTypeButton.label = "Mostra nodi per tipo";
 
+const addSensorButton = new OBC.Button(viewer);
+addSensorButton.materialIcon = "sensors";
+addSensorButton.tooltip = "Aggiungi sensore";
+addSensorButton.onClick.add(() => showSensorForm());
+
 const goBackButton = new OBC.Button(viewer);
 goBackButton.materialIcon = "exit_to_app";
 goBackButton.tooltip = "Go back";
@@ -160,7 +167,7 @@ const refreshButton = new OBC.Button(viewer);
 refreshButton.materialIcon = "refresh";
 refreshButton.tooltip = "Reset model";
 refreshButton.onClick.add(() => {
-  window.location.reload();
+    window.location.reload();
 });
 
 const mainToolbar = new OBC.Toolbar(viewer);
@@ -170,6 +177,7 @@ mainToolbar.addChild(
     refreshButton,
     propertiesProcessor.uiElement.get("main"),
     queryTool,
+    addSensorButton,
     goBackButton
 );
 viewer.ui.addToolbar(mainToolbar);
@@ -523,4 +531,37 @@ function fetchTraversalByName() {
     } else {
         alert("Please fill all the fields ;)");
     }
+}
+
+function showSensorForm() {
+    const sensorContainer = document.getElementById("sensor-form-container") as HTMLElement;
+    const closeButton = document.getElementById("sensor-close") as HTMLElement;
+    const confirmButton = document.getElementById("sensor-confirm-button") as HTMLElement;
+    const resetButton = document.getElementById("sensor-reset-button") as HTMLElement;
+    const title = document.getElementById("sensor-title-label") as HTMLElement;
+    const subtitle = document.getElementById("sensor-subtitle-label") as HTMLElement;
+
+    sensorContainer.style.display = "block";
+
+    function updateLabelText(titleText: string, subtitleText: string) {
+        title.innerText = titleText;
+        subtitle.innerText = subtitleText;
+    }
+
+    closeButton.onclick = function () {
+        sensorContainer.style.display = "none";
+    };
+    confirmButton.onclick = function () {
+        fetchTraversal();
+        sensorContainer.style.display = "none";
+    }
+    resetButton.onclick = function () {
+        const inputFields = document.querySelectorAll('input');
+        const selectField = document.querySelector('select[name="direction"]');
+        inputFields.forEach((input) => {
+            input.value = '';
+        });
+        selectField.value = 'Any';
+    }
+    updateLabelText("Show node details", "Node key");
 }
