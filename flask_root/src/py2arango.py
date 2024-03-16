@@ -1,199 +1,215 @@
-import os
-import sys
 from arango import ArangoClient
 from uuid import uuid4
 import ifcopenshell
 
 
-def insertSensor(db, nodes_name, edges_name, name):
-    # Inserimento sensore
-    sensor_node = {
-        "_key": "TemperatureSensor001",
-        "type": "sensor",
-        "name": "TemperatureSensor001",
-        "sensor_type": "temperature",
-        "properties": {
-            "accuracy": "+/- 0.1°C",
-            "measurement_range": "-20°C to 50°C"
+class Py2Arango(object):
+    def __init__(self):
+        self.client = ArangoClient(hosts='http://arangodb:8529')
+        self.db = self.client.db('prova', username='root', password='BDLaaS')
+        self.existing_nodes = set()
+        self.existing_edges = set()
+        self.graph = None
+
+    def insertSensor(self, nodes_name, edges_name, component_id, type, brandName, controlledProperty,
+                     manufacturerName,
+                     modelName, name):
+        # Inserimento sensore
+        id = component_id.split("-")[-1]
+        sensor_node = {
+            "_key": f"Sensor{type}-{id}",
+            "type": "DeviceModel",
+            "brandName": {
+                "type": "Property",
+                "value": brandName
+            },
+            "deviceCategory": {
+                "type": "Property",
+                "value": [
+                    "sensor"
+                ]
+            },
+            "category": {
+                "type": "Property",
+                "value": [
+                    "sensor"
+                ]
+            },
+            "controlledProperty": {
+                "type": "Property",
+                "value": [
+                    controlledProperty
+                ]
+            },
+            "function": {
+                "type": "Property",
+                "value": [
+                    "sensing"
+                ]
+            },
+            "manufacturerName": {
+                "type": "Property",
+                "value": manufacturerName
+            },
+            "modelName": {
+                "type": "Property",
+                "value": modelName
+            },
+            "name": {
+                "type": "Property",
+                "value": name
+            }
         }
-    }
-    sensor_key = sensor_node["_key"]
-
-    # Definire la query AQL per ottenere il nodo corrispondente al criterio di ricerca
-    query = f"""
-            FOR i IN {nodes_name}
-            FILTER i.name == '{name}'
-            LIMIT 1
-            RETURN i
-        """
-
-    # Eseguire la query AQL con il criterio di ricerca
-    cursor = db.aql.execute(query)
-
-    db[nodes_name].insert(sensor_node)
-
-    try:
-        # Ottenere il primo documento dalla query
-        wall = next(cursor, None)
+        sensor_key = sensor_node["_key"]
 
         sensor_edge = {
-            "_from": wall["_id"],
+            "_from": f"{nodes_name}/{component_id}",
             "_to": f"{nodes_name}/{sensor_key}",
-            "rel_name": "HasTemperatureSensor"
+            "rel_name": f"Has{type}Sensor"
         }
-        db[edges_name].insert(sensor_edge)
-    except StopIteration:
-        pass
 
+        try:
+            self.db[nodes_name].insert(sensor_node)
+            self.db[edges_name].insert(sensor_edge)
+        except Exception as e:
+            return 404
+        return 200
 
-# Create the basic node with literal attributes and the class hierarchy
-# Input: ifc_entity - an instance, ifc_file - the parsed ifc-SPF
-# Output: basic nodes with properties for literal attributes and labels for ifc class hierarchy
-def create_pure_node_from_ifc_entity(ifc_entity):
-    key = f"{ifc_entity.is_a()}-{str(ifc_entity.id() if ifc_entity.id() != 0 else uuid4())}"
-    node = {'_key': key, 'name': ifc_entity.is_a()}
-    attributes_type = ['ENTITY INSTANCE', 'AGGREGATE OF ENTITY INSTANCE', 'DERIVED']
-    for i in range(ifc_entity.__len__()):
-        if not ifc_entity.wrapped_data.get_argument_type(i) in attributes_type:
-            name = ifc_entity.wrapped_data.get_argument_name(i)
-            name_value = ifc_entity.wrapped_data.get_argument(i)
-            node[name] = name_value
-    return node
+    # Create the basic node with literal attributes and the class hierarchy
+    # Input: ifc_entity - an instance, ifc_file - the parsed ifc-SPF
+    # Output: basic nodes with properties for literal attributes and labels for ifc class hierarchy
+    @staticmethod
+    def create_pure_node_from_ifc_entity(ifc_entity):
+        key = f"{ifc_entity.is_a()}-{str(ifc_entity.id() if ifc_entity.id() != 0 else uuid4())}"
+        node = {'_key': key, 'name': ifc_entity.is_a()}
+        attributes_type = ['ENTITY INSTANCE', 'AGGREGATE OF ENTITY INSTANCE', 'DERIVED']
+        for i in range(ifc_entity.__len__()):
+            if not ifc_entity.wrapped_data.get_argument_type(i) in attributes_type:
+                name = ifc_entity.wrapped_data.get_argument_name(i)
+                name_value = ifc_entity.wrapped_data.get_argument(i)
+                node[name] = name_value
+        return node
 
+    # existing_nodes = set()
+    # existing_edges = set()
 
-existing_nodes = set()
-existing_edges = set()
+    # Process literal attributes, entity attributes, and relationship attributes
+    # Input: db - a link to ArangoDB graph database, ifc_entity - an instance, ifc_file - the parsed ifc-SPF
+    # Output: a subgraph
+    def create_graph_from_ifc_entity_all(self, ifc_entity, ifc_file, nodes_name, edges_name):
+        node = self.create_pure_node_from_ifc_entity(ifc_entity)
 
+        # Check if node already exists in the database
+        node_key = node["_key"]
+        if node_key not in self.existing_nodes:
+            collection = self.db[nodes_name]
+            collection.insert(node)
+            self.existing_nodes.add(node_key)
 
-# Process literal attributes, entity attributes, and relationship attributes
-# Input: db - a link to ArangoDB graph database, ifc_entity - an instance, ifc_file - the parsed ifc-SPF
-# Output: a subgraph
-def create_graph_from_ifc_entity_all(db, ifc_entity, ifc_file, nodes_name, edges_name):
-    node = create_pure_node_from_ifc_entity(ifc_entity)
+        for i in range(ifc_entity.__len__()):
+            if ifc_entity[i]:
+                if ifc_entity.wrapped_data.get_argument_type(i) == 'ENTITY INSTANCE':
+                    if ifc_entity.is_a() in ['IfcOwnerHistory'] and ifc_entity.is_a() != 'IfcProject':
+                        continue
+                    else:
+                        sub_node = self.create_pure_node_from_ifc_entity(ifc_entity[i])
 
-    # Check if node already exists in the database
-    node_key = node["_key"]
-    if node_key not in existing_nodes:
-        collection = db[nodes_name]
-        collection.insert(node)
-        existing_nodes.add(node_key)
+                        # Check if sub node already exists in the database
+                        sub_node_key = sub_node["_key"]
+                        if sub_node_key not in self.existing_nodes:
+                            sub_collection = self.db[nodes_name]
+                            sub_collection.insert(sub_node)
+                            self.existing_nodes.add(sub_node_key)
 
-    for i in range(ifc_entity.__len__()):
-        if ifc_entity[i]:
-            if ifc_entity.wrapped_data.get_argument_type(i) == 'ENTITY INSTANCE':
-                if ifc_entity.is_a() in ['IfcOwnerHistory'] and ifc_entity.is_a() != 'IfcProject':
-                    continue
-                else:
-                    sub_node = create_pure_node_from_ifc_entity(ifc_entity[i])
+                        # Controllo se l'arco esiste già
+                        edge_key = (node["_key"], sub_node["_key"], ifc_entity.wrapped_data.get_argument_name(i))
+                        if edge_key not in self.existing_edges:
+                            rel_collection = self.db[edges_name]
+                            rel_collection.insert({
+                                "_from": f"{nodes_name}/{node['_key']}",
+                                "_to": f"{nodes_name}/{sub_node['_key']}",
+                                "rel_name": ifc_entity.wrapped_data.get_argument_name(i)
+                            })
+                            self.existing_edges.add(edge_key)
+
+                elif ifc_entity.wrapped_data.get_argument_type(i) == 'AGGREGATE OF ENTITY INSTANCE':
+                    for sub_entity in ifc_entity[i]:
+                        sub_node = self.create_pure_node_from_ifc_entity(sub_entity)
+
+                        # Check if sub node already exists in the database
+                        sub_node_key = sub_node["_key"]
+                        if sub_node_key not in self.existing_nodes:
+                            sub_collection = self.db[nodes_name]
+                            sub_collection.insert(sub_node)
+                            self.existing_nodes.add(sub_node_key)
+
+                        # Controllo se l'arco esiste già
+                        edge_key = (node["_key"], sub_node["_key"], ifc_entity.wrapped_data.get_argument_name(i))
+                        if edge_key not in self.existing_edges:
+                            rel_collection = self.db[edges_name]
+                            rel_collection.insert({
+                                "_from": f"{nodes_name}/{node['_key']}",
+                                "_to": f"{nodes_name}/{sub_node['_key']}",
+                                "rel_name": ifc_entity.wrapped_data.get_argument_name(i)
+                            })
+                            self.existing_edges.add(edge_key)
+
+        for rel_name in ifc_entity.wrapped_data.get_inverse_attribute_names():
+            if ifc_entity.wrapped_data.get_inverse(rel_name):
+                inverse_relations = ifc_entity.wrapped_data.get_inverse(rel_name)
+                for wrapped_rel in inverse_relations:
+                    rel_entity = ifc_file.by_id(wrapped_rel.id())
+                    sub_node = self.create_pure_node_from_ifc_entity(rel_entity)
 
                     # Check if sub node already exists in the database
                     sub_node_key = sub_node["_key"]
-                    if sub_node_key not in existing_nodes:
-                        sub_collection = db[nodes_name]
+                    if sub_node_key not in self.existing_nodes:
+                        sub_collection = self.db[nodes_name]
                         sub_collection.insert(sub_node)
-                        existing_nodes.add(sub_node_key)
+                        self.existing_nodes.add(sub_node_key)
 
                     # Controllo se l'arco esiste già
-                    edge_key = (node["_key"], sub_node["_key"], ifc_entity.wrapped_data.get_argument_name(i))
-                    if edge_key not in existing_edges:
-                        rel_collection = db[edges_name]
+                    edge_key = (sub_node["_key"], sub_node["_key"], rel_name)
+                    if edge_key not in self.existing_edges:
+                        rel_collection = self.db[edges_name]
                         rel_collection.insert({
-                            "_from": f"{nodes_name}/{node['_key']}",
+                            "_from": f"{nodes_name}/{sub_node['_key']}",
                             "_to": f"{nodes_name}/{sub_node['_key']}",
-                            "rel_name": ifc_entity.wrapped_data.get_argument_name(i)
+                            "rel_name": rel_name
                         })
-                        existing_edges.add(edge_key)
+                        self.existing_edges.add(edge_key)
 
-            elif ifc_entity.wrapped_data.get_argument_type(i) == 'AGGREGATE OF ENTITY INSTANCE':
-                for sub_entity in ifc_entity[i]:
-                    sub_node = create_pure_node_from_ifc_entity(sub_entity)
+    def create_full_graph(self, ifc_file, nodes_name, edges_name):
+        idx = 1
+        length = len(ifc_file.wrapped_data.entity_names())
+        for entity_id in ifc_file.wrapped_data.entity_names():
+            entity = ifc_file.by_id(entity_id)
+            print(idx, '/', length, entity)
+            self.create_graph_from_ifc_entity_all(entity, ifc_file, nodes_name, edges_name)
+            idx += 1
+        return
 
-                    # Check if sub node already exists in the database
-                    sub_node_key = sub_node["_key"]
-                    if sub_node_key not in existing_nodes:
-                        sub_collection = db[nodes_name]
-                        sub_collection.insert(sub_node)
-                        existing_nodes.add(sub_node_key)
+    def init_graph(self, file_path):
+        filename = file_path.rsplit('/', 1)[-1].split('.')[-2]
 
-                    # Controllo se l'arco esiste già
-                    edge_key = (node["_key"], sub_node["_key"], ifc_entity.wrapped_data.get_argument_name(i))
-                    if edge_key not in existing_edges:
-                        rel_collection = db[edges_name]
-                        rel_collection.insert({
-                            "_from": f"{nodes_name}/{node['_key']}",
-                            "_to": f"{nodes_name}/{sub_node['_key']}",
-                            "rel_name": ifc_entity.wrapped_data.get_argument_name(i)
-                        })
-                        existing_edges.add(edge_key)
+        nodes_name = f"{filename}_nodes"
+        edges_name = f"{filename}_edges"
+        graph_name = f"{filename}_graph"
 
-    for rel_name in ifc_entity.wrapped_data.get_inverse_attribute_names():
-        if ifc_entity.wrapped_data.get_inverse(rel_name):
-            inverse_relations = ifc_entity.wrapped_data.get_inverse(rel_name)
-            for wrapped_rel in inverse_relations:
-                rel_entity = ifc_file.by_id(wrapped_rel.id())
-                sub_node = create_pure_node_from_ifc_entity(rel_entity)
+        if not (self.db.has_collection(nodes_name) and self.db.has_collection(edges_name)):
+            self.db.create_collection(nodes_name)
+            self.db.create_collection(edges_name, edge=True)
 
-                # Check if sub node already exists in the database
-                sub_node_key = sub_node["_key"]
-                if sub_node_key not in existing_nodes:
-                    sub_collection = db[nodes_name]
-                    sub_collection.insert(sub_node)
-                    existing_nodes.add(sub_node_key)
+            # Caricamento file ifc
+            ifc_file = ifcopenshell.open(file_path)
 
-                # Controllo se l'arco esiste già
-                edge_key = (sub_node["_key"], sub_node["_key"], rel_name)
-                if edge_key not in existing_edges:
-                    rel_collection = db[edges_name]
-                    rel_collection.insert({
-                        "_from": f"{nodes_name}/{sub_node['_key']}",
-                        "_to": f"{nodes_name}/{sub_node['_key']}",
-                        "rel_name": rel_name
-                    })
-                    existing_edges.add(edge_key)
+            # Creazione grafo
+            self.create_full_graph(ifc_file, nodes_name, edges_name)
 
-
-def create_full_graph(db, ifc_file, nodes_name, edges_name):
-    idx = 1
-    length = len(ifc_file.wrapped_data.entity_names())
-    for entity_id in ifc_file.wrapped_data.entity_names():
-        entity = ifc_file.by_id(entity_id)
-        print(idx, '/', length, entity)
-        create_graph_from_ifc_entity_all(db, entity, ifc_file, nodes_name, edges_name)
-        idx += 1
-    return
-
-
-if len(sys.argv) != 2:
-    print("Usage: python py2arango.py <path_to_ifc_file>")
-    sys.exit(1)
-
-# Initialize the ArangoDB client
-client = ArangoClient(hosts='http://arangodb:8529')
-db = client.db('prova', username='root', password='BDLaaS')
-
-filename = sys.argv[1].rsplit('/', 1)[-1].split('.')[-2]
-print(filename)
-nodes_name = f"{filename}_nodes"
-edges_name = f"{filename}_edges"
-graph_name = f"{filename}_graph"
-
-if not (db.has_collection(nodes_name) and db.has_collection(edges_name)):
-    db.create_collection(nodes_name)
-    db.create_collection(edges_name, edge=True)
-
-    # Caricamento file ifc
-    ifc_file_path = sys.argv[1]
-    ifc_file = ifcopenshell.open(ifc_file_path)
-
-    # Creazione grafo
-    create_full_graph(db, ifc_file, nodes_name, edges_name)
-
-    insertSensor(db, nodes_name, edges_name, 'IfcWallStandardCase')
-
-    graph = db.create_graph(graph_name, edge_definitions=[
-        {
-            "edge_collection": edges_name,  # Nome della collezione di archi (edges) esistente
-            "from_vertex_collections": [nodes_name],  # Nomi delle collezioni di nodi (from)
-            "to_vertex_collections": [nodes_name]  # Nomi delle collezioni di nodi (to)
-        }
-    ])
+            self.graph = self.db.create_graph(graph_name, edge_definitions=[
+                {
+                    "edge_collection": edges_name,  # Nome della collezione di archi (edges) esistente
+                    "from_vertex_collections": [nodes_name],  # Nomi delle collezioni di nodi (from)
+                    "to_vertex_collections": [nodes_name]  # Nomi delle collezioni di nodi (to)
+                }
+            ])

@@ -525,7 +525,7 @@ function fetchTraversalByName() {
                 }
                 const options = {};
                 const editor = new JSONEditor(jsonContainer, options);
-                editor.set({"error": "Please go back ad start mapping procedure with file insert here"});
+                editor.set({"error": "Please go back and start mapping procedure with file insert here"});
             }
         }
     } else {
@@ -538,21 +538,14 @@ function showSensorForm() {
     const closeButton = document.getElementById("sensor-close") as HTMLElement;
     const confirmButton = document.getElementById("sensor-confirm-button") as HTMLElement;
     const resetButton = document.getElementById("sensor-reset-button") as HTMLElement;
-    const title = document.getElementById("sensor-title-label") as HTMLElement;
-    const subtitle = document.getElementById("sensor-subtitle-label") as HTMLElement;
 
     sensorContainer.style.display = "block";
-
-    function updateLabelText(titleText: string, subtitleText: string) {
-        title.innerText = titleText;
-        subtitle.innerText = subtitleText;
-    }
 
     closeButton.onclick = function () {
         sensorContainer.style.display = "none";
     };
     confirmButton.onclick = function () {
-        fetchTraversal();
+        createSensor();
         sensorContainer.style.display = "none";
     }
     resetButton.onclick = function () {
@@ -563,5 +556,64 @@ function showSensorForm() {
         });
         selectField.value = 'Any';
     }
-    updateLabelText("Show node details", "Node key");
+}
+
+function createSensor() {
+    const componentID = (document.getElementById("component-input") as HTMLSelectElement).value;
+    const sensorType = (document.getElementById("sensor-type-input") as HTMLSelectElement).value;
+    const brandName = (document.getElementById("brand-name-input") as HTMLSelectElement).value;
+    const manufacturerName = (document.getElementById("manufacturer-name-input") as HTMLSelectElement).value;
+    const modelName = (document.getElementById("model-name-input") as HTMLSelectElement).value;
+    const name = (document.getElementById("name-input") as HTMLSelectElement).value;
+    const description = (document.getElementById("description-input") as HTMLSelectElement).value;
+    const controlledProperty = (document.getElementById("controlled-property-input") as HTMLSelectElement).value;
+    const measurementType = (document.getElementById("measurement-type-input") as HTMLSelectElement).value;
+    const coordinateX = (document.getElementById("coordinate-x-input") as HTMLSelectElement).value;
+    const coordinateY = (document.getElementById("coordinate-y-input") as HTMLSelectElement).value;
+    const coordinateZ = (document.getElementById("coordinate-z-input") as HTMLSelectElement).value;
+
+    if (componentID && sensorType && controlledProperty && measurementType && coordinateX && coordinateY && coordinateZ) {
+        try {
+            const sceneModelName = ifcManager.groups[0].name;
+            if (modelName) {
+                fetch('http://flask_app:8432/create_sensor/', {
+                method: 'POST',
+                body: JSON.stringify({
+                    sceneModelName: sceneModelName,
+                    componentID: componentID,
+                    sensorType: sensorType,
+                    brandName: brandName,
+                    manufacturerName: manufacturerName,
+                    modelName: modelName,
+                    name: name,
+                    description: description,
+                    controlledProperty: controlledProperty,
+                    measurementType: measurementType,
+                    coordinateX: coordinateX,
+                    coordinateY: coordinateY,
+                    coordinateZ: coordinateZ
+                }),
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        alert("Sensor successfully created!")
+                        return response.json();
+                    })
+                    .catch(error => {
+                        alert(error);
+                    });
+            } else {
+                alert("Error: No model in scene, please load a model.")
+            }
+        } catch (error) {
+            alert("Error: please go back and start mapping procedure with file insert here");
+        }
+    } else {
+        alert("Please fill all the compulsory fields ;)");
+    }
 }

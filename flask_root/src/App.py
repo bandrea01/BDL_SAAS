@@ -6,7 +6,7 @@ from flask import redirect, url_for
 import dataGenerator
 import time
 from py_fiware import FiwareAPI
-from arango import ArangoClient
+from py2arango import Py2Arango
 
 import os
 
@@ -14,13 +14,11 @@ app = Flask(__name__)
 app.secret_key = 'cristian'
 CORS(app)
 
+arango = Py2Arango()
 fiware = FiwareAPI()
+
 fiware.setOrionIP("orion:1026")
 fiware.setPerseoIP("perseo-fe:9090")
-
-# Initialize the ArangoDB client
-client = ArangoClient(hosts='http://arangodb:8529')
-db = client.db('prova', username='root', password='BDLaaS')
 
 
 def login_required(f):
@@ -101,7 +99,11 @@ def upload_file():
     uploaded_file = request.files['file']
     file_path = '/app/src/ifc/' + uploaded_file.filename
     uploaded_file.save(file_path)
-    os.system('python /app/src/py2arango.py ' + file_path)
+    # os.system('python /app/src/py2arango.py ' + file_path)
+
+    arango.init_graph(file_path)
+
+    # TODO EVENTUALMENTE CERCARE DI FARE LA CREAZIONE SU ORION DELLE ENTITA' BUILDING TYPE ESTRAENDO GEOMETRIA
     return redirect(url_for('menu'))
 
 
@@ -127,16 +129,16 @@ def generation():
     #     err = "Error in init Orion: " + str(res_entity)
     #     return render_template("error.html", message=err)
 
-    res_device_model = fiware.init_device_model("Temperature", "200", "", "temperature", "", "", "Temperature sensor")
-    if res_device_model != 201 and res_device_model != 200:
-        err = "Error in init Orion: " + str(res_device_model)
-        return render_template("error.html", message=err)
-
-    res_device_measurement = fiware.init_device_measurement("Temperature", "200", "temperature", "Temperature measure",
-                                                            2, 0, 1, "Temperature", "Temperature measurement", 25.0)
-    if res_device_measurement != 201 and res_device_measurement != 200:
-        err = "Error in init Orion: " + str(res_device_measurement)
-        return render_template("error.html", message=err)
+    # res_device_model = fiware.init_device_model("Temperature", "200", "", "temperature", "", "", "Temperature sensor")
+    # if res_device_model != 201 and res_device_model != 200:
+    #     err = "Error in init Orion: " + str(res_device_model)
+    #     return render_template("error.html", message=err)
+    #
+    # res_device_measurement = fiware.init_device_measurement("Temperature", "200", "temperature", "Temperature measure",
+    #                                                         2, 0, 1, "Temperature", "Temperature measurement", 25.0)
+    # if res_device_measurement != 201 and res_device_measurement != 200:
+    #     err = "Error in init Orion: " + str(res_device_measurement)
+    #     return render_template("error.html", message=err)
 
     # res_subscription = fiware.init_subscriptions("Quantumleap subscription",
     #                                              sensor_type,
@@ -170,7 +172,37 @@ def generation():
 
 @app.route('/create_sensor', methods=['GET', 'POST'])
 def create_sensor():
-    return
+    data = request.json
+    sceneModelName = data.get("sceneModelName")
+    componentID = data.get("componentID")
+    sensorType = data.get("sensorType")
+    brandName = data.get("brandName")
+    manufacturerName = data.get("manufacturerName")
+    modelName = data.get("modelName")
+    name = data.get("name")
+    description = data.get("description")
+    controlledProperty = data.get("controlledProperty")
+    measurementType = data.get("measurementType")
+    coordinateX = data.get("coordinateX")
+    coordinateY = data.get("coordinateY")
+    coordinateZ = data.get("coordinateZ")
+
+    res_device_model = fiware.init_device_model(sensorType, componentID.split("-")[-1], brandName, controlledProperty,
+                                                manufacturerName, modelName, name)
+    if res_device_model != 201 and res_device_model != 200:
+        err = "Error in init Orion: " + str(res_device_model)
+        return render_template("error.html", message=err)
+
+    res_device_measurement = fiware.init_device_measurement(sensorType, componentID.split("-")[-1], controlledProperty,
+                                                            description,
+                                                            coordinateX, coordinateY, coordinateZ, measurementType,
+                                                            name, 25.0)
+    if res_device_measurement != 201 and res_device_measurement != 200:
+        err = "Error in init Orion: " + str(res_device_measurement)
+        return render_template("error.html", message=err)
+
+    arango.insertSensor(f"{sceneModelName}_nodes", f"{sceneModelName}_edges", componentID, sensorType, brandName,
+                        controlledProperty, manufacturerName, modelName, name)
 
 
 """-------------------    AQL    ---------------------"""
@@ -178,7 +210,7 @@ def create_sensor():
 
 @app.route("/get_all_nodes/<string:nodes_name>", methods=["GET"])
 def get_all_nodes(nodes_name):
-    nodes = db[nodes_name]
+    nodes = arango.db[nodes_name]
 
     cursor = nodes.all()
 
@@ -195,7 +227,7 @@ def get_all_nodes(nodes_name):
 
 @app.route("/get_all_edges/<string:edges_name>", methods=["GET"])
 def get_all_edges(edges_name):
-    edges = db[edges_name]
+    edges = arango.db[edges_name]
 
     cursor = edges.all()
 
@@ -211,7 +243,7 @@ def get_all_edges(edges_name):
 
 @app.route("/get_node_by_key/<string:nodes_name>/<string:key>", methods=["GET"])
 def get_node_by_key(nodes_name, key):
-    nodes = db[nodes_name]
+    nodes = arango.db[nodes_name]
 
     # Definire il criterio di ricerca
     filter_key = {'_key': key}
@@ -238,7 +270,7 @@ def get_node_by_id(nodes_name, id):
     """
 
     # Esegui la query e ottieni i risultati
-    cursor = db.aql.execute(query)
+    cursor = arango.db.aql.execute(query)
     results = list(cursor)
 
     if not results:
@@ -251,7 +283,7 @@ def get_node_by_id(nodes_name, id):
 
 @app.route("/get_nodes_by_name/<string:nodes_name>/<string:name>", methods=["GET"])
 def get_nodes_by_name(nodes_name, name):
-    nodes = db[nodes_name]
+    nodes = arango.db[nodes_name]
 
     # Definire il criterio di ricerca
     filter_name = {'name': name}
@@ -273,7 +305,7 @@ def get_nodes_by_name(nodes_name, name):
     "/traversal/<string:graph_name>/<string:start_vertex_collection>/<string:start_vertex_key>/<string:direction>/<int:min_depth>/<int:max_depth>",
     methods=["GET"])
 def traversal(graph_name, start_vertex_collection, start_vertex_key, direction, min_depth, max_depth):
-    graph = db.graph(graph_name)
+    graph = arango.db.graph(graph_name)
     start_vertex = f"{start_vertex_collection}/{start_vertex_key}"
 
     travers = graph.traverse(
@@ -295,8 +327,7 @@ def traversal(graph_name, start_vertex_collection, start_vertex_key, direction, 
     "/traversal_by_name/<string:graph_name>/<string:start_vertex_collection>/<string:vertex_type>/<string:direction>/<int:min_depth>/<int:max_depth>",
     methods=["GET"])
 def traversal_by_name(graph_name, start_vertex_collection, vertex_type, direction, min_depth, max_depth):
-    graph = db.graph(graph_name)
-
+    # graph = arango.db.graph(graph_name)
     query = f"""
             FOR node IN {start_vertex_collection}
                 FILTER node.name == "{vertex_type}"
@@ -306,7 +337,7 @@ def traversal_by_name(graph_name, start_vertex_collection, vertex_type, directio
             """
 
     # Esegui la query e ottieni i risultati
-    cursor = db.aql.execute(query)
+    cursor = arango.db.aql.execute(query)
     results = list(cursor)
 
     if not results:
