@@ -226,14 +226,14 @@ function showTraversalFields() {
         subtitle.innerText = subtitleText;
     }
 
-    closeButton.onclick = function () {
+    closeButton.onClick = function () {
         queryContainer.style.display = "none";
     };
-    confirmButton.onclick = function () {
+    confirmButton.onClick = function () {
         fetchTraversal();
         queryContainer.style.display = "none";
     }
-    resetButton.onclick = function () {
+    resetButton.onClick = function () {
         const inputFields = document.querySelectorAll('input');
         const selectField = document.querySelector('select[name="direction"]');
         inputFields.forEach((input) => {
@@ -545,8 +545,8 @@ function showSensorForm() {
         sensorContainer.style.display = "none";
     };
     confirmButton.onclick = function () {
-        createSensor();
         sensorContainer.style.display = "none";
+        createSensor();
     }
     resetButton.onclick = function () {
         const inputFields = document.querySelectorAll('input');
@@ -568,15 +568,15 @@ function createSensor() {
     const description = (document.getElementById("description-input") as HTMLSelectElement).value;
     const controlledProperty = (document.getElementById("controlled-property-input") as HTMLSelectElement).value;
     const measurementType = (document.getElementById("measurement-type-input") as HTMLSelectElement).value;
-    const coordinateX = (document.getElementById("coordinate-x-input") as HTMLSelectElement).value;
-    const coordinateY = (document.getElementById("coordinate-y-input") as HTMLSelectElement).value;
-    const coordinateZ = (document.getElementById("coordinate-z-input") as HTMLSelectElement).value;
+    const coordinateX = parseFloat((document.getElementById("coordinate-x-input") as HTMLSelectElement).value);
+    const coordinateY = parseFloat((document.getElementById("coordinate-y-input") as HTMLSelectElement).value);
+    const coordinateZ = parseFloat((document.getElementById("coordinate-z-input") as HTMLSelectElement).value);
 
     if (componentID && sensorType && controlledProperty && measurementType && coordinateX && coordinateY && coordinateZ) {
         try {
             const sceneModelName = ifcManager.groups[0].name;
             if (modelName) {
-                fetch('http://flask_app:8432/create_sensor/', {
+                fetch('http://flask_app:8432/create_sensor', {
                 method: 'POST',
                 body: JSON.stringify({
                     sceneModelName: sceneModelName,
@@ -602,7 +602,7 @@ function createSensor() {
                             throw new Error('Network response was not ok');
                         }
                         alert("Sensor successfully created!")
-                        return response.json();
+                        //return response.json();
                     })
                     .catch(error => {
                         alert(error);

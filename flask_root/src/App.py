@@ -123,23 +123,6 @@ def generation():
     entity_id = data.get("entityId")
     # TODO PRENDERE ENTITY ID DAL FORM
 
-    # sensor_type = "TemperatureSensor"
-    # res_entity = fiware.init_entites(sensor_type, 20.0)
-    # if res_entity != 201 and res_entity != 200:
-    #     err = "Error in init Orion: " + str(res_entity)
-    #     return render_template("error.html", message=err)
-
-    # res_device_model = fiware.init_device_model("Temperature", "200", "", "temperature", "", "", "Temperature sensor")
-    # if res_device_model != 201 and res_device_model != 200:
-    #     err = "Error in init Orion: " + str(res_device_model)
-    #     return render_template("error.html", message=err)
-    #
-    # res_device_measurement = fiware.init_device_measurement("Temperature", "200", "temperature", "Temperature measure",
-    #                                                         2, 0, 1, "Temperature", "Temperature measurement", 25.0)
-    # if res_device_measurement != 201 and res_device_measurement != 200:
-    #     err = "Error in init Orion: " + str(res_device_measurement)
-    #     return render_template("error.html", message=err)
-
     # res_subscription = fiware.init_subscriptions("Quantumleap subscription",
     #                                              sensor_type,
     #                                              "normalized",
@@ -201,8 +184,12 @@ def create_sensor():
         err = "Error in init Orion: " + str(res_device_measurement)
         return render_template("error.html", message=err)
 
+    sceneModelName = sceneModelName.split(".")[0]
+
     arango.insertSensor(f"{sceneModelName}_nodes", f"{sceneModelName}_edges", componentID, sensorType, brandName,
                         controlledProperty, manufacturerName, modelName, name)
+
+    return jsonify("done"), 200
 
 
 """-------------------    AQL    ---------------------"""
@@ -211,53 +198,37 @@ def create_sensor():
 @app.route("/get_all_nodes/<string:nodes_name>", methods=["GET"])
 def get_all_nodes(nodes_name):
     nodes = arango.db[nodes_name]
-
     cursor = nodes.all()
-
-    # Convertire il cursore in una lista
     nodes_list = list(cursor)
 
     if not nodes_list:
-        # Se non ci sono nodi trovati, restituisci un messaggio di errore
         return jsonify({'error': 'Nodi non trovati'}), 404
 
-    # Restituisci i dati JSON
     return jsonify(nodes_list)
 
 
 @app.route("/get_all_edges/<string:edges_name>", methods=["GET"])
 def get_all_edges(edges_name):
     edges = arango.db[edges_name]
-
     cursor = edges.all()
-
     nodes_list = list(cursor)
 
     if not nodes_list:
-        # Se non ci sono nodi trovati, restituisci un messaggio di errore
         return jsonify({'error': 'Edge non trovati'}), 404
 
-    # Restituisci i dati JSON
     return jsonify(nodes_list)
 
 
 @app.route("/get_node_by_key/<string:nodes_name>/<string:key>", methods=["GET"])
 def get_node_by_key(nodes_name, key):
     nodes = arango.db[nodes_name]
-
-    # Definire il criterio di ricerca
     filter_key = {'_key': key}
-
-    # Ottenere il nodo dalla collezione utilizzando il metodo find() con limit=1
     cursor = nodes.find(filter_key)
-
     nodes_list = list(cursor)
 
     if not nodes_list:
-        # Se non ci sono nodi trovati, restituisci un messaggio di errore
         return jsonify({'error': 'Nodo non trovato'}), 404
 
-    # Restituisci i dati JSON
     return jsonify(nodes_list)
 
 
@@ -268,36 +239,25 @@ def get_node_by_id(nodes_name, id):
         FILTER i._key LIKE '%-{id}'
         RETURN i
     """
-
-    # Esegui la query e ottieni i risultati
     cursor = arango.db.aql.execute(query)
     results = list(cursor)
 
     if not results:
-        # Se non ci sono nodi trovati, restituisci un messaggio di errore
         return jsonify({'error': 'Nodo non trovato'}), 404
 
-    # Restituisci i dati JSON
     return jsonify(results)
 
 
 @app.route("/get_nodes_by_name/<string:nodes_name>/<string:name>", methods=["GET"])
 def get_nodes_by_name(nodes_name, name):
     nodes = arango.db[nodes_name]
-
-    # Definire il criterio di ricerca
     filter_name = {'name': name}
-
-    # Ottenere il nodo dalla collezione utilizzando il metodo find() con limit=1
     cursor = nodes.find(filter_name)
-
     nodes_list = list(cursor)
 
     if not nodes_list:
-        # Se non ci sono nodi trovati, restituisci un messaggio di errore
         return jsonify({'error': 'Nodo/i non trovato/i'}), 404
 
-    # Restituisci i dati JSON
     return jsonify(nodes_list)
 
 
@@ -316,10 +276,8 @@ def traversal(graph_name, start_vertex_collection, start_vertex_key, direction, 
     )
 
     if not travers:
-        # Se non ci sono nodi trovati, restituisci un messaggio di errore
         return jsonify({'error': 'Traversal error'}), 404
 
-    # Restituisci i dati JSON
     return jsonify(travers)
 
 
@@ -327,7 +285,6 @@ def traversal(graph_name, start_vertex_collection, start_vertex_key, direction, 
     "/traversal_by_name/<string:graph_name>/<string:start_vertex_collection>/<string:vertex_type>/<string:direction>/<int:min_depth>/<int:max_depth>",
     methods=["GET"])
 def traversal_by_name(graph_name, start_vertex_collection, vertex_type, direction, min_depth, max_depth):
-    # graph = arango.db.graph(graph_name)
     query = f"""
             FOR node IN {start_vertex_collection}
                 FILTER node.name == "{vertex_type}"
@@ -335,16 +292,12 @@ def traversal_by_name(graph_name, start_vertex_collection, vertex_type, directio
                 node GRAPH "{graph_name}"
                 RETURN p
             """
-
-    # Esegui la query e ottieni i risultati
     cursor = arango.db.aql.execute(query)
     results = list(cursor)
 
     if not results:
-        # Se non ci sono nodi trovati, restituisci un messaggio di errore
         return jsonify({'error': 'Traversal error'}), 404
 
-    # Restituisci i dati JSON
     return jsonify(results)
 
 

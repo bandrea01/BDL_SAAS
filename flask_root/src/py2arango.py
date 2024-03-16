@@ -68,12 +68,15 @@ class Py2Arango(object):
             "rel_name": f"Has{type}Sensor"
         }
 
-        try:
-            self.db[nodes_name].insert(sensor_node)
-            self.db[edges_name].insert(sensor_edge)
-        except Exception as e:
-            return 404
-        return 200
+        self.db[nodes_name].insert(sensor_node)
+        self.db[edges_name].insert(sensor_edge)
+
+        # try:
+        #     self.db[nodes_name].insert(sensor_node)
+        #     self.db[edges_name].insert(sensor_edge)
+        # except Exception as e:
+        #     return 404
+        # return 200
 
     # Create the basic node with literal attributes and the class hierarchy
     # Input: ifc_entity - an instance, ifc_file - the parsed ifc-SPF
@@ -190,6 +193,10 @@ class Py2Arango(object):
         return
 
     def init_graph(self, file_path):
+        self.existing_nodes = set()
+        self.existing_edges = set()
+        self.graph = None
+
         filename = file_path.rsplit('/', 1)[-1].split('.')[-2]
 
         nodes_name = f"{filename}_nodes"
@@ -213,3 +220,5 @@ class Py2Arango(object):
                     "to_vertex_collections": [nodes_name]  # Nomi delle collezioni di nodi (to)
                 }
             ])
+
+

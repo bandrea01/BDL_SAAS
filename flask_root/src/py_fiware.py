@@ -3,7 +3,6 @@ import requests
 
 
 class FiwareAPI(object):
-
     def __init__(self):
         self.orionIP = None
         self.perseoIP = None
