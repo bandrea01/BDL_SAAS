@@ -7,10 +7,11 @@ class FiwareAPI(object):
         self.orionIP = None
         self.perseoIP = None
         self.header = {
-            'Content-Type': 'application/ld+json',
+            'Content-Type': 'application/ld+json'
         }
         self.header_subscription = {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/ld+json',
+            'Accept': 'application/ld+json'
         }
 
     def setOrionIP(self, orion_ip):
@@ -401,7 +402,80 @@ class FiwareAPI(object):
         res = self.subscribe(payload)
         return res
 
-    def init_rules_mail(self, rule_name, text, template, to, subject):
+    def init_quantumleap_subscription(self, description, type, format, uri):
+        json = self.get_subscriptions()
+
+        # TODO DA SISTEMARE
+        for sub in json:
+            if sub["notification"]["endpoint"]["uri"] == uri:
+                return 200
+
+        payload = {
+            "description": description,
+            "type": "Subscription",
+            "entities": [
+                {
+                    "type": type
+                }
+            ],
+            "watchedAttributes": [
+                "numValue"
+            ],
+            "notification": {
+                "attributes": [
+                    "numValue",
+                    "location"
+                ],
+                "format": format,
+                "endpoint": {
+                    "uri": uri,
+                    "accept": "application/json"
+                }
+            },
+            "@context": [
+                "https://raw.githubusercontent.com/smart-data-models/dataModel.Device/master/context.jsonld"
+            ]
+        }
+        res = self.subscribe(payload)
+        return res
+
+    def init_perseo_subscription(self, description, type, format, uri):
+        json = self.get_subscriptions()
+
+        # TODO DA SISTEMARE
+        for sub in json:
+            if sub["notification"]["endpoint"]["uri"] == uri:
+                return 200
+
+        payload = {
+            "description": description,
+            "type": "Subscription",
+            "entities": [
+                {
+                    "type": type
+                }
+            ],
+            "watchedAttributes": [
+                "numValue"
+            ],
+            "notification": {
+                "attributes": [
+                    "numValue"
+                ],
+                "format": format,
+                "endpoint": {
+                    "uri": uri,
+                    "accept": "application/json"
+                }
+            },
+            "@context": [
+                "https://raw.githubusercontent.com/smart-data-models/dataModel.Device/master/context.jsonld"
+            ]
+        }
+        res = self.subscribe(payload)
+        return res
+
+    def init_rule_mail(self, rule_name, text, template, to, subject):
         status = self.get_rule_by_name(rule_name)
 
         if status == 200:

@@ -123,25 +123,10 @@ def generation():
     entity_id = data.get("entityId")
     # TODO PRENDERE ENTITY ID DAL FORM
 
-    # res_subscription = fiware.init_subscriptions("Quantumleap subscription",
-    #                                              sensor_type,
-    #                                              "normalized",
-    #                                              "http://quantumleap:8668/v2/notify")
-    # if res_subscription != 201:
-    #     err = "Error in doing subscription: " + str(res_subscription)
-    #     return render_template("error.html", message=err)
-
-    # res_subscription = fiware.init_subscriptions("Perseo-FE subscription",
-    #                                              sensor_type,
-    #                                              "normalized",
-    #                                              "http://perseo-fe:9090/notices")
-    # if res_subscription != 201:
-    #     err = "Error in doing subscription: " + str(res_subscription)
-    #     return render_template("error.html", message=err)
-
-    # res_rule = fiware.init_rules_mail("temperature_rule_mail",
-    #                                   f"SELECT *, temperature? AS temperature FROM iotEvent WHERE (CAST(CAST(temperature?,String), DOUBLE)>={threshold} AND type='TemperatureSensor')",
-    #                                   "WARNING! Possible fire in progress/Temperature sensor malfunction... Detected temperature: ${temperature}°C",
+    # TODO DA CONTROLLARE LA RULE E IL TEMPLATE
+    # res_rule = fiware.init_rule_mail("temperature_rule_mail",
+    #                                   f"SELECT *, https://smartdatamodels.org/dataModel.Device/numValue? AS value FROM iotEvent WHERE (CAST(CAST(temperature?,String), DOUBLE)>={threshold} AND id='{entity_id}')",
+    #                                   "WARNING! SIGLA SENSORE threshold level exceeded. Value: ${value}",
     #                                   mail, "Temperature Notify")
     #
     # if res_rule != 200:
@@ -182,6 +167,22 @@ def create_sensor():
                                                             name, 25.0)
     if res_device_measurement != 201 and res_device_measurement != 200:
         err = "Error in init Orion: " + str(res_device_measurement)
+        return render_template("error.html", message=err)
+
+    res_subscription = fiware.init_quantumleap_subscription("Quantumleap Sensor Subscription",
+                                                            "DeviceMeasurement",
+                                                            "normalized",
+                                                            "http://quantumleap:8668/v2/notify")
+    if res_subscription != 201:
+        err = "Error in doing subscription: " + str(res_subscription)
+        return render_template("error.html", message=err)
+
+    res_subscription = fiware.init_perseo_subscription("Perseo Sensor Subscription",
+                                                       "DeviceMeasurement",
+                                                       "normalized",
+                                                       "http://perseo-fe:9090/notices")
+    if res_subscription != 201:
+        err = "Error in doing subscription: " + str(res_subscription)
         return render_template("error.html", message=err)
 
     sceneModelName = sceneModelName.split(".")[0]
