@@ -58,10 +58,10 @@ def update_entities(n, start_value, entity_id):
         res_update = fiware.update_entity(entity_id, payload)
         if res_update != 204:
             err_update = "Error in update data " + str(res_update)
-            return render_template("error.html", msg=err_update)
+            return jsonify("error: ", err_update)
         time.sleep(5)
 
-    return res_update
+    return jsonify(res_update)
 
 
 @app.route('/mapping')
@@ -84,8 +84,8 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        # if username == os.getenv('DEBUG_USR') and password == os.getenv('DEBUG_PWD'):
-        if username == "admin" and password == "restapi":
+        if username == os.getenv('DEBUG_USR') and password == os.getenv('DEBUG_PWD'):
+        # if username == "admin" and password == "restapi":
             session['user_id'] = username
             return redirect(url_for('menu'))
         else:
@@ -126,25 +126,20 @@ def generation():
     mail = data.get("mail")
     threshold = data.get("threshold")
     dataAmount = data.get("dataAmount")
-    # entity_id = data.get("entityId")
+    sensor_id = data.get("sensorId")
 
-    entity_id = "urn:ngsi-ld:MEASUREMENT:id:SensorTemperature-200"
-    entity_name = entity_id.split(":")[4]
-    # TODO PRENDERE ENTITY ID DAL FORM
+    entity_id = f"urn:ngsi-ld:MEASUREMENT:id:{sensor_id}"
 
-    # TODO DA CONTROLLARE LA RULE E IL TEMPLATE
-    res_rule = fiware.init_rule_mail(f"{entity_name}_rule_mail",
-                                      f"SELECT *, numValue? AS value FROM iotEvent WHERE (CAST(CAST(numValue?,String), DOUBLE) >= {threshold} AND id = '{entity_id}')",
-                                      "WARNING! " + entity_name + " threshold level exceeded. Value: ${value}",
-                                      mail, f"{entity_name} Notify")
+    res_rule = fiware.init_rule_mail(f"{sensor_id}_rule_mail",
+                                     f"SELECT *, numValue? AS value FROM iotEvent WHERE (CAST(CAST(numValue?,String), DOUBLE) >= {threshold} AND id = '{entity_id}')",
+                                     "WARNING! " + sensor_id + " threshold level exceeded. Value: ${value}",
+                                     mail, f"{sensor_id} Notify")
 
     if res_rule != 200:
         err = "Error in rule creation: " + str(res_rule)
         return render_template("error.html", message=err)
 
-    # TODO SISTEMARE IL TIPO DI ENTITA' DA AGGIORNARE
     res = update_entities(dataAmount, 20.0, entity_id)
-    # update_entities(dataAmount, 20.0, f"urn:ngsi-ld:MEASUREMENT:id:Sensor{type}-{id}")
 
     return res
 
@@ -203,14 +198,15 @@ def create_sensor():
 
     return jsonify("done"), 200
 
-@app.route("/getOrionSensors", method = ["GET"])
+
+@app.route("/getOrionSensors", methods=["GET"])
 def getOrionSensors():
-    #TODO
-    entities = fiware.get_entity_from_type("")
+    entities = fiware.get_entity_from_type("https://smartdatamodels.org/dataModel.Device/DeviceMeasurement")
     ids = []
     for entity in entities:
-        ids.append(entity["id"])
-    return jsonify({"entities": ids})
+        ids.append(entity["id"].split(":")[4])
+    return jsonify(ids)
+
 
 """-------------------    AQL    ---------------------"""
 

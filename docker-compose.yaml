@@ -80,7 +80,7 @@ services:
       - general_network
 
   crate:
-    image: crate:${CRATE_VERSION:-4.8.4}
+    image: crate:${CRATE_VERSION:-5.6.2}
     command: crate -Cauth.host_based.enabled=false
       -Ccluster.name=democluster -Chttp.cors.enabled=true -Chttp.cors.allow-origin="*"
     environment:
