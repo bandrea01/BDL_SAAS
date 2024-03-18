@@ -176,17 +176,38 @@ hr {
 }
 
 .sensor-form-content {
-    display: grid;
-    grid-template-columns: 1fr 1fr; /* Modificato per adattarsi dinamicamente */
-    grid-gap: 10px; /* Aggiunto spazio tra le colonne */
     background-color: #06191D;
     padding: 20px;
     border: 2px solid #fafafa;
-    max-width: 800px; /* Aumentata la larghezza massima per una migliore leggibilità */
+    max-width: 800px;
     border-radius: 15px;
     position: relative;
     z-index: 1;
     margin: 10% auto;
+}
+
+.sensor-form-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2%;
+}
+
+.sensor-form-header h2 {
+    color: #bef134;
+    font-weight: bold;
+    font-size: 25px;
+}
+
+.sensor-form-header span {
+    color: #fafafa;
+    font-size: 20px;
+}
+
+.sensor-form-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 10px;
 }
 
 .query-content .close {
@@ -226,10 +247,10 @@ hr {
     margin-bottom: 10px;
 }
 
-.input-container label {
+.input-container span {
     width: 70%;
     color: #fafafa;
-    font-size: 14px;
+    font-size: 16px;
 }
 
 .input-container input,
@@ -242,6 +263,7 @@ hr {
     background-color: #0b2d34;
     color: #fafafa;
     margin-right: 0;
+    font-size: 13px;
 }
 
 .label-text {

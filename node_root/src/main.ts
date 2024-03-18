@@ -535,7 +535,7 @@ function fetchTraversalByName() {
 
 function showSensorForm() {
     const sensorContainer = document.getElementById("sensor-form-container") as HTMLElement;
-    const closeButton = document.getElementById("sensor-close") as HTMLElement;
+    const closeButton = document.getElementById("sensor-close-button") as HTMLElement;
     const confirmButton = document.getElementById("sensor-confirm-button") as HTMLElement;
     const resetButton = document.getElementById("sensor-reset-button") as HTMLElement;
 
@@ -572,7 +572,7 @@ function createSensor() {
     const coordinateY = parseFloat((document.getElementById("coordinate-y-input") as HTMLSelectElement).value);
     const coordinateZ = parseFloat((document.getElementById("coordinate-z-input") as HTMLSelectElement).value);
 
-    if (componentID && sensorType && controlledProperty && measurementType && coordinateX && coordinateY && coordinateZ) {
+    if (componentID && sensorType && brandName && manufacturerName && modelName && controlledProperty && coordinateX && coordinateY && coordinateZ) {
         try {
             const sceneModelName = ifcManager.groups[0].name;
             if (modelName) {

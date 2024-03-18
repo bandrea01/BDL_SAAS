@@ -109,79 +109,90 @@
 
 <!-- Sensor form -->
 <div id="sensor-form-container" class="query-container">
-    <div>
-        <span id="sensor-close" class="close">&times;</span>
-        <h2 id="sensor-title-label">Add Sensor</h2>
-    </div>
     <div class="sensor-form-content">
-        <div class="input-group">
-            <label class="input-container">
-                <span class="label-text">Component ID</span>
-                <input type="text" id="component-input" name="component_id" placeholder="Es. IfcWallStandardCase-200" required>
-            </label>
+        <div class="sensor-form-header">
+            <h2 id="sensor-title-label">Add Sensor</h2>
+            <span id="sensor-close-button" class="close">&times;</span>
         </div>
-        <div>
-            <label class="input-container">
-                <span class="label-text">Sensor Type</span>
-                <input type="text" id="sensor-type-input" name="node_name" placeholder="Es. Temperature" required>
-            </label>
+        <div class="sensor-form-body">
+            <div class="input-group">
+                <label class="input-container">
+                    <span class="label-text">Component ID *</span>
+                    <input type="text" id="component-input" name="component_id"
+                           placeholder="Es. IfcWallStandardCase-200" required>
+                </label>
+            </div>
+            <div>
+                <label class="input-container">
+                    <span class="label-text">Sensor Type *</span>
+                    <input type="text" id="sensor-type-input" name="node_name" placeholder="Type of sensor (es. Temperature)" required>
+                </label>
+            </div>
+            <div>
+                <label class="input-container">
+                    <span class="label-text">Brand Name *</span>
+                    <input type="text" id="brand-name-input" name="brand_name" placeholder="Device's Brand Name (Es. STMicroelectronics)"
+                           required>
+                </label>
+            </div>
+            <div>
+                <label class="input-container">
+                    <span class="label-text">Manufacturer Name *</span>
+                    <input type="text" id="manufacturer-name-input" name="manefacturer_name"
+                           placeholder="Device's Manufacturer Name (es. STMicroelectronics)" required>
+                </label>
+            </div>
+            <div>
+                <label class="input-container">
+                    <span class="label-text">Model Name *</span>
+                    <input type="text" id="model-name-input" name="model_name" placeholder="Devices's Model Name (es. AC412)" required>
+                </label>
+            </div>
+            <div>
+                <label class="input-container">
+                    <span class="label-text">Name of item</span>
+                    <input type="text" id="name-input" name="name" placeholder="Device's name (es. MySensor)">
+                </label>
+            </div>
+            <div>
+                <label class="input-container">
+                    <span class="label-text">Description</span>
+                    <input type="text" id="description-input" name="description_name"
+                           placeholder="Device's information description">
+                </label>
+            </div>
+            <div>
+                <label class="input-container">
+                    <span class="label-text">Controlled property *</span>
+                    <input type="text" id="controlled-property-input" name="controlled_property_name"
+                           placeholder="Quantity measured by device (Es. temperature)" required>
+                </label>
+            </div>
+            <div>
+                <label class="input-container">
+                    <span class="label-text">Measurement type</span>
+                    <input type="text" id="measurement-type-input" name="measurement_name" placeholder="Measurement taken type">
+                </label>
+            </div>
+            <div>
+                <label class="input-container">
+                    <span class="label-text">Relative coordinates *</span>
+                    <div>
+                        <input type="text" id="coordinate-x-input" name="coordinate_x_name" placeholder="X coordinate"
+                               required>
+                    </div>
+                    <div>
+                        <input type="text" id="coordinate-y-input" name="coordinate_y_name" placeholder="Y coordinate"
+                               required>
+                    </div>
+                    <div>
+                        <input type="text" id="coordinate-z-input" name="coordinate_z_name" placeholder="Z coordinate"
+                               required>
+                    </div>
+                </label>
+            </div>
         </div>
-        <div>
-            <label class="input-container">
-                <span class="label-text">Brand Name</span>
-                <input type="text" id="brand-name-input" name="brand_name" placeholder="Es. STMicroelectronics" required>
-            </label>
-        </div>
-        <div>
-            <label class="input-container">
-                <span class="label-text">Manufacturer Name</span>
-                <input type="text" id="manufacturer-name-input" name="manefacturer_name" placeholder="Es. STMicroelectronics" required>
-            </label>
-        </div>
-        <div>
-            <label class="input-container">
-                <span class="label-text">Model Name</span>
-                <input type="text" id="model-name-input" name="model_name" placeholder="Es. AC412" required>
-            </label>
-        </div>
-        <div>
-            <label class="input-container">
-                <span class="label-text">Name</span>
-                <input type="text" id="name-input" name="name" placeholder="Es. MySensor" required>
-            </label>
-        </div>
-        <div>
-            <label class="input-container">
-                <span class="label-text">Description</span>
-                <input type="text" id="description-input" name="description_name" placeholder="Es. Sensor of this component..." required>
-            </label>
-        </div>
-        <div>
-            <label class="input-container">
-                <span class="label-text">Controlled property</span>
-                <input type="text" id="controlled-property-input" name="controlled_property_name" placeholder="Es. Temperature" required>
-            </label>
-        </div>
-        <div>
-            <label class="input-container">
-                <span class="label-text">Measurement type</span>
-                <input type="text" id="measurement-type-input" name="measurement_name" placeholder="Es. ..." required>
-            </label>
-        </div>
-        <div>
-            <label class="input-container">
-                <span class="label-text">Coordinates</span>
-                <div>
-                    <input type="text" id="coordinate-x-input" name="coordinate_x_name" placeholder="X coordinate" required>
-                </div>
-                <div>
-                    <input type="text" id="coordinate-y-input" name="coordinate_y_name" placeholder="Y coordinate" required>
-                </div>
-                <div>
-                    <input type="text" id="coordinate-z-input" name="coordinate_z_name" placeholder="Z coordinate" required>
-                </div>
-            </label>
-        </div>
+
         <div class="button-container">
             <button id="sensor-confirm-button">Conferma</button>
             <button id="sensor-reset-button">Reset</button>
