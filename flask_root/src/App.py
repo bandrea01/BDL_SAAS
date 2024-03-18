@@ -84,8 +84,8 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        if username == os.getenv('DEBUG_USR') and password == os.getenv('DEBUG_PWD'):
-            # if username == "admin" and password == "restapi":
+        # if username == os.getenv('DEBUG_USR') and password == os.getenv('DEBUG_PWD'):
+        if username == "admin" and password == "restapi":
             session['user_id'] = username
             return redirect(url_for('menu'))
         else:
@@ -203,6 +203,14 @@ def create_sensor():
 
     return jsonify("done"), 200
 
+@app.route("/getOrionSensors", method = ["GET"])
+def getOrionSensors():
+    #TODO
+    entities = fiware.get_entity_from_type("")
+    ids = []
+    for entity in entities:
+        ids.append(entity["id"])
+    return jsonify({"entities": ids})
 
 """-------------------    AQL    ---------------------"""
 

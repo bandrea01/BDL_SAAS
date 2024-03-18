@@ -68,7 +68,7 @@ class FiwareAPI(object):
         return response.status_code == 200
 
     def get_entity_from_type(self, entity_type):
-        url = f'http://{self.orionIP}/ngsi-ld/v1/entities?{entity_type}'
+        url = f'http://{self.orionIP}/ngsi-ld/v1/entities?type={entity_type}'
         response = requests.get(url, headers=self.header)
         return response.json()
 
