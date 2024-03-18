@@ -13,6 +13,9 @@ class FiwareAPI(object):
             'Content-Type': 'application/ld+json',
             'Accept': 'application/ld+json'
         }
+        self.header_perseo = {
+            'Content-Type': 'application/json'
+        }
 
     def setOrionIP(self, orion_ip):
         self.orionIP = orion_ip
@@ -162,22 +165,22 @@ class FiwareAPI(object):
 
     def get_rule_by_name(self, rule_name):
         url = f'http://{self.perseoIP}/rules/{rule_name}'
-        response = requests.get(url, headers=self.header_subscription)
+        response = requests.get(url, headers=self.header_perseo)
         return response.status_code
 
     def get_rules(self):
         url = f'http://{self.perseoIP}/rules'
-        response = requests.get(url, headers=self.header_subscription)
+        response = requests.get(url, headers=self.header_perseo)
         return response.json()
 
     def insert_rule(self, data):
         url = f'http://{self.perseoIP}/rules'
-        response = requests.post(url, headers=self.header_subscription, json=data)
+        response = requests.post(url, headers=self.header_perseo, json=data)
         return response.status_code
 
     def delete_rule(self, rule_name):
         url = f'http://{self.perseoIP}/rules/{rule_name}'
-        response = requests.delete(url, headers=self.header_subscription)
+        response = requests.delete(url, headers=self.header_perseo)
         return response.status_code
 
     def init_device_model(self, type, id, brandName, controlledProperty, manufacturerName, modelName, name):
@@ -405,9 +408,8 @@ class FiwareAPI(object):
     def init_quantumleap_subscription(self, description, type, format, uri):
         json = self.get_subscriptions()
 
-        # TODO DA SISTEMARE
         for sub in json:
-            if sub["notification"]["endpoint"]["uri"] == uri:
+            if sub["notification"]["endpoint"]["uri"] == uri and sub["entities"]["type"] == type:
                 return 200
 
         payload = {
@@ -442,9 +444,8 @@ class FiwareAPI(object):
     def init_perseo_subscription(self, description, type, format, uri):
         json = self.get_subscriptions()
 
-        # TODO DA SISTEMARE
         for sub in json:
-            if sub["notification"]["endpoint"]["uri"] == uri:
+            if sub["notification"]["endpoint"]["uri"] == uri and sub["entities"]["type"] == type:
                 return 200
 
         payload = {
