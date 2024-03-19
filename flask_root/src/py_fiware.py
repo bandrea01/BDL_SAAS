@@ -16,6 +16,10 @@ class FiwareAPI(object):
         self.header_perseo = {
             'Content-Type': 'application/json'
         }
+        self.header_perseo_subscription = {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        }
 
     def setOrionIP(self, orion_ip):
         self.orionIP = orion_ip
@@ -350,60 +354,60 @@ class FiwareAPI(object):
         res = self.insert_entity(payload)
         return res
 
-    def init_entites(self, type, temperature_value):
-        if self.entity_exists("urn:ngsi-ld:TemperatureSensor:001"):
-            return 200
+    # def init_entites(self, type, temperature_value):
+    #     if self.entity_exists("urn:ngsi-ld:TemperatureSensor:001"):
+    #         return 200
+    #
+    #     # self.delete_entity("urn:ngsi-ld:TemperatureSensor:001")
+    #     payload = {
+    #         "id": "urn:ngsi-ld:TemperatureSensor:001",
+    #         "type": type,
+    #         "category": {
+    #             "type": "Property",
+    #             "value": "sensor"
+    #         },
+    #         "location": {
+    #             "type": "GeoProperty",
+    #             "value": {
+    #                 "type": "Point",
+    #                 "coordinates": [-8, 44]
+    #             }
+    #         },
+    #         "temperature": {
+    #             "type": "Property",
+    #             "value": temperature_value,
+    #             "unitCode": "CEL"
+    #         }
+    #     }
+    #     res = self.insert_entity(payload)
+    #     return res
 
-        # self.delete_entity("urn:ngsi-ld:TemperatureSensor:001")
-        payload = {
-            "id": "urn:ngsi-ld:TemperatureSensor:001",
-            "type": type,
-            "category": {
-                "type": "Property",
-                "value": "sensor"
-            },
-            "location": {
-                "type": "GeoProperty",
-                "value": {
-                    "type": "Point",
-                    "coordinates": [-8, 44]
-                }
-            },
-            "temperature": {
-                "type": "Property",
-                "value": temperature_value,
-                "unitCode": "CEL"
-            }
-        }
-        res = self.insert_entity(payload)
-        return res
-
-    def init_subscriptions(self, description, type, format, uri):
-        json = self.get_subscriptions()
-
-        for sub in json:
-            if sub["notification"]["endpoint"]["uri"] == uri:
-                self.delete_subscription(sub["id"])
-
-        payload = {
-            "description": description,
-            "type": "Subscription",
-            "entities": [
-                {
-                    "type": type,
-                }
-            ],
-            "notification": {
-                "attributes": ["temperature", "location"],
-                "format": format,
-                "endpoint": {
-                    "uri": uri,
-                    "accept": "application/json"
-                }
-            }
-        }
-        res = self.subscribe(payload)
-        return res
+    # def init_subscriptions(self, description, type, format, uri):
+    #     json = self.get_subscriptions()
+    #
+    #     for sub in json:
+    #         if sub["notification"]["endpoint"]["uri"] == uri:
+    #             self.delete_subscription(sub["id"])
+    #
+    #     payload = {
+    #         "description": description,
+    #         "type": "Subscription",
+    #         "entities": [
+    #             {
+    #                 "type": type,
+    #             }
+    #         ],
+    #         "notification": {
+    #             "attributes": ["temperature", "location"],
+    #             "format": format,
+    #             "endpoint": {
+    #                 "uri": uri,
+    #                 "accept": "application/json"
+    #             }
+    #         }
+    #     }
+    #     res = self.subscribe(payload)
+    #     return res
 
     def init_quantumleap_subscription(self, description, type, format, uri):
         json = self.get_subscriptions()
@@ -431,14 +435,14 @@ class FiwareAPI(object):
                 "format": format,
                 "endpoint": {
                     "uri": uri,
-                    "accept": "application/json"
+                    "accept": "application/ld+json"
                 }
             },
             "@context": [
                 "https://raw.githubusercontent.com/smart-data-models/dataModel.Device/master/context.jsonld"
             ]
         }
-        res = self.subscribe(payload)
+        res = self.subscribe(payload, self.header_subscription)
         return res
 
     def init_perseo_subscription(self, description, type, format, uri):
