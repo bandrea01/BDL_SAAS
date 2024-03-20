@@ -140,14 +140,14 @@ const nodesByTypeButton = new OBC.Button(viewer);
 allNodesButton.onClick.add(() => fetchAllNodes());
 allEdgesButton.onClick.add(() => fetchAllEdges());
 
-allNodesButton.label = "Mostra tutti i nodi";
-allEdgesButton.label = "Mostra tutte le relazioni";
-traversalNodeButton.label = "Mostra dettagli nodo";
-nodesByTypeButton.label = "Mostra nodi per tipo";
+allNodesButton.label = "Show all nodes";
+allEdgesButton.label = "Show all edges";
+traversalNodeButton.label = "Show node details";
+nodesByTypeButton.label = "Show nodes by type";
 
 const addSensorButton = new OBC.Button(viewer);
 addSensorButton.materialIcon = "sensors";
-addSensorButton.tooltip = "Aggiungi sensore";
+addSensorButton.tooltip = "Add sensor";
 addSensorButton.onClick.add(() => showSensorForm());
 
 const goBackButton = new OBC.Button(viewer);

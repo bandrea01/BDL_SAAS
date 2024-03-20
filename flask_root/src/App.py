@@ -7,7 +7,6 @@ import dataGenerator
 import time
 from py_fiware import FiwareAPI
 from py2arango import Py2Arango
-
 import os
 
 app = Flask(__name__)
@@ -54,7 +53,6 @@ def update_entities(n, start_value, entity_id):
                 "https://raw.githubusercontent.com/smart-data-models/dataModel.Device/master/context.jsonld"
             ]
         }
-        # TODO CAMBIARE ENTITY_ID PASSANDOLO DINAMICAMENTE COME PARAMETRO PER FUNZIONE E DA FRONT-END
         res_update = fiware.update_entity(entity_id, payload)
         if res_update != 204:
             err_update = "Error in update data " + str(res_update)
@@ -97,6 +95,15 @@ def login():
 @login_required
 def menu():
     return render_template("menu.html")
+
+
+@app.route('/viewer', methods=['GET', 'POST'])
+@login_required
+def viewer():
+    host_ip_address = request.host.split(':')[0]
+    viewer_url = f"http://{host_ip_address}:5173"
+
+    return redirect(viewer_url)
 
 
 @app.route('/mapping', methods=['GET', 'POST'])
