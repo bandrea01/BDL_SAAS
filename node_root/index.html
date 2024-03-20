@@ -56,7 +56,7 @@
             In the toolbar on the bottom you can perform three different actions:
         </p>
         <p>
-            • <strong>Load IFC:</strong> you can load a IFC file that you want to
+            • <strong>Load IFC:</strong> you can load an IFC file that you want to
             visualize.
         </p>
         <p>
@@ -74,34 +74,68 @@
     </div>
 </div>
 <!-- Query form -->
-<div id="query-container" class="query-container">
+<div id="query-container-id" class="query-container">
     <div class="query-content">
-        <span id="query-close" class="close">&times;</span>
-        <h2 id="title-label">Show nodes by type</h2>
+        <span id="query-close-id" class="close">&times;</span>
+        <h2 id="title-label-id">Show nodes details</h2>
         <div class="input-group">
             <label class="input-container">
-                <span class="label-text" id="subtitle-label">Node Type</span>
-                <input type="text" id="node-name-input" name="node_name" placeholder="Es. IfcWallStandardCase" required>
+                <span class="label-text" id="subtitle-id-label">Node key</span>
+                <input type="text" id="node-name-input-id" name="node_name" placeholder="Es. IfcWallStandardCase-200" required>
             </label>
             <label class="input-container">
                 <span class="label-text">Minimum depth</span>
-                <input type="text" id="min-depth-input" name="min_depth" placeholder="Es. 0" required>
+                <input type="text" id="min-depth-input-id" name="min_depth" placeholder="Es. 0" required>
             </label>
             <label class="input-container">
                 <span class="label-text">Maximum depth</span>
-                <input type="text" id="max-depth-input" name="max_depth" placeholder="Es. 5" required>
+                <input type="text" id="max-depth-input-id" name="max_depth" placeholder="Es. 5" required>
             </label>
             <label class="input-container">
                 <span class="label-text">Direction</span>
-                <select id="direction-input" name="direction" required>
+                <select id="direction-input-id" name="direction" required>
                     <option value="Inbound">Inbound</option>
                     <option value="Outbound">Outbound</option>
                     <option value="Any" selected>Any</option>
                 </select>
             </label>
             <div class="button-container">
-                <button id="confirm-button">Conferma</button>
-                <button id="reset-button">Reset</button>
+                <button id="confirm-button-id">Confirm</button>
+                <button id="reset-button-id">Reset</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Query by type form -->
+<div id="query-container-type" class="query-container">
+    <div class="query-content">
+        <span id="query-close-type" class="close">&times;</span>
+        <h2 id="title-label-type">Show nodes by type</h2>
+        <div class="input-group">
+            <label class="input-container">
+                <span class="label-text" id="subtitle-label-type">Node Type</span>
+                <input type="text" id="node-name-input-type" name="node_name" placeholder="Es. IfcWallStandardCase" required>
+            </label>
+            <label class="input-container">
+                <span class="label-text">Minimum depth</span>
+                <input type="text" id="min-depth-input-type" name="min_depth" placeholder="Es. 0" required>
+            </label>
+            <label class="input-container">
+                <span class="label-text">Maximum depth</span>
+                <input type="text" id="max-depth-input-type" name="max_depth" placeholder="Es. 5" required>
+            </label>
+            <label class="input-container">
+                <span class="label-text">Direction</span>
+                <select id="direction-input-type" name="direction" required>
+                    <option value="Inbound">Inbound</option>
+                    <option value="Outbound">Outbound</option>
+                    <option value="Any" selected>Any</option>
+                </select>
+            </label>
+            <div class="button-container">
+                <button id="confirm-button-type">Confirm</button>
+                <button id="reset-button-type">Reset</button>
             </div>
         </div>
     </div>
@@ -194,7 +228,7 @@
         </div>
 
         <div class="button-container">
-            <button id="sensor-confirm-button">Conferma</button>
+            <button id="sensor-confirm-button">Confirm</button>
             <button id="sensor-reset-button">Reset</button>
         </div>
     </div>

@@ -113,7 +113,7 @@ services:
       - general_network
 
   redis:
-    image: redis:${REDIS_VERSION:-7.0.6}
+    image: redis:${REDIS_VERSION:-7.2.4}
     ports:
       - "6379:6379"
     volumes:

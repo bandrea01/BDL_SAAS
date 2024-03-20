@@ -2,7 +2,7 @@ import * as OBC from "openbim-components";
 import * as THREE from "three";
 import * as JSONEditor from 'jsoneditor';
 
-
+const hostIPAddress = window.location.hostname;
 const viewer = new OBC.Components();
 viewer.onInitialized.add(() => {
 });
@@ -66,7 +66,7 @@ ifcLoader.onIfcLoaded.add(async (model) => {
         try {
             const modelName = ifcManager.groups[0].name;
             if (modelName) {
-                fetch('http://flask_app:8432/get_node_by_id/' + modelName.split(".")[0] + '_nodes/' + expressID)
+                fetch(`http://${hostIPAddress}:8432/get_node_by_id/` + modelName.split(".")[0] + '_nodes/' + expressID)
                     .then(response => {
                         if (!response.ok) {
                             throw new Error('Network response was not ok');
@@ -154,7 +154,7 @@ const goBackButton = new OBC.Button(viewer);
 goBackButton.materialIcon = "exit_to_app";
 goBackButton.tooltip = "Go back";
 
-goBackButton.onClick.add(() => redirectTo("http://flask_app:8432/menu"));
+goBackButton.onClick.add(() => redirectTo(`http://${hostIPAddress}:8432/menu`));
 
 queryTool.addChild(allNodesButton);
 queryTool.addChild(allEdgesButton);
@@ -212,12 +212,12 @@ function redirectTo(url: string): void {
 }
 
 function showTraversalFields() {
-    const queryContainer = document.getElementById("query-container") as HTMLElement;
-    const closeButton = document.getElementById("query-close") as HTMLElement;
-    const confirmButton = document.getElementById("confirm-button") as HTMLElement;
-    const resetButton = document.getElementById("reset-button") as HTMLElement;
-    const title = document.getElementById("title-label") as HTMLElement;
-    const subtitle = document.getElementById("subtitle-label") as HTMLElement;
+    const queryContainer = document.getElementById("query-container-id") as HTMLElement;
+    const closeButton = document.getElementById("query-close-id") as HTMLElement;
+    const confirmButton = document.getElementById("confirm-button-id") as HTMLElement;
+    const resetButton = document.getElementById("reset-button-id") as HTMLElement;
+    const title = document.getElementById("title-label-id") as HTMLElement;
+    const subtitle = document.getElementById("subtitle-label-id") as HTMLElement;
 
     queryContainer.style.display = "block";
 
@@ -226,14 +226,14 @@ function showTraversalFields() {
         subtitle.innerText = subtitleText;
     }
 
-    closeButton.onClick = function () {
+    closeButton.onclick = function () {
         queryContainer.style.display = "none";
     };
-    confirmButton.onClick = function () {
+    confirmButton.onclick = function () {
         fetchTraversal();
         queryContainer.style.display = "none";
     }
-    resetButton.onClick = function () {
+    resetButton.onclick = function () {
         const inputFields = document.querySelectorAll('input');
         const selectField = document.querySelector('select[name="direction"]');
         inputFields.forEach((input) => {
@@ -241,16 +241,15 @@ function showTraversalFields() {
         });
         selectField.value = 'Any';
     }
-    updateLabelText("Show node details", "Node key");
 }
 
 function showTraversalByTypeFields() {
-    const queryContainer = document.getElementById("query-container") as HTMLElement;
-    const closeButton = document.getElementById("query-close") as HTMLElement;
-    const confirmButton = document.getElementById("confirm-button") as HTMLElement;
-    const resetButton = document.getElementById("reset-button") as HTMLElement;
-    const title = document.getElementById("title-label") as HTMLElement;
-    const subtitle = document.getElementById("subtitle-label") as HTMLElement;
+    const queryContainer = document.getElementById("query-container-type") as HTMLElement;
+    const closeButton = document.getElementById("query-close-type") as HTMLElement;
+    const confirmButton = document.getElementById("confirm-button-type") as HTMLElement;
+    const resetButton = document.getElementById("reset-button-type") as HTMLElement;
+    const title = document.getElementById("title-label-type") as HTMLElement;
+    const subtitle = document.getElementById("subtitle-label-type") as HTMLElement;
 
     queryContainer.style.display = "block";
 
@@ -273,15 +272,14 @@ function showTraversalByTypeFields() {
             input.value = '';
         });
         selectField.value = 'Any';
-    }
-    updateLabelText("Show nodes by type", "Node type");
+    };
 }
 
 function fetchAllNodes() {
     try {
         const modelName = ifcManager.groups[0].name;
         if (modelName) {
-            fetch('http://flask_app:8432/get_all_nodes/' + modelName.split(".")[0] + '_nodes')
+            fetch(`http://${hostIPAddress}:8432/get_all_nodes/` + modelName.split(".")[0] + `_nodes`)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
@@ -338,7 +336,7 @@ function fetchAllEdges() {
     try {
         const modelName = ifcManager.groups[0].name;
         if (modelName) {
-            fetch('http://flask_app:8432/get_all_edges/' + modelName.split(".")[0] + '_edges')
+            fetch(`http://${hostIPAddress}:8432/get_all_edges/` + modelName.split(".")[0] + `_edges`)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
@@ -392,10 +390,10 @@ function fetchAllEdges() {
 }
 
 function fetchTraversal() {
-    const nodeNameInput = (document.getElementById("node-name-input") as HTMLSelectElement).value;
-    const minDepthInput = (document.getElementById("min-depth-input") as HTMLSelectElement).value;
-    const maxDepthInput = (document.getElementById("max-depth-input") as HTMLSelectElement).value;
-    const directionInput = (document.getElementById("direction-input") as HTMLSelectElement).value;
+    const nodeNameInput = (document.getElementById("node-name-input-id") as HTMLSelectElement).value;
+    const minDepthInput = (document.getElementById("min-depth-input-id") as HTMLSelectElement).value;
+    const maxDepthInput = (document.getElementById("max-depth-input-id") as HTMLSelectElement).value;
+    const directionInput = (document.getElementById("direction-input-id") as HTMLSelectElement).value;
 
     if (nodeNameInput && minDepthInput && maxDepthInput && directionInput) {
         if (minDepthInput < 0 || maxDepthInput < 0) {
@@ -406,7 +404,7 @@ function fetchTraversal() {
         try {
             const modelName = ifcManager.groups[0].name;
             if (modelName) {
-                fetch('http://flask_app:8432/traversal/' + modelName.split(".")[0] + '_graph/' + modelName.split(".")[0] + '_nodes/' + nodeNameInput + '/' + directionInput + '/' + minDepthInput + '/' + maxDepthInput)
+                fetch(`http://${hostIPAddress}:8432/traversal/` + modelName.split(".")[0] + `_graph/` + modelName.split(".")[0] + `_nodes/` + nodeNameInput + `/` + directionInput + `/` + minDepthInput + `/` + maxDepthInput)
                     .then(response => {
                         if (!response.ok) {
                             throw new Error('Network response was not ok');
@@ -463,10 +461,10 @@ function fetchTraversal() {
 }
 
 function fetchTraversalByName() {
-    const nodeNameInput = (document.getElementById("node-name-input") as HTMLSelectElement).value;
-    const minDepthInput = (document.getElementById("min-depth-input") as HTMLSelectElement).value;
-    const maxDepthInput = (document.getElementById("max-depth-input") as HTMLSelectElement).value;
-    const directionInput = (document.getElementById("direction-input") as HTMLSelectElement).value;
+    const nodeNameInput = (document.getElementById("node-name-input-type") as HTMLSelectElement).value;
+    const minDepthInput = (document.getElementById("min-depth-input-type") as HTMLSelectElement).value;
+    const maxDepthInput = (document.getElementById("max-depth-input-type") as HTMLSelectElement).value;
+    const directionInput = (document.getElementById("direction-input-type") as HTMLSelectElement).value;
 
     if (nodeNameInput && minDepthInput && maxDepthInput && directionInput) {
         if (minDepthInput < 0 || maxDepthInput < 0) {
@@ -477,7 +475,7 @@ function fetchTraversalByName() {
         try {
             const modelName = ifcManager.groups[0].name;
             if (modelName) {
-                fetch('http://flask_app:8432/traversal_by_name/' + modelName.split(".")[0] + '_graph/' + modelName.split(".")[0] + '_nodes/' + nodeNameInput + '/' + directionInput + '/' + minDepthInput + '/' + maxDepthInput)
+                fetch(`http://${hostIPAddress}:8432/traversal_by_name/` + modelName.split(".")[0] + `_graph/` + modelName.split(".")[0] + `_nodes/` + nodeNameInput + `/` + directionInput + `/` + minDepthInput + `/` + maxDepthInput)
                     .then(response => {
                         if (!response.ok) {
                             throw new Error('Network response was not ok');
@@ -576,7 +574,7 @@ function createSensor() {
         try {
             const sceneModelName = ifcManager.groups[0].name;
             if (modelName) {
-                fetch('http://flask_app:8432/create_sensor', {
+                fetch(`http://${hostIPAddress}:8432/create_sensor`, {
                 method: 'POST',
                 body: JSON.stringify({
                     sceneModelName: sceneModelName,

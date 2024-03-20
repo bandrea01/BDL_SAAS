@@ -213,8 +213,7 @@
     </div>
 
     <div class="dashboard">
-        <iframe src="http://grafana:3000/d/fd42fcb5-adbf-4f4e-89fb-c2b47b7dc1e6/temperaturemonitoration?orgId=1&refresh=5s&from=1709883072337&to=1709904672337"
-                width="100%" height="100%"></iframe>
+        <iframe id="grafana-id" width="100%" height="100%"></iframe>
     </div>
     <div class="button-container">
         <!-- Modifica il pulsante per avviare la simulazione -->
@@ -226,6 +225,12 @@
 </div>
 
 <script>
+    const hostIPAddress = window.location.hostname;
+    const iframeSrc = `http://${hostIPAddress}:3000/d/fd42fcb5-adbf-4f4e-89fb-c2b47b7dc1e6/sensorsmonitoration?orgId=1&refresh=auto&from=1710945025538&to=1710966625538`;
+    const dashboardFrame = document.getElementById('grafana-id');
+    dashboardFrame.src = iframeSrc;
+
+
     // Rimuovi la parte che gestisce il modal alla caricamento della pagina
     var modal = document.getElementById("myModal");
     var dataForm = document.getElementById("dataForm");
@@ -333,7 +338,6 @@
                 return response.json();
             })
             .then(data => {
-                console.log(data);
                 const selectElement = document.getElementById('sensor_id');
                 selectElement.removeChild(selectElement.options[0]);
                 data.forEach(sensor => {
