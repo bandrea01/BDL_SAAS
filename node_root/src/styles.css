@@ -181,9 +181,11 @@ hr {
     border: 2px solid #fafafa;
     max-width: 800px;
     border-radius: 15px;
-    position: relative;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     z-index: 1;
-    margin: 10% auto;
 }
 
 .sensor-form-header {
