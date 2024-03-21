@@ -1,4 +1,4 @@
-from arango import ArangoClient
+from arango import ArangoClient, DatabaseCreateError
 from uuid import uuid4
 import ifcopenshell
 
@@ -6,13 +6,20 @@ import ifcopenshell
 class Py2Arango(object):
     def __init__(self):
         self.client = ArangoClient(hosts='http://arangodb:8529')
-        self.db = self.client.db('prova', username='root', password='BDLaaS')
+        self.db = self.get_database()
         self.existing_nodes = set()
         self.existing_edges = set()
         self.graph = None
 
-    def insertSensor(self, nodes_name, edges_name, component_id, type, brandName, controlledProperty,
-                     manufacturerName,
+    def get_database(self):
+        sys_db = self.client.db('_system', username='root', password='BDLaaS')
+
+        if not sys_db.has_database('prova'):
+            sys_db.create_database('prova')
+
+        return self.client.db('prova', username='root', password='BDLaaS')
+
+    def insertSensor(self, nodes_name, edges_name, component_id, type, brandName, controlledProperty, manufacturerName,
                      modelName, name):
         # Inserimento sensore
         id = component_id.split("-")[-1]
@@ -92,9 +99,6 @@ class Py2Arango(object):
                 name_value = ifc_entity.wrapped_data.get_argument(i)
                 node[name] = name_value
         return node
-
-    # existing_nodes = set()
-    # existing_edges = set()
 
     # Process literal attributes, entity attributes, and relationship attributes
     # Input: db - a link to ArangoDB graph database, ifc_entity - an instance, ifc_file - the parsed ifc-SPF
