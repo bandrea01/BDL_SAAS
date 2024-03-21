@@ -358,8 +358,8 @@ class FiwareAPI(object):
         json = self.get_subscriptions()
 
         for sub in json:
-            if sub["notification"]["endpoint"]["uri"] == uri and sub["entities"]["type"] == type:
-                return 200
+            if sub["notification"]["endpoint"]["uri"] == uri and sub["entities"] == type:
+                self.delete_subscription(sub["id"])
 
         payload = {
             "description": description,
@@ -380,22 +380,22 @@ class FiwareAPI(object):
                 "format": format,
                 "endpoint": {
                     "uri": uri,
-                    "accept": "application/ld+json"
+                    "accept": "application/json"
                 }
             },
             "@context": [
                 "https://raw.githubusercontent.com/smart-data-models/dataModel.Device/master/context.jsonld"
             ]
         }
-        res = self.subscribe(payload, self.header_subscription)
+        res = self.subscribe(payload)
         return res
 
     def init_perseo_subscription(self, description, type, format, uri):
         json = self.get_subscriptions()
 
         for sub in json:
-            if sub["notification"]["endpoint"]["uri"] == uri and sub["entities"]["type"] == type:
-                return 200
+            if sub["notification"]["endpoint"]["uri"] == uri and sub["entities"] == type:
+                self.delete_subscription(sub["id"])
 
         payload = {
             "description": description,

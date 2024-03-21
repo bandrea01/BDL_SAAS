@@ -137,6 +137,23 @@ def generation():
 
     entity_id = f"urn:ngsi-ld:MEASUREMENT:id:{sensor_id}"
 
+    # TODO IN TEORIA DOVREBBE ESSERE FATTO SUL CREATE SENSOR PER FARLO UNA SOLA VOLTA
+    res_subscription = fiware.init_quantumleap_subscription("Quantumleap Sensor Subscription",
+                                                            "DeviceMeasurement",
+                                                            "normalized",
+                                                            "http://quantumleap:8668/v2/notify")
+    if res_subscription != 201:
+        err = "Error in doing subscription: " + str(res_subscription)
+        return render_template("error.html", message=err)
+
+    res_subscription = fiware.init_perseo_subscription("Perseo Sensor Subscription",
+                                                       "DeviceMeasurement",
+                                                       "normalized",
+                                                       "http://perseo-fe:9090/notices")
+    if res_subscription != 201:
+        err = "Error in doing subscription: " + str(res_subscription)
+        return render_template("error.html", message=err)
+
     res_rule = fiware.init_rule_mail(f"{sensor_id}_rule_mail",
                                      f"SELECT *, numValue? AS value FROM iotEvent WHERE (CAST(CAST(numValue?,String), DOUBLE) >= {threshold} AND id = '{entity_id}')",
                                      "WARNING! " + sensor_id + " threshold level exceeded. Value: ${value}",
@@ -180,22 +197,6 @@ def create_sensor():
                                                             name, 25.0)
     if res_device_measurement != 201 and res_device_measurement != 200:
         err = "Error in init Orion: " + str(res_device_measurement)
-        return render_template("error.html", message=err)
-
-    res_subscription = fiware.init_quantumleap_subscription("Quantumleap Sensor Subscription",
-                                                            "DeviceMeasurement",
-                                                            "normalized",
-                                                            "http://quantumleap:8668/v2/notify")
-    if res_subscription != 201:
-        err = "Error in doing subscription: " + str(res_subscription)
-        return render_template("error.html", message=err)
-
-    res_subscription = fiware.init_perseo_subscription("Perseo Sensor Subscription",
-                                                       "DeviceMeasurement",
-                                                       "normalized",
-                                                       "http://perseo-fe:9090/notices")
-    if res_subscription != 201:
-        err = "Error in doing subscription: " + str(res_subscription)
         return render_template("error.html", message=err)
 
     sceneModelName = sceneModelName.split(".")[0]
