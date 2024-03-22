@@ -10,7 +10,7 @@ from py2arango import Py2Arango
 import os
 
 app = Flask(__name__)
-app.secret_key = 'cristian'
+app.secret_key = 'BDLaaS'
 CORS(app)
 
 arango = Py2Arango()
