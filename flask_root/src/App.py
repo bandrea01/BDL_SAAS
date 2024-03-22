@@ -40,6 +40,13 @@ def login_required(f):
 
 
 def update_entities(n, start_value, entity_id):
+    """
+    Metodo che aggiorna un'entità selezionata dall'utente
+    @param n: Numero di dati da generare
+    @param start_value: Valore di partenza da cui partire
+    @param entity_id: Id dell'entità da aggiornare
+    @return:
+    """
     temperatures = dataGenerator.generate_temperature_values(n, 0.5, start_value, 0.05)
     res_update = 0
 
@@ -64,26 +71,35 @@ def update_entities(n, start_value, entity_id):
 
 @app.route('/mapping')
 @login_required
-def main_page():
+def mapping():
+    """
+    Render template pagina di mapping
+    @return: upload_arango.html
+    """
     return render_template('upload_arango.html')
 
 
 @app.route('/')
 @login_required
 def index():
+    """
+    Render template pagina di mapping
+    @return: login.html
+    """
     return render_template("login.html")
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     """
-        Pagina di login per accedere alle risorse del database
+    Pagina di login per accedere al menù delle operazioni
+    @return: La pagina HTML relativa a seconda dei parametri
     """
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        # if username == os.getenv('DEBUG_USR') and password == os.getenv('DEBUG_PWD'):
-        if username == "admin" and password == "restapi":
+        if username == os.getenv('DEBUG_USR') and password == os.getenv('DEBUG_PWD'):
+        # if username == "admin" and password == "restapi":
             session['user_id'] = username
             return redirect(url_for('menu'))
         else:
@@ -94,12 +110,20 @@ def login():
 @app.route('/menu', methods=['GET', 'POST'])
 @login_required
 def menu():
+    """
+    Render template pagina di menù
+    @return: menu.html
+    """
     return render_template("menu.html")
 
 
 @app.route('/viewer', methods=['GET', 'POST'])
 @login_required
 def viewer():
+    """
+    Redirect alla pagina dedicata al viewer
+    @return: Redirect alla pagina dedicata
+    """
     host_ip_address = request.host.split(':')[0]
     viewer_url = f"http://{host_ip_address}:5173"
 
@@ -109,10 +133,13 @@ def viewer():
 @app.route('/mapping', methods=['GET', 'POST'])
 @login_required
 def upload_file():
+    """
+    Mapping file IFC
+    @return: Redirect alla pagina di menù
+    """
     uploaded_file = request.files['file']
     file_path = '/app/src/ifc/' + uploaded_file.filename
     uploaded_file.save(file_path)
-    # os.system('python /app/src/py2arango.py ' + file_path)
 
     arango.init_graph(file_path)
 
@@ -123,12 +150,20 @@ def upload_file():
 @app.route('/monitoring', methods=['GET', 'POST'])
 @login_required
 def monitoring():
+    """
+    Render template della pagina grafana_dashboard.html
+    @return: grafana_dashboard.html
+    """
     return render_template("grafana_dashboard.html")
 
 
 @app.route('/generation', methods=['GET', 'POST'])
 @login_required
 def generation():
+    """
+    Metodo che avvia la generazione dei dati del sensore ed effettua le sottoscrizioni ad ORION-LD
+    @return: Valore di ritorno per indicare se l'operazione è andata a buon fine o meno (200 o 404)
+    """
     data = request.json
     mail = data.get("mail")
     threshold = data.get("threshold")
@@ -170,6 +205,10 @@ def generation():
 
 @app.route('/create_sensor', methods=['GET', 'POST'])
 def create_sensor():
+    """
+    Metodo per creare un sensore, inserirlo in ORION-LD e ArangoDB
+    @return: Viene ritornato il valore 200 se tutto è andato a buon fine
+    """
     data = request.json
     sceneModelName = data.get("sceneModelName")
     componentID = data.get("componentID")
@@ -209,6 +248,10 @@ def create_sensor():
 
 @app.route("/getOrionSensors", methods=["GET"])
 def getOrionSensors():
+    """
+    Metodo che restituisce la lista dei sensori creati su ORION-LD
+    @return: La lista in formato JSON dei sensori creati
+    """
     entities = fiware.get_entity_from_type("https://smartdatamodels.org/dataModel.Device/DeviceMeasurement")
     ids = []
     for entity in entities:
@@ -221,6 +264,11 @@ def getOrionSensors():
 
 @app.route("/get_all_nodes/<string:nodes_name>", methods=["GET"])
 def get_all_nodes(nodes_name):
+    """
+    Metodo che ritorna tutti i nodi all'interno di una collezione di nodi
+    @param nodes_name: Il nome della collezione
+    @return: La lista in formato JSON dei nodi della collezione
+    """
     nodes = arango.db[nodes_name]
     cursor = nodes.all()
     nodes_list = list(cursor)
@@ -233,6 +281,11 @@ def get_all_nodes(nodes_name):
 
 @app.route("/get_all_edges/<string:edges_name>", methods=["GET"])
 def get_all_edges(edges_name):
+    """
+    Metodo che ritorna tutti gli edge all'interno di una collezione di edge
+    @param edges_name: Il nome della collezione
+    @return: La lista in formato JSON degli edge della collezione
+    """
     edges = arango.db[edges_name]
     cursor = edges.all()
     nodes_list = list(cursor)
@@ -245,6 +298,12 @@ def get_all_edges(edges_name):
 
 @app.route("/get_node_by_key/<string:nodes_name>/<string:key>", methods=["GET"])
 def get_node_by_key(nodes_name, key):
+    """
+    Metodo che ritorna un nodo in base alla sua _key
+    @param nodes_name: Il nome della collezione
+    @param key: La chiave del nodo
+    @return: Le informazioni relative al nodo in formato JSON
+    """
     nodes = arango.db[nodes_name]
     filter_key = {'_key': key}
     cursor = nodes.find(filter_key)
@@ -258,6 +317,12 @@ def get_node_by_key(nodes_name, key):
 
 @app.route("/get_node_by_id/<string:nodes_name>/<string:id>", methods=["GET"])
 def get_node_by_id(nodes_name, id):
+    """
+    Metodo che ritorna un nodo in base al suo _id
+    @param nodes_name: Il nome della collezione
+    @param id: L'id del nodo
+    @return: Le informazioni relative al nodo in formato JSON
+    """
     query = f"""
         FOR i IN {nodes_name}
         FILTER i._key LIKE '%-{id}'
@@ -274,6 +339,12 @@ def get_node_by_id(nodes_name, id):
 
 @app.route("/get_nodes_by_name/<string:nodes_name>/<string:name>", methods=["GET"])
 def get_nodes_by_name(nodes_name, name):
+    """
+    Metodo che ritorna un nodo in base al suo name
+    @param nodes_name: Il nome della collezione
+    @param name: Il name del nodo
+    @return: Le informazioni relative al nodo in formato JSON
+    """
     nodes = arango.db[nodes_name]
     filter_name = {'name': name}
     cursor = nodes.find(filter_name)
@@ -289,6 +360,16 @@ def get_nodes_by_name(nodes_name, name):
     "/traversal/<string:graph_name>/<string:start_vertex_collection>/<string:start_vertex_key>/<string:direction>/<int:min_depth>/<int:max_depth>",
     methods=["GET"])
 def traversal(graph_name, start_vertex_collection, start_vertex_key, direction, min_depth, max_depth):
+    """
+    Metodo che ritorna le informazioni di un nodo
+    @param graph_name: Il nome del grafo
+    @param start_vertex_collection: Il nome della collezione
+    @param start_vertex_key: La chiave del nodi di partenza
+    @param direction: La direzione
+    @param min_depth: La profondità minima
+    @param max_depth: La profondità massima
+    @return: Il risultato del traversal in formato JSON
+    """
     graph = arango.db.graph(graph_name)
     start_vertex = f"{start_vertex_collection}/{start_vertex_key}"
 
@@ -309,6 +390,16 @@ def traversal(graph_name, start_vertex_collection, start_vertex_key, direction, 
     "/traversal_by_name/<string:graph_name>/<string:start_vertex_collection>/<string:vertex_type>/<string:direction>/<int:min_depth>/<int:max_depth>",
     methods=["GET"])
 def traversal_by_name(graph_name, start_vertex_collection, vertex_type, direction, min_depth, max_depth):
+    """
+    Metodo che ritorna le informazioni di tutti i nodi di un determinato tipo di nodo
+    @param graph_name: Il nome del grafo
+    @param start_vertex_collection: Il nome della collezione
+    @param vertex_type: Il tipo di nodo
+    @param direction: La direzione
+    @param min_depth: La profondità minima
+    @param max_depth: La profondità massima
+    @return: Il risultato del traversal in formato JSON
+    """
     query = f"""
             FOR node IN {start_vertex_collection}
                 FILTER node.name == "{vertex_type}"

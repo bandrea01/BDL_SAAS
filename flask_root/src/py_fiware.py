@@ -445,8 +445,5 @@ class FiwareAPI(object):
             }
         }
 
-        #Questo è un metodo per eseguire la conversione dal formato ngsi-v2 a quello ngsi-ld
-
-
         res = self.insert_rule(payload)
         return res

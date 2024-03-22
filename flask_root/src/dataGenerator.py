@@ -9,6 +9,7 @@ def generate_temperature_values(n, std_dev, avg, outlier_probability):
     Args:
         n (int): Number of temperature values to generate.
         std_dev (float): Standard deviation of the normal distribution.
+        avg (float): Average
         outlier_probability (float): Probability of generating an outlier (0 to 1).
 
     Returns:
@@ -27,11 +28,3 @@ def generate_temperature_values(n, std_dev, avg, outlier_probability):
             temperature = np.random.normal(avg, std_dev)
             temperatures.append(round(temperature, 2))
     return temperatures
-
-# Usage example
-# num_values = 100
-# mean_temp = 25  # Mean temperature
-# std_dev_temp = 2  # Standard deviation of temperature
-# outlier_probability = 0.1  # 10% chance of generating an outlier
-#
-# generate_temperature_values(num_values, mean_temp, std_dev_temp, outlier_probability)
