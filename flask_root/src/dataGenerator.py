@@ -19,13 +19,13 @@ def generate_temperature_values(n, std_dev, avg, outlier_probability):
     for i in range(0, n):
         if random.random() < outlier_probability:
             outlier = np.random.normal(avg + 20, std_dev)
-            temperatures.append(outlier)
+            temperatures.append(round(outlier, 2))
             if actual_outlier_probability > 0.03:
                 actual_outlier_probability = actual_outlier_probability - 0.04
         else:
             # Generate a normal temperature value
             temperature = np.random.normal(avg, std_dev)
-            temperatures.append(temperature)
+            temperatures.append(round(temperature, 2))
     return temperatures
 
 # Usage example

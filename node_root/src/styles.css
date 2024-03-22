@@ -3,7 +3,6 @@
 :root {
     --primary-color: #BCF124;
     --secondary-color: #6528D7;
-    /* TODO: Probably this needs to be called background-color */
     --secondary-color-100: #000000bb;
     --secondary-color-120: #1a2128;
 }
