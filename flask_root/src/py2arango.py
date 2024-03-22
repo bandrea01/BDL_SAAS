@@ -1,4 +1,4 @@
-from arango import ArangoClient, DatabaseCreateError
+from arango import ArangoClient
 from uuid import uuid4
 import ifcopenshell
 
