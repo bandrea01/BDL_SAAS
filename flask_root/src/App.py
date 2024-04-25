@@ -99,7 +99,6 @@ def login():
         username = request.form['username']
         password = request.form['password']
         if username == os.getenv('DEBUG_USR') and password == os.getenv('DEBUG_PWD'):
-        # if username == "admin" and password == "restapi":
             session['user_id'] = username
             return redirect(url_for('menu'))
         else:
