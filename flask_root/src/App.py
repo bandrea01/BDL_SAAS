@@ -172,26 +172,35 @@ def generation():
     entity_id = f"urn:ngsi-ld:MEASUREMENT:id:{sensor_id}"
 
     # TODO IN TEORIA DOVREBBE ESSERE FATTO SUL CREATE SENSOR PER FARLO UNA SOLA VOLTA
-    res_subscription = fiware.init_quantumleap_subscription("Quantumleap Sensor Subscription",
-                                                            "DeviceMeasurement",
-                                                            "normalized",
-                                                            "http://quantumleap:8668/v2/notify")
+    res_subscription = fiware.init_quantumleap_subscription(
+        "Quantumleap Sensor Subscription",
+        "DeviceMeasurement",
+        "normalized",
+        "http://quantumleap:8668/v2/notify"
+    )
+
     if res_subscription != 201:
         err = "Error in doing subscription: " + str(res_subscription)
         return render_template("error.html", message=err)
 
-    res_subscription = fiware.init_perseo_subscription("Perseo Sensor Subscription",
-                                                       "DeviceMeasurement",
-                                                       "normalized",
-                                                       "http://perseo-fe:9090/notices")
+    res_subscription = fiware.init_perseo_subscription(
+        "Perseo Sensor Subscription",
+        "DeviceMeasurement",
+        "normalized",
+        "http://perseo-fe:9090/notices"
+    )
+
     if res_subscription != 201:
         err = "Error in doing subscription: " + str(res_subscription)
         return render_template("error.html", message=err)
 
-    res_rule = fiware.init_rule_mail(f"{sensor_id}_rule_mail",
-                                     f"SELECT *, numValue? AS value FROM iotEvent WHERE (CAST(CAST(numValue?,String), DOUBLE) >= {threshold} AND id = '{entity_id}')",
-                                     "WARNING! " + sensor_id + " threshold level exceeded. Value: ${value}",
-                                     mail, f"{sensor_id} Notify")
+    res_rule = fiware.init_rule_mail(
+        f"{sensor_id}_rule_mail",
+        f"SELECT *, numValue? AS value FROM iotEvent WHERE (CAST(CAST(numValue?,String), DOUBLE) >= {threshold} AND id = '{entity_id}')",
+        "WARNING! " + sensor_id + " threshold level exceeded. Value: ${value}",
+        mail,
+        f"{sensor_id} Notify"
+    )
 
     if res_rule != 200:
         err = "Error in rule creation: " + str(res_rule)
@@ -202,7 +211,7 @@ def generation():
     return res
 
 
-@app.route('/create_sensor', methods=['GET', 'POST'])
+@app.route('/api/create/sensor', methods=['GET', 'POST'])
 def create_sensor():
     """
     Metodo per creare un sensore, inserirlo in ORION-LD e ArangoDB
@@ -223,29 +232,55 @@ def create_sensor():
     coordinateY = data.get("coordinateY")
     coordinateZ = data.get("coordinateZ")
 
-    res_device_model = fiware.init_device_model(sensorType, componentID.split("-")[-1], brandName, controlledProperty,
-                                                manufacturerName, modelName, name)
+    res_device_model = fiware.init_device_model(
+        sensorType,
+        componentID.split("-")[-1],
+        brandName,
+        controlledProperty,
+        manufacturerName,
+        modelName,
+        name
+    )
+
     if res_device_model != 201 and res_device_model != 200:
         err = "Error in init Orion: " + str(res_device_model)
         return render_template("error.html", message=err)
 
-    res_device_measurement = fiware.init_device_measurement(sensorType, componentID.split("-")[-1], controlledProperty,
-                                                            description,
-                                                            coordinateX, coordinateY, coordinateZ, measurementType,
-                                                            name, 25.0)
+    res_device_measurement = fiware.init_device_measurement(
+        sensorType,
+        componentID.split("-")[-1],
+        controlledProperty,
+        description,
+        coordinateX,
+        coordinateY,
+        coordinateZ,
+        measurementType,
+        name,
+        25.0
+    )
+
     if res_device_measurement != 201 and res_device_measurement != 200:
         err = "Error in init Orion: " + str(res_device_measurement)
         return render_template("error.html", message=err)
 
     sceneModelName = sceneModelName.split(".")[0]
 
-    arango.insertSensor(f"{sceneModelName}_nodes", f"{sceneModelName}_edges", componentID, sensorType, brandName,
-                        controlledProperty, manufacturerName, modelName, name)
+    arango.insertSensor(
+        f"{sceneModelName}_nodes",
+        f"{sceneModelName}_edges",
+        componentID,
+        sensorType,
+        brandName,
+        controlledProperty,
+        manufacturerName,
+        modelName,
+        name
+    )
 
     return jsonify("done"), 200
 
 
-@app.route("/getOrionSensors", methods=["GET"])
+@app.route("/api/orion/sensors", methods=["GET"])
 def getOrionSensors():
     """
     Metodo che restituisce la lista dei sensori creati su ORION-LD
@@ -261,14 +296,18 @@ def getOrionSensors():
 """-------------------    AQL    ---------------------"""
 
 
-@app.route("/get_all_nodes/<string:nodes_name>", methods=["GET"])
-def get_all_nodes(nodes_name):
+@app.route("/api/find/all/nodes", methods=["GET"])
+def get_all_nodes():
     """
     Metodo che ritorna tutti i nodi all'interno di una collezione di nodi
-    @param nodes_name: Il nome della collezione
     @return: La lista in formato JSON dei nodi della collezione
     """
-    nodes = arango.db[nodes_name]
+    nodes_collection = request.args.get('nodes_collection')
+
+    if not all([nodes_collection]):
+        return jsonify({'error': 'Missing required query parameters'}), 400
+
+    nodes = arango.db[nodes_collection]
     cursor = nodes.all()
     nodes_list = list(cursor)
 
@@ -278,14 +317,18 @@ def get_all_nodes(nodes_name):
     return jsonify(nodes_list)
 
 
-@app.route("/get_all_edges/<string:edges_name>", methods=["GET"])
-def get_all_edges(edges_name):
+@app.route("/api/find/all/edges", methods=["GET"])
+def get_all_edges():
     """
     Metodo che ritorna tutti gli edge all'interno di una collezione di edge
-    @param edges_name: Il nome della collezione
     @return: La lista in formato JSON degli edge della collezione
     """
-    edges = arango.db[edges_name]
+    edges_collection = request.args.get('edges_collection')
+
+    if not all([edges_collection]):
+        return jsonify({'error': 'Missing required query parameters'}), 400
+
+    edges = arango.db[edges_collection]
     cursor = edges.all()
     nodes_list = list(cursor)
 
@@ -295,15 +338,19 @@ def get_all_edges(edges_name):
     return jsonify(nodes_list)
 
 
-@app.route("/get_node_by_key/<string:nodes_name>/<string:key>", methods=["GET"])
-def get_node_by_key(nodes_name, key):
+@app.route("/api/find/node/key", methods=["GET"])
+def get_node_by_key():
     """
     Metodo che ritorna un nodo in base alla sua _key
-    @param nodes_name: Il nome della collezione
-    @param key: La chiave del nodo
     @return: Le informazioni relative al nodo in formato JSON
     """
-    nodes = arango.db[nodes_name]
+    nodes_collection = request.args.get('nodes_collection')
+    key = request.args.get('key')
+
+    if not all([nodes_collection, key]):
+        return jsonify({'error': 'Missing required query parameters'}), 400
+
+    nodes = arango.db[nodes_collection]
     filter_key = {'_key': key}
     cursor = nodes.find(filter_key)
     nodes_list = list(cursor)
@@ -314,16 +361,20 @@ def get_node_by_key(nodes_name, key):
     return jsonify(nodes_list)
 
 
-@app.route("/get_node_by_id/<string:nodes_name>/<string:id>", methods=["GET"])
-def get_node_by_id(nodes_name, id):
+@app.route("/api/find/node/id", methods=["GET"])
+def get_node_by_id():
     """
     Metodo che ritorna un nodo in base al suo _id
-    @param nodes_name: Il nome della collezione
-    @param id: L'id del nodo
     @return: Le informazioni relative al nodo in formato JSON
     """
+    nodes_collection = request.args.get('nodes_collection')
+    id = request.args.get('id')
+
+    if not all([nodes_collection, id]):
+        return jsonify({'error': 'Missing required query parameters'}), 400
+
     query = f"""
-        FOR i IN {nodes_name}
+        FOR i IN {nodes_collection}
         FILTER i._key LIKE '%-{id}'
         RETURN i
     """
@@ -336,15 +387,19 @@ def get_node_by_id(nodes_name, id):
     return jsonify(results)
 
 
-@app.route("/get_nodes_by_name/<string:nodes_name>/<string:name>", methods=["GET"])
-def get_nodes_by_name(nodes_name, name):
+@app.route("/api/find/nodes/name", methods=["GET"])
+def get_nodes_by_name():
     """
     Metodo che ritorna un nodo in base al suo name
-    @param nodes_name: Il nome della collezione
-    @param name: Il name del nodo
     @return: Le informazioni relative al nodo in formato JSON
     """
-    nodes = arango.db[nodes_name]
+    nodes_collection = request.args.get('nodes_collection')
+    name = request.args.get('name')
+
+    if not all([nodes_collection, name]):
+        return jsonify({'error': 'Missing required query parameters'}), 400
+
+    nodes = arango.db[nodes_collection]
     filter_name = {'name': name}
     cursor = nodes.find(filter_name)
     nodes_list = list(cursor)
@@ -355,20 +410,22 @@ def get_nodes_by_name(nodes_name, name):
     return jsonify(nodes_list)
 
 
-@app.route(
-    "/traversal/<string:graph_name>/<string:start_vertex_collection>/<string:start_vertex_key>/<string:direction>/<int:min_depth>/<int:max_depth>",
-    methods=["GET"])
-def traversal(graph_name, start_vertex_collection, start_vertex_key, direction, min_depth, max_depth):
+@app.route("/api/traversal", methods=["GET"])
+def traversal():
     """
     Metodo che ritorna le informazioni di un nodo
-    @param graph_name: Il nome del grafo
-    @param start_vertex_collection: Il nome della collezione
-    @param start_vertex_key: La chiave del nodi di partenza
-    @param direction: La direzione
-    @param min_depth: La profondità minima
-    @param max_depth: La profondità massima
     @return: Il risultato del traversal in formato JSON
     """
+    graph_name = request.args.get('graph_name')
+    start_vertex_collection = request.args.get('start_vertex_collection')
+    start_vertex_key = request.args.get('start_vertex_key')
+    direction = request.args.get('direction')
+    min_depth = int(request.args.get('min_depth'))
+    max_depth = int(request.args.get('max_depth'))
+
+    if not all([graph_name, start_vertex_collection, direction]):
+        return jsonify({'error': 'Missing required query parameters'}), 400
+
     graph = arango.db.graph(graph_name)
     start_vertex = f"{start_vertex_collection}/{start_vertex_key}"
 
@@ -385,20 +442,22 @@ def traversal(graph_name, start_vertex_collection, start_vertex_key, direction, 
     return jsonify(travers)
 
 
-@app.route(
-    "/traversal_by_name/<string:graph_name>/<string:start_vertex_collection>/<string:vertex_type>/<string:direction>/<int:min_depth>/<int:max_depth>",
-    methods=["GET"])
-def traversal_by_name(graph_name, start_vertex_collection, vertex_type, direction, min_depth, max_depth):
+@app.route("/api/traversal/name", methods=["GET"])
+def traversal_by_name():
     """
     Metodo che ritorna le informazioni di tutti i nodi di un determinato tipo di nodo
-    @param graph_name: Il nome del grafo
-    @param start_vertex_collection: Il nome della collezione
-    @param vertex_type: Il tipo di nodo
-    @param direction: La direzione
-    @param min_depth: La profondità minima
-    @param max_depth: La profondità massima
     @return: Il risultato del traversal in formato JSON
     """
+    graph_name = request.args.get('graph_name')
+    start_vertex_collection = request.args.get('start_vertex_collection')
+    vertex_type = request.args.get('vertex_type')
+    direction = request.args.get('direction')
+    min_depth = int(request.args.get('min_depth'))
+    max_depth = int(request.args.get('max_depth'))
+
+    if not all([graph_name, start_vertex_collection, vertex_type, direction]):
+        return jsonify({'error': 'Missing required query parameters'}), 400
+
     query = f"""
             FOR node IN {start_vertex_collection}
                 FILTER node.name == "{vertex_type}"

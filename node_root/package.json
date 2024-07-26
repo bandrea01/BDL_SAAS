@@ -7,11 +7,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "jsoneditor": "^10.0.1",
+    "jsoneditor": "^10.1.0",
     "openbim-components": "1.1.1",
     "three": "0.152.2"
   },
   "devDependencies": {
+    "@types/jsoneditor": "^9.9.5",
     "@types/three": "^0.156.0",
     "typescript": "^5.0.2",
     "vite": "^5.3.5"

@@ -4,11 +4,11 @@ import { setupEventHandlers } from "./eventHandlers";
 import {setupToolbar} from "./toolbar.ts";
 
 export const hostIPAddress = window.location.hostname;
-const viewer = new OBC.Components();
-viewer.onInitialized.add(() => {});
+let viewer = new OBC.Components();
 
 const viewerContainer = document.getElementById("webinar-sharepoint-viewer") as HTMLDivElement;
-configureViewer(viewer, viewerContainer);
+
+viewer = configureViewer(viewer, viewerContainer);
 
 const ifcLoader = new OBC.FragmentIfcLoader(viewer);
 
@@ -39,4 +39,4 @@ length.enabled = true;
 length.snapDistance = 1;
 
 setupEventHandlers(viewer, ifcLoader, ifcManager, propertiesProcessor, highlighter);
-setupToolbar(viewer, ifcLoader, propertiesProcessor, hostIPAddress);
+viewer = setupToolbar(viewer, ifcLoader, propertiesProcessor, hostIPAddress);
