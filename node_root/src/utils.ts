@@ -1,6 +1,6 @@
 import JSONEditor from "jsoneditor";
-import {hostIPAddress, ifcManager} from "./main.ts";
-import {fetchTraversal, fetchTraversalByName} from "./api.ts";
+import {ifcManager} from "./main.ts";
+import {createSensor, fetchNodeSensors, fetchTraversal, fetchTraversalByName} from "./api.ts";
 
 export function showSensorForm() {
     const sensorContainer = document.getElementById("sensor-form-container") as HTMLElement;
@@ -19,63 +19,21 @@ export function showSensorForm() {
     resetButton.onclick = resetInputFields;
 }
 
-export async function createSensor(sceneModelName: string) {
-    const jsonContainer = document.getElementById("jsoneditor");
+export function showNodeSensorForm() {
+    const sensorContainer = document.getElementById("query-container-sensors") as HTMLElement;
+    const closeButton = document.getElementById("query-close-sensors") as HTMLElement;
+    const confirmButton = document.getElementById("confirm-button-sensors") as HTMLElement;
+    const resetButton = document.getElementById("reset-button-sensors") as HTMLElement;
 
-    if (!sceneModelName || !jsonContainer) {
-        displayError(jsonContainer, "No model found in scene");
-        return;
-    }
+    sensorContainer.style.display = "block";
 
-    const componentID = (document.getElementById("component-input") as HTMLSelectElement).value;
-    const sensorType = (document.getElementById("sensor-type-input") as HTMLSelectElement).value;
-    const brandName = (document.getElementById("brand-name-input") as HTMLSelectElement).value;
-    const manufacturerName = (document.getElementById("manufacturer-name-input") as HTMLSelectElement).value;
-    const modelName = (document.getElementById("model-name-input") as HTMLSelectElement).value;
-    const name = (document.getElementById("name-input") as HTMLSelectElement).value;
-    const description = (document.getElementById("description-input") as HTMLSelectElement).value;
-    const controlledProperty = (document.getElementById("controlled-property-input") as HTMLSelectElement).value;
-    const measurementType = (document.getElementById("measurement-type-input") as HTMLSelectElement).value;
-    const coordinateX = parseFloat((document.getElementById("coordinate-x-input") as HTMLSelectElement).value);
-    const coordinateY = parseFloat((document.getElementById("coordinate-y-input") as HTMLSelectElement).value);
-    const coordinateZ = parseFloat((document.getElementById("coordinate-z-input") as HTMLSelectElement).value);
-
-    if (componentID && sensorType && brandName && manufacturerName && modelName && controlledProperty && coordinateX && coordinateY && coordinateZ) {
-        const sensorData = {
-            componentID: componentID,
-            sensorType: sensorType,
-            brandName: brandName,
-            manufacturerName: manufacturerName,
-            modelName: modelName,
-            name: name,
-            description: description,
-            controlledProperty: controlledProperty,
-            measurementType: measurementType,
-            coordinateX: coordinateX,
-            coordinateY: coordinateY,
-            coordinateZ: coordinateZ,
-        };
-
-        try {
-            const response = await fetch(
-                `http://${hostIPAddress}:8432/api/create/sensor`,
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify(sensorData)
-                });
-            if (!response.ok) throw new Error('Network response was not ok');
-            const data = await response.json();
-            clearAndSetJSONEditor(jsonContainer, data);
-        } catch (error) {
-            displayError(jsonContainer, "Error adding sensor");
-        }
-    } else {
-        alert("Please fill all the compulsory fields ;)");
-    }
-
+    closeButton.onclick = () => sensorContainer.style.display = "none";
+    confirmButton.onclick = () => {
+        sensorContainer.style.display = "none";
+        fetchNodeSensors().then(() => {
+        });
+    };
+    resetButton.onclick = resetInputFields;
 }
 
 export function showTraversalFields() {

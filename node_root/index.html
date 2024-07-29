@@ -141,6 +141,32 @@
     </div>
 </div>
 
+<!-- Query node sensors -->
+<div id="query-container-sensors" class="query-container">
+    <div class="query-content">
+        <span id="query-close-sensors" class="close">&times;</span>
+        <h2 id="title-label-sensors">Show node sensors</h2>
+        <div class="input-group">
+            <label class="input-container">
+                <span class="label-text" id="subtitle-id-sensors">Node key</span>
+                <input type="text" id="node-name-input-key-sensors" name="node_name" placeholder="Es. IfcWallStandardCase-200" required>
+            </label>
+            <label class="input-container">
+                <span class="label-text">Direction</span>
+                <select id="direction-input-sensors" name="direction" required>
+                    <option value="Inbound">Inbound</option>
+                    <option value="Outbound">Outbound</option>
+                    <option value="Any" selected>Any</option>
+                </select>
+            </label>
+            <div class="button-container">
+                <button id="confirm-button-sensors">Confirm</button>
+                <button id="reset-button-sensors">Reset</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- Sensor form -->
 <div id="sensor-form-container" class="query-container">
     <div class="sensor-form-content">
@@ -235,7 +261,7 @@
 </div>
 
 
-<script type="module" src="/src/main.ts"></script>
+<script type="module" src="./src/main.ts"></script>
 <script>
     document.getElementById("help-button").addEventListener("click", function () {
         document.getElementById("popup-container").style.display = "block";

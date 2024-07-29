@@ -1,6 +1,6 @@
 import * as OBC from "openbim-components";
 import {
-    redirectTo,
+    redirectTo, showNodeSensorForm,
     showSensorForm,
     showTraversalByTypeFields,
     showTraversalFields
@@ -12,6 +12,7 @@ export function setupToolbar(viewer: OBC.Components, ifcLoader: OBC.FragmentIfcL
 
     const allNodesButton = new OBC.Button(viewer);
     const allEdgesButton = new OBC.Button(viewer);
+    const nodeSensorsButton = new OBC.Button(viewer);
     const traversalNodeButton = new OBC.Button(viewer);
     const nodesByTypeButton = new OBC.Button(viewer);
 
@@ -20,16 +21,19 @@ export function setupToolbar(viewer: OBC.Components, ifcLoader: OBC.FragmentIfcL
 
     queryTool.addChild(allNodesButton);
     queryTool.addChild(allEdgesButton);
+    queryTool.addChild(nodeSensorsButton);
     queryTool.addChild(traversalNodeButton);
     queryTool.addChild(nodesByTypeButton);
 
     allNodesButton.label = "Show all nodes";
     allEdgesButton.label = "Show all edges";
+    nodeSensorsButton.label = "Show node sensors";
     traversalNodeButton.label = "Show node details";
     nodesByTypeButton.label = "Show nodes by type";
 
     allNodesButton.onClick.add(() => fetchAllNodes());
     allEdgesButton.onClick.add(() => fetchAllEdges());
+    nodeSensorsButton.onClick.add(() => showNodeSensorForm());
     traversalNodeButton.onClick.add(() => showTraversalFields());
     nodesByTypeButton.onClick.add(() => showTraversalByTypeFields());
 

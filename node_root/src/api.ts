@@ -157,3 +157,101 @@ export async function fetchTraversalByName() {
         alert("Please fill all the fields ;)");
     }
 }
+
+export async function fetchNodeSensors() {
+    const modelName = ifcManager.groups[0].name;
+    const jsonContainer = document.getElementById("jsoneditor");
+
+    if (!modelName || !jsonContainer) {
+        displayError(jsonContainer, "No model found in scene");
+        return;
+    }
+
+    const nodeNameInput = (document.getElementById("node-name-input-key-sensors") as HTMLSelectElement).value;
+    const directionInput = (document.getElementById("direction-input-sensors") as HTMLSelectElement).value;
+
+    if (nodeNameInput && directionInput) {
+        try {
+            const params = {
+                graph_name: `${modelName.split(".")[0]}_graph`,
+                start_vertex_collection: `${modelName.split(".")[0]}_nodes`,
+                vertex_key: nodeNameInput,
+                direction: directionInput
+            };
+            const queryString = new URLSearchParams(params).toString();
+
+            const response = await fetch(`http://${hostIPAddress}:8432/api/node/find/sensors?${queryString}`);
+            if (!response.ok) throw new Error('Network response was not ok');
+            const data = await response.json();
+            clearAndSetJSONEditor(jsonContainer, data);
+        } catch (error) {
+            displayError(jsonContainer, "Please go back and start mapping procedure with file insert here");
+        }
+    } else {
+        alert("Please fill all the fields ;)");
+    }
+}
+
+export async function createSensor(sceneModelName: string) {
+    const jsonContainer = document.getElementById("jsoneditor");
+
+    if (!sceneModelName || !jsonContainer) {
+        displayError(jsonContainer, "No model found in scene");
+        return;
+    }
+
+    const componentID = (document.getElementById("component-input") as HTMLSelectElement).value;
+    const sensorType = (document.getElementById("sensor-type-input") as HTMLSelectElement).value;
+    const brandName = (document.getElementById("brand-name-input") as HTMLSelectElement).value;
+    const manufacturerName = (document.getElementById("manufacturer-name-input") as HTMLSelectElement).value;
+    const modelName = (document.getElementById("model-name-input") as HTMLSelectElement).value;
+    const name = (document.getElementById("name-input") as HTMLSelectElement).value;
+    const description = (document.getElementById("description-input") as HTMLSelectElement).value;
+    const controlledProperty = (document.getElementById("controlled-property-input") as HTMLSelectElement).value;
+    const measurementType = (document.getElementById("measurement-type-input") as HTMLSelectElement).value;
+    const coordinateX = parseFloat((document.getElementById("coordinate-x-input") as HTMLSelectElement).value);
+    const coordinateY = parseFloat((document.getElementById("coordinate-y-input") as HTMLSelectElement).value);
+    const coordinateZ = parseFloat((document.getElementById("coordinate-z-input") as HTMLSelectElement).value);
+
+    if (componentID && sensorType && brandName && manufacturerName && modelName && controlledProperty && coordinateX && coordinateY && coordinateZ) {
+        if (isNaN(coordinateX) || isNaN(coordinateY) || isNaN(coordinateZ)) {
+            alert("Please insert a number for coordinates");
+        } else if (coordinateX < -90 || coordinateY < -180 || coordinateX > 90 || coordinateY > 180) {
+            alert("Invalid coordinates, latitude should be between -90 and 90, longitude should be between -180 and 180");
+        }
+
+        const sensorData = {
+            sceneModelName: sceneModelName,
+            componentID: componentID,
+            sensorType: sensorType,
+            brandName: brandName,
+            manufacturerName: manufacturerName,
+            modelName: modelName,
+            name: name,
+            description: description,
+            controlledProperty: controlledProperty,
+            measurementType: measurementType,
+            coordinateX: coordinateX,
+            coordinateY: coordinateY,
+            coordinateZ: coordinateZ
+        };
+
+        try {
+            const response = await fetch(
+                `http://${hostIPAddress}:8432/api/create/sensor`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(sensorData)
+                });
+            if (!response.ok) throw new Error('Network response was not ok');
+            alert("Sensor successfully created!")
+        } catch (error) {
+            alert(error);
+        }
+    } else {
+        alert("Please fill all the compulsory fields ;)");
+    }
+}

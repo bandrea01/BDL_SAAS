@@ -211,7 +211,7 @@ def generation():
     return res
 
 
-@app.route('/api/create/sensor', methods=['GET', 'POST'])
+@app.route('/api/create/sensor', methods=['POST'])
 def create_sensor():
     """
     Metodo per creare un sensore, inserirlo in ORION-LD e ArangoDB
@@ -307,8 +307,12 @@ def get_all_nodes():
     if not all([nodes_collection]):
         return jsonify({'error': 'Missing required query parameters'}), 400
 
-    nodes = arango.db[nodes_collection]
-    cursor = nodes.all()
+    query = f"""
+            FOR i IN {nodes_collection}
+            LET cleanedNode = UNSET(i, "_id", "_rev")
+            RETURN cleanedNode
+        """
+    cursor = arango.db.aql.execute(query)
     nodes_list = list(cursor)
 
     if not nodes_list:
@@ -328,14 +332,18 @@ def get_all_edges():
     if not all([edges_collection]):
         return jsonify({'error': 'Missing required query parameters'}), 400
 
-    edges = arango.db[edges_collection]
-    cursor = edges.all()
-    nodes_list = list(cursor)
+    query = f"""
+            FOR i IN {edges_collection}
+            LET cleanedNode = UNSET(i, "_key", "_id", "_rev")
+            RETURN cleanedNode
+            """
+    cursor = arango.db.aql.execute(query)
+    edges_list = list(cursor)
 
-    if not nodes_list:
+    if not edges_list:
         return jsonify({'error': 'Edge non trovati'}), 404
 
-    return jsonify(nodes_list)
+    return jsonify(edges_list)
 
 
 @app.route("/api/find/node/key", methods=["GET"])
@@ -375,8 +383,9 @@ def get_node_by_id():
 
     query = f"""
         FOR i IN {nodes_collection}
-        FILTER i._key LIKE '%-{id}'
-        RETURN i
+        FILTER i._key LIKE 'Ifc%-{id}'
+        LET cleanedNode = UNSET(i, "_id", "_rev")
+        RETURN cleanedNode
     """
     cursor = arango.db.aql.execute(query)
     results = list(cursor)
@@ -461,10 +470,51 @@ def traversal_by_name():
     query = f"""
             FOR node IN {start_vertex_collection}
                 FILTER node.name == "{vertex_type}"
-                FOR v, e, p IN {min_depth}..{max_depth} {direction} 
-                node GRAPH "{graph_name}"
-                RETURN p
+                FOR v, e, p IN {min_depth}..{max_depth} {direction} node GRAPH "{graph_name}"
+                LET cleanedNode = UNSET(v, "_id", "_rev")
+                RETURN cleanedNode
             """
+    cursor = arango.db.aql.execute(query)
+    results = list(cursor)
+
+    if not results:
+        return jsonify({'error': 'Traversal error'}), 404
+
+    return jsonify(results)
+
+
+@app.route("/api/node/find/sensors", methods=["GET"])
+def sensors_by_node():
+    """
+    Metodo che ritorna le informazioni di tutti i nodi di un determinato tipo di nodo
+    @return: Il risultato del traversal in formato JSON
+    """
+    graph_name = request.args.get('graph_name')
+    start_vertex_collection = request.args.get('start_vertex_collection')
+    vertex_key = request.args.get('vertex_key')
+    direction = request.args.get('direction')
+
+    if not all([graph_name, start_vertex_collection, vertex_key, direction]):
+        return jsonify({'error': 'Missing required query parameters'}), 400
+
+    query = f"""
+            FOR node IN {start_vertex_collection}
+            FILTER node._key == "{vertex_key}"
+            LET relatedNodes = (
+                FOR v, e, p IN {direction} node GRAPH {graph_name}
+                    FILTER v._key LIKE '%Sensor%'
+                LET cleanedNode = UNSET(v, "_id", "_rev")
+                RETURN {{node: cleanedNode}}
+            )
+    
+            LET cleanedNode = UNSET(node, "_id", "_rev")
+    
+            RETURN {{
+                node: cleanedNode,
+                relatedNodes: relatedNodes
+            }}
+            """
+
     cursor = arango.db.aql.execute(query)
     results = list(cursor)
 
