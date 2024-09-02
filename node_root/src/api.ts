@@ -133,7 +133,7 @@ export async function fetchTraversalByName() {
         if (minDepthInput < 0 || maxDepthInput < 0) {
             alert("Please insert a positive number for depth");
         } else if (minDepthInput > maxDepthInput) {
-            alert("Invalid numbers for depht, minimum depth should be less than max depth");
+            alert("Invalid numbers for depth, minimum depth should be less than max depth");
         }
         try {
             const params = {
@@ -201,7 +201,6 @@ export async function createSensor(sceneModelName: string) {
     }
 
     const componentID = (document.getElementById("component-input") as HTMLSelectElement).value;
-    const sensorType = (document.getElementById("sensor-type-input") as HTMLSelectElement).value;
     const brandName = (document.getElementById("brand-name-input") as HTMLSelectElement).value;
     const manufacturerName = (document.getElementById("manufacturer-name-input") as HTMLSelectElement).value;
     const modelName = (document.getElementById("model-name-input") as HTMLSelectElement).value;
@@ -213,7 +212,7 @@ export async function createSensor(sceneModelName: string) {
     const coordinateY = parseFloat((document.getElementById("coordinate-y-input") as HTMLSelectElement).value);
     const coordinateZ = parseFloat((document.getElementById("coordinate-z-input") as HTMLSelectElement).value);
 
-    if (componentID && sensorType && brandName && manufacturerName && modelName && controlledProperty && coordinateX && coordinateY && coordinateZ) {
+    if (componentID && brandName && manufacturerName && modelName && controlledProperty && coordinateX && coordinateY && coordinateZ) {
         if (isNaN(coordinateX) || isNaN(coordinateY) || isNaN(coordinateZ)) {
             alert("Please insert a number for coordinates");
         } else if (coordinateX < -90 || coordinateY < -180 || coordinateX > 90 || coordinateY > 180) {
@@ -223,7 +222,6 @@ export async function createSensor(sceneModelName: string) {
         const sensorData = {
             sceneModelName: sceneModelName,
             componentID: componentID,
-            sensorType: sensorType,
             brandName: brandName,
             manufacturerName: manufacturerName,
             modelName: modelName,
@@ -253,5 +251,39 @@ export async function createSensor(sceneModelName: string) {
         }
     } else {
         alert("Please fill all the compulsory fields ;)");
+    }
+}
+
+export async function exportIfcModel() {
+    const modelName = ifcManager.groups[0].name;
+    if (!modelName) {
+        alert("No model found in scene");
+        return;
+    }
+
+    try {
+        const params = {
+            model_name: `${modelName}`
+        };
+        const queryString = new URLSearchParams(params).toString();
+
+        const response = await fetch(`http://${hostIPAddress}:8432/api/export/ifc?${queryString}`);
+        if (!response.ok) throw new Error('Network response was not ok');
+
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${modelName.split('.')[0]}_exported.ifc`;
+        document.body.appendChild(a);
+        a.click();
+
+        a.remove();
+        window.URL.revokeObjectURL(url);
+
+        alert("IFC model successfully exported!");
+    } catch (error) {
+        alert(error);
     }
 }

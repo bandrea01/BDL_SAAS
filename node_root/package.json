@@ -9,7 +9,7 @@
   "dependencies": {
     "jsoneditor": "^10.1.0",
     "openbim-components": "1.1.1",
-    "three": "0.152.2"
+    "three": "0.160.1"
   },
   "devDependencies": {
     "@types/jsoneditor": "^9.9.5",

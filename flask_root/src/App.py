@@ -1,5 +1,5 @@
 from functools import wraps
-from flask import Flask, request, session, jsonify
+from flask import Flask, request, session, jsonify, send_file
 from flask_cors import CORS
 from flask import render_template
 from flask import redirect, url_for
@@ -160,7 +160,7 @@ def monitoring():
 @login_required
 def generation():
     """
-    Metodo che avvia la generazione dei dati del sensore ed effettua le sottoscrizioni ad ORION-LD
+    Metodo che avvia la generazione dei dati del sensore ed effettua le sottoscrizioni a ORION-LD
     @return: Valore di ritorno per indicare se l'operazione è andata a buon fine o meno (200 o 404)
     """
     data = request.json
@@ -218,9 +218,9 @@ def create_sensor():
     @return: Viene ritornato il valore 200 se tutto è andato a buon fine
     """
     data = request.json
+
     sceneModelName = data.get("sceneModelName")
     componentID = data.get("componentID")
-    sensorType = data.get("sensorType")
     brandName = data.get("brandName")
     manufacturerName = data.get("manufacturerName")
     modelName = data.get("modelName")
@@ -233,7 +233,7 @@ def create_sensor():
     coordinateZ = data.get("coordinateZ")
 
     res_device_model = fiware.init_device_model(
-        sensorType,
+        sceneModelName,
         componentID.split("-")[-1],
         brandName,
         controlledProperty,
@@ -243,11 +243,11 @@ def create_sensor():
     )
 
     if res_device_model != 201 and res_device_model != 200:
-        err = "Error in init Orion: " + str(res_device_model)
+        err = "Error in init Orion device model: " + str(res_device_model)
         return render_template("error.html", message=err)
 
     res_device_measurement = fiware.init_device_measurement(
-        sensorType,
+        sceneModelName,
         componentID.split("-")[-1],
         controlledProperty,
         description,
@@ -260,7 +260,7 @@ def create_sensor():
     )
 
     if res_device_measurement != 201 and res_device_measurement != 200:
-        err = "Error in init Orion: " + str(res_device_measurement)
+        err = "Error in init Orion device measurement: " + str(res_device_measurement)
         return render_template("error.html", message=err)
 
     sceneModelName = sceneModelName.split(".")[0]
@@ -269,12 +269,13 @@ def create_sensor():
         f"{sceneModelName}_nodes",
         f"{sceneModelName}_edges",
         componentID,
-        sensorType,
         brandName,
         controlledProperty,
         manufacturerName,
         modelName,
-        name
+        name,
+        description,
+        [coordinateX, coordinateY, coordinateZ]
     )
 
     return jsonify("done"), 200
@@ -291,6 +292,30 @@ def getOrionSensors():
     for entity in entities:
         ids.append(entity["id"].split(":")[4])
     return jsonify(ids)
+
+
+@app.route("/api/export/ifc", methods=["GET"])
+def export_ifc_model():
+    """
+    Metodo che esporta un grafo su ArangoDB in file IFC
+    @return: Il file IFC
+    """
+    model_name = request.args.get('model_name')
+    if not model_name:
+        return "Model name is required", 400
+
+    # Remove the file extension
+    model_name = model_name.rsplit('.', 1)[0]
+
+    output_file_path = ""
+
+    try:
+        output_file_path = arango.export_ifc(model_name)
+
+        return send_file(output_file_path, as_attachment=True)
+    finally:
+        if os.path.exists(output_file_path):
+            os.remove(output_file_path)
 
 
 """-------------------    AQL    ---------------------"""

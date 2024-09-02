@@ -5,7 +5,7 @@ import {
     showTraversalByTypeFields,
     showTraversalFields
 } from "./utils.ts";
-import {fetchAllEdges, fetchAllNodes} from "./api.ts";
+import {exportIfcModel, fetchAllEdges, fetchAllNodes} from "./api.ts";
 
 export function setupToolbar(viewer: OBC.Components, ifcLoader: OBC.FragmentIfcLoader, propertiesProcessor: OBC.IfcPropertiesProcessor, hostIPAddress: string) {
     const queryTool = new OBC.Button(viewer);
@@ -52,10 +52,17 @@ export function setupToolbar(viewer: OBC.Components, ifcLoader: OBC.FragmentIfcL
     refreshButton.tooltip = "Reset model";
     refreshButton.onClick.add(() => window.location.reload());
 
+    const exportButton = new OBC.Button(viewer);
+    exportButton.materialIcon = "download";
+    exportButton.tooltip = "Export IFC model";
+    exportButton.onClick.add(() => exportIfcModel());
+
+
     const mainToolbar = new OBC.Toolbar(viewer);
 
     mainToolbar.addChild(
         ifcLoader.uiElement.get("main"),
+        exportButton,
         refreshButton,
         propertiesProcessor.uiElement.get("main"),
         queryTool,

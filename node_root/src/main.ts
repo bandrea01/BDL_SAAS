@@ -12,6 +12,8 @@ viewer = configureViewer(viewer, viewerContainer);
 
 const ifcLoader = new OBC.FragmentIfcLoader(viewer);
 
+//TODO: Provare la versione 0.0.57, per la configurazione attuale da problemi
+
 ifcLoader.settings.wasm = {
     absolute: true,
     path: "https://unpkg.com/web-ifc@0.0.44/",
@@ -20,7 +22,7 @@ ifcLoader.settings.wasm = {
 export const ifcManager = new OBC.FragmentManager(viewer);
 
 // @ts-ignore
-//ifcManager.uiElement.get("main").materiaIcon = "delete";
+//ifcManager.uiElement.get("main").materialIcon = "delete";
 // @ts-ignore
 //ifcManager.uiElement.get("main").tooltip = "Remove models";
 

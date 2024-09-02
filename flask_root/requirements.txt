@@ -1,8 +1,8 @@
 flask==3.0.3
 flask-cors==4.0.1
 Jinja2==3.1.4
-python-arango==8.0.0
-ifcopenshell==0.7.0.240627
+python-arango==8.1.0
+ifcopenshell==0.8.0
 lark-parser==0.12.0
 uuid==1.30
 numpy==1.26.4

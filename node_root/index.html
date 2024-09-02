@@ -48,7 +48,7 @@
             • Double-clicking the <strong>SCROLL WHEEL</strong> initiates a length
             measurement operation, which you can conclude simply by
             double-clicking it again. If you want to delete a previous
-            measurament, you can simply point at it and press
+            measurement, you can simply point at it and press
             <strong>DELETE</strong>.
         </p>
         <p>&nbsp;</p>
@@ -184,12 +184,6 @@
             </div>
             <div>
                 <label class="input-container">
-                    <span class="label-text">Sensor Type *</span>
-                    <input type="text" id="sensor-type-input" name="node_name" placeholder="Type of sensor (es. Temperature)" required>
-                </label>
-            </div>
-            <div>
-                <label class="input-container">
                     <span class="label-text">Brand Name *</span>
                     <input type="text" id="brand-name-input" name="brand_name" placeholder="Device's Brand Name (Es. STMicroelectronics)"
                            required>
@@ -198,19 +192,19 @@
             <div>
                 <label class="input-container">
                     <span class="label-text">Manufacturer Name *</span>
-                    <input type="text" id="manufacturer-name-input" name="manefacturer_name"
+                    <input type="text" id="manufacturer-name-input" name="manufacturer_name"
                            placeholder="Device's Manufacturer Name (es. STMicroelectronics)" required>
                 </label>
             </div>
             <div>
                 <label class="input-container">
                     <span class="label-text">Model Name *</span>
-                    <input type="text" id="model-name-input" name="model_name" placeholder="Devices's Model Name (es. AC412)" required>
+                    <input type="text" id="model-name-input" name="model_name" placeholder="Device's Model Name (es. AC412)" required>
                 </label>
             </div>
             <div>
                 <label class="input-container">
-                    <span class="label-text">Name of item</span>
+                    <span class="label-text">Device's name</span>
                     <input type="text" id="name-input" name="name" placeholder="Device's name (es. MySensor)">
                 </label>
             </div>
@@ -224,8 +218,35 @@
             <div>
                 <label class="input-container">
                     <span class="label-text">Controlled property *</span>
-                    <input type="text" id="controlled-property-input" name="controlled_property_name"
-                           placeholder="Quantity measured by device (Es. temperature)" required>
+                    <select
+                           id="controlled-property-input"
+                           name="controlled_property_name"
+                           required
+                    >
+                        <option value="CONDUCTANCESENSOR">Conductance</option>
+                        <option value="CONTACTSENSOR">Contact</option>
+                        <option value="FIRESENSOR">Fire</option>
+                        <option value="FLOWSENSOR">Flow</option>
+                        <option value="GASSENSOR">Gas</option>
+                        <option value="HEATSENSOR">Heat</option>
+                        <option value="HUMIDITYSENSOR">Humidity</option>
+                        <option value="IONCONCENTRATIONSENSOR">Ion concentrations</option>
+                        <option value="LEVELSENSOR">Level</option>
+                        <option value="LIGHTSENSOR">Light</option>
+                        <option value="MOISTURESENSOR">Moisture</option>
+                        <option value="MOVEMENTSENSOR">Movement</option>
+                        <option value="PHSENSOR">Ph</option>
+                        <option value="PRESSURESENSOR">Pressure</option>
+                        <option value="RADIATIONSENSOR">Radiation</option>
+                        <option value="RADIOACTIVITYSENSOR">Radioactivity</option>
+                        <option value="SMOKESENSOR">Smoke</option>
+                        <option value="SOUNDSENSOR">Sound</option>
+                        <option value="TEMPERATURESENSOR">Temperature</option>
+                        <option value="WINDSENSOR">Wind</option>
+                        <option value="CO2SENSOR">Co2</option>
+                        <option value="FROSTSENSOR">Frost</option>
+                        <option value="IDENTIFIERSENSOR">Identifier</option>
+                    </select>
                 </label>
             </div>
             <div>

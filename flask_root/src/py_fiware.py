@@ -187,12 +187,12 @@ class FiwareAPI(object):
         response = requests.delete(url, headers=self.header_perseo)
         return response.status_code
 
-    def init_device_model(self, type, id, brandName, controlledProperty, manufacturerName, modelName, name):
-        if self.entity_exists(f"urn:ngsi-ld:DeviceModel:Sensor{type}-{id}"):
+    def init_device_model(self, sceneModelName, id, brandName, controlledProperty, manufacturerName, modelName, name):
+        if self.entity_exists(f"urn:ngsi-ld:DeviceModel:{sceneModelName}-{controlledProperty}-{id}"):
             return 200
 
         payload = {
-            "id": f"urn:ngsi-ld:DeviceModel:Sensor{type}-{id}",
+            "id": f"urn:ngsi-ld:DeviceModel:{sceneModelName}-{controlledProperty}-{id}",
             "type": "DeviceModel",
             "brandName": {
                 "type": "Property",
@@ -213,7 +213,7 @@ class FiwareAPI(object):
             "controlledProperty": {
                 "type": "Property",
                 "value": [
-                    controlledProperty
+                    controlledProperty.lower().replace('sensor', '')
                 ]
             },
             "function": {
@@ -241,13 +241,13 @@ class FiwareAPI(object):
         res = self.insert_entity(payload)
         return res
 
-    def init_device_measurement(self, type, id, controlledProperty, description, x, y, z, measurementType, name,
+    def init_device_measurement(self, sceneModelName, id, controlledProperty, description, x, y, z, measurementType, name,
                                 numValue):
-        if self.entity_exists(f"urn:ngsi-ld:MEASUREMENT:id:Sensor{type}-{id}"):
+        if self.entity_exists(f"urn:ngsi-ld:MEASUREMENT:id:{sceneModelName}-{controlledProperty}-{id}"):
             return 200
 
         payload = {
-            "id": f"urn:ngsi-ld:MEASUREMENT:id:Sensor{type}-{id}",
+            "id": f"urn:ngsi-ld:MEASUREMENT:id:{sceneModelName}-{controlledProperty}-{id}",
             "type": "DeviceMeasurement",
             "address": {
                 "type": "Property",
@@ -270,7 +270,7 @@ class FiwareAPI(object):
             },
             "controlledProperty": {
                 "type": "Property",
-                "value": controlledProperty
+                "value": controlledProperty.lower().replace('sensor', '')
             },
             "dataProvider": {
                 "type": "Property",
@@ -329,7 +329,7 @@ class FiwareAPI(object):
             },
             "refDevice": {
                 "type": "Property",
-                "value": f"urn:ngsi-ld:DeviceModel:Sensor{type}-{id}"
+                "value": f"urn:ngsi-ld:DeviceModel:{sceneModelName}-{controlledProperty}-{id}"
             },
             "seeAlso": {
                 "type": "Property",
