@@ -22,6 +22,16 @@ class Py2Arango(object):
 
         return self.client.db('prova', username='root', password='BDLaaS')
 
+    def getIfcNodeFromKey(self, collection_name, key):
+        query = f"""
+            FOR i IN {collection_name}
+                FILTER i._key == "{key}"
+                RETURN i
+        """
+
+        cursor = self.db.aql.execute(query)
+        return cursor.next()
+
     def getIfcNodeFromName(self, collection_name, name):
         query = f"""
             FOR i IN {collection_name}
@@ -74,6 +84,33 @@ class Py2Arango(object):
         }
 
         return current_id, ifc_sensor, edge
+
+    @staticmethod
+    def getIfcRelConnectsElements(nodes_name, current_id, ifc_sensor, componentToConnect):
+        current_id += 1
+
+        ifcRelConnectsElements = {
+            "_key": f"IfcRelConnectsElements-{current_id}",
+            "name": "IfcRelConnectsElements",
+            "row": f"#{current_id}",
+            "GlobalId": str(uuid4()),
+            "Name": "Connection",
+            "Description": "Connection between sensor and component"
+        }
+
+        edge = {
+            "_from": f"{nodes_name}/{ifc_sensor['_key']}",
+            "_to": f"{nodes_name}/{ifcRelConnectsElements['_key']}",
+            "rel_name": f"RelatingElement"
+        }
+
+        edge_component = {
+            "_from": f"{nodes_name}/{ifcRelConnectsElements['_key']}",
+            "_to": f"{nodes_name}/{componentToConnect['_key']}",
+            "rel_name": f"RelatedElement"
+        }
+
+        return current_id, ifcRelConnectsElements, edge, edge_component
 
     @staticmethod
     def getIfcRelContainedInSpatialStructureEdge(nodes_name, ifc_sensor, ifcRelContainedInSpatialStructure):
@@ -461,12 +498,13 @@ class Py2Arango(object):
 
         return current_id, ifcCartesianPoint, edge
 
-    def insertSensor(self, nodes_name, edges_name, component_id, brandName, controlledProperty, manufacturerName,
+    def insertSensor(self, nodes_name, edges_name, component_key, brandName, controlledProperty, manufacturerName,
                      modelName, name, description, coordinates):
 
         current_id = self.getRowNumber(nodes_name)
         ifcOwnerHistory = self.getIfcNodeFromName(nodes_name, "IfcOwnerHistory")
         ifcRelContainedInSpatialStructure = self.getIfcNodeFromName(nodes_name, "IfcRelContainedInSpatialStructure")
+        componentToConnect = self.getIfcNodeFromKey(nodes_name, component_key)
 
         nodes = []
         edges = []
@@ -489,6 +527,16 @@ class Py2Arango(object):
         # TODO: Vedere se implementare anche un metodo che crei un IfcRelConnectsElements
         #  (relazione tra gli oggetti: RelatingElement) per collegare il sensore
         #  ad un componente architettonico direttamente
+        # Create IfcRelConnectsElements node and edge
+        current_id, ifcRelConnectsElements, edge, edge_component = self.getIfcRelConnectsElements(
+            nodes_name,
+            current_id,
+            ifc_sensor,
+            componentToConnect
+        )
+        nodes.append(ifcRelConnectsElements)
+        edges.append(edge)
+        edges.append(edge_component)
 
         # Create IfcRelContainedInSpatialStructure edge
         edge = self.getIfcRelContainedInSpatialStructureEdge(nodes_name, ifc_sensor, ifcRelContainedInSpatialStructure)
@@ -771,6 +819,8 @@ class Py2Arango(object):
 
         self.db[nodes_name].insert_many(nodes)
         self.db[edges_name].insert_many(edges)
+
+    """IFC-SPF to ArangoDB graph conversion"""
 
     # Create the basic node with literal attributes and the class hierarchy
     # Input: ifc_entity - an instance, ifc_file - the parsed ifc-SPF
