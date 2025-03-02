@@ -8,6 +8,7 @@ import time
 from py_fiware import FiwareAPI
 from py2arango import Py2Arango
 import os
+import logging
 
 app = Flask(__name__)
 app.secret_key = 'BDLaaS'
@@ -19,6 +20,8 @@ fiware = FiwareAPI()
 fiware.setOrionIP("orion:1026")
 fiware.setPerseoIP("perseo-fe:9090")
 
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger = logging.getLogger(__name__)
 
 def login_required(f):
     """
@@ -233,7 +236,7 @@ def create_sensor():
     coordinateZ = data.get("coordinateZ")
 
     res_device_model = fiware.init_device_model(
-        sceneModelName,
+        sceneModelName.split(".")[0],
         componentID.split("-")[-1],
         brandName,
         controlledProperty,
@@ -247,7 +250,7 @@ def create_sensor():
         return render_template("error.html", message=err)
 
     res_device_measurement = fiware.init_device_measurement(
-        sceneModelName,
+        sceneModelName.split(".")[0],
         componentID.split("-")[-1],
         controlledProperty,
         description,
