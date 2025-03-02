@@ -330,7 +330,7 @@
     };
 
     function getAllSensors() {
-        fetch('/getOrionSensors')
+        fetch('/api/orion/sensors')
             .then(response => {
                 if (!response.ok) {
                     throw new Error('Response error! Inspect console logs for more information');
